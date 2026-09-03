@@ -652,6 +652,31 @@ body{padding-bottom:64px}
 .role-card-btn:hover{transform:scale(1.08);box-shadow:0 8px 24px rgba(14,165,233,.4)}
 .landing-footer{position:relative;z-index:2;padding:16px;text-align:center;font-size:10px;color:var(--g500);border-top:1px solid rgba(255,255,255,.06);opacity:0;animation:fadeUp .6s ease 1.4s forwards}
 
+/* ═══ VOLUNTEER CHARACTER ═══ */
+.vol-character-section{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:30px;margin:-8px 0 36px;opacity:0;animation:slideInUp .8s ease 1s forwards;perspective:1000px}
+.vol-character{width:150px;height:210px;animation:floatY3D 5s ease-in-out infinite;transform-style:preserve-3d;flex-shrink:0;filter:drop-shadow(0 20px 40px rgba(0,0,0,.3))}
+.vol-character svg{width:100%;height:100%}
+.vol-feat-showcase{display:flex;flex-direction:column;gap:10px;max-width:320px}
+.vol-feat-tip{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px);color:var(--g300);font-size:13px;opacity:0;transform:translateX(40px);transition:all .5s cubic-bezier(.4,0,.2,1);position:relative}
+.vol-feat-tip.show{opacity:1;transform:translateX(0)}
+.vol-feat-tip.active{background:rgba(14,165,233,.2);border-color:rgba(14,165,233,.5);color:white;box-shadow:0 0 24px rgba(14,165,233,.15)}
+.vol-feat-tip::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:rgba(255,255,255,.12);transition:border-right-color .3s}
+.vol-feat-tip.active::before{border-right-color:rgba(14,165,233,.5)}
+.vol-feat-ic{font-size:18px;flex-shrink:0}
+.vol-feat-txt{font-size:12px;line-height:1.4}
+.vol-feat-txt b{color:var(--cyan)}
+@keyframes charPoint{0%,100%{transform:rotate(0deg)}30%,70%{transform:rotate(-15deg)}}
+@keyframes charNod{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.vol-character .pointing-arm{transform-origin:28px 82px;animation:charPoint 3s ease-in-out infinite}
+.vol-character .head-group{animation:charNod 4s ease-in-out infinite}
+@media(max-width:768px){
+.vol-character-section{flex-direction:column;gap:16px;margin:0 0 28px}
+.vol-character{width:110px;height:154px}
+.vol-feat-showcase{max-width:100%;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px}
+.vol-feat-tip{padding:7px 12px;font-size:11px}
+.vol-feat-tip::before{display:none}
+}
+
 /* ═══ PAGE SYSTEM ═══ */
 .app-page{display:none}
 .app-page.active{display:block;animation:fadeUp .4s ease}
@@ -700,6 +725,101 @@ body{padding-bottom:64px}
 <div class="landing-feat">🚗 Route Planner</div>
 <div class="landing-feat">🤝 Volunteers</div>
 </div>
+
+<!-- Volunteer Character with 3D Feature Showcase -->
+<div class="vol-character-section" id="volCharSection">
+<div class="vol-character">
+<svg viewBox="0 0 120 170" xmlns="http://www.w3.org/2000/svg">
+<!-- Shadow -->
+<ellipse cx="60" cy="166" rx="30" ry="5" fill="rgba(0,0,0,.12)"/>
+<!-- Left leg -->
+<rect x="40" y="122" width="16" height="32" rx="6" fill="#1e293b"/>
+<!-- Right leg -->
+<rect x="64" y="122" width="16" height="32" rx="6" fill="#1e293b"/>
+<!-- Left boot -->
+<path d="M37 150 Q37 160 48 160 L56 160 Q59 160 59 150 Z" fill="#292524"/>
+<!-- Right boot -->
+<path d="M61 150 Q61 160 72 160 L80 160 Q83 160 83 150 Z" fill="#292524"/>
+<!-- Boot soles -->
+<rect x="37" y="157" width="22" height="3" rx="1.5" fill="#1c1917"/>
+<rect x="61" y="157" width="22" height="3" rx="1.5" fill="#1c1917"/>
+<!-- Body / Vest -->
+<path d="M34 78 Q34 72 40 70 L80 70 Q86 72 86 78 L86 124 Q86 128 80 128 L40 128 Q34 128 34 124 Z" fill="#ea580c"/>
+<!-- Vest collar left -->
+<path d="M42 70 L60 90 L42 90 Z" fill="#f97316" opacity=".6"/>
+<!-- Vest collar right -->
+<path d="M78 70 L60 90 L78 90 Z" fill="#f97316" opacity=".6"/>
+<!-- Vest center line -->
+<line x1="60" y1="90" x2="60" y2="126" stroke="#c2410c" stroke-width="1.5" opacity=".5"/>
+<!-- Reflective stripes -->
+<rect x="36" y="96" width="48" height="4" rx="2" fill="#fbbf24"/>
+<rect x="36" y="112" width="48" height="4" rx="2" fill="#fbbf24"/>
+<!-- Pocket -->
+<rect x="42" y="102" width="14" height="10" rx="2" fill="#c2410c" opacity=".6"/>
+<!-- Badge/Logo circle -->
+<circle cx="76" cy="82" r="5" fill="#fbbf24" opacity=".8"/>
+<text x="76" y="85" font-size="6" fill="#c2410c" text-anchor="middle" font-weight="bold">RL</text>
+<!-- Neck -->
+<rect x="53" y="59" width="14" height="14" rx="6" fill="#d4a574"/>
+<!-- Head group (animated nod) -->
+<g class="head-group">
+<!-- Head -->
+<ellipse cx="60" cy="42" rx="20" ry="21" fill="#d4a574"/>
+<!-- Ears -->
+<ellipse cx="39" cy="44" rx="5" ry="6" fill="#c99a6b"/>
+<ellipse cx="81" cy="44" rx="5" ry="6" fill="#c99a6b"/>
+<!-- Eyes -->
+<ellipse cx="51" cy="40" rx="4" ry="4.5" fill="white"/>
+<ellipse cx="69" cy="40" rx="4" ry="4.5" fill="white"/>
+<circle cx="52.5" cy="40.5" r="2.5" fill="#1e293b"/>
+<circle cx="70.5" cy="40.5" r="2.5" fill="#1e293b"/>
+<!-- Eye shine -->
+<circle cx="53.5" cy="39.5" r=".8" fill="white"/>
+<circle cx="71.5" cy="39.5" r=".8" fill="white"/>
+<!-- Eyebrows -->
+<path d="M46 34 Q51 31 56 34" stroke="#8B6914" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<path d="M64 34 Q69 31 74 34" stroke="#8B6914" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<!-- Smile -->
+<path d="M50 51 Q60 58 70 51" stroke="#a0845c" stroke-width="2" fill="none" stroke-linecap="round"/>
+<!-- Nose -->
+<path d="M58 45 Q60 49 62 45" stroke="#c99a6b" stroke-width="1.5" fill="none"/>
+</g>
+<!-- Helmet -->
+<path d="M37 35 Q37 16 60 16 Q83 16 83 35 L83 28 Q83 13 60 13 Q37 13 37 28 Z" fill="#dc2626"/>
+<rect x="35" y="33" width="50" height="5" rx="2.5" fill="#b91c1c"/>
+<!-- Helmet brim highlight -->
+<rect x="38" y="34" width="44" height="2" rx="1" fill="#ef4444" opacity=".5"/>
+<!-- Helmet top light -->
+<circle cx="60" cy="16" r="4" fill="#fbbf24"/>
+<circle cx="60" cy="16" r="2" fill="#fef3c7" opacity=".8"/>
+<!-- Helmet cross -->
+<rect x="57" y="22" width="6" height="2" rx="1" fill="white" opacity=".7"/>
+<rect x="59" y="20" width="2" height="6" rx="1" fill="white" opacity=".7"/>
+<!-- Left arm (pointing) -->
+<g class="pointing-arm">
+<rect x="14" y="78" width="22" height="13" rx="6" fill="#ea580c"/>
+<!-- Hand -->
+<circle cx="14" cy="84" r="7" fill="#d4a574"/>
+<!-- Pointing finger -->
+<rect x="6" y="82" width="8" height="4" rx="2" fill="#d4a574"/>
+</g>
+<!-- Right arm -->
+<rect x="84" y="80" width="18" height="13" rx="6" fill="#ea580c"/>
+<circle cx="104" cy="86" r="7" fill="#d4a574"/>
+<!-- Radio on belt -->
+<rect x="86" y="100" width="8" height="14" rx="2" fill="#1e293b"/>
+<rect x="88" y="96" width="2" height="8" rx="1" fill="#64748b"/>
+</svg>
+</div>
+<div class="vol-feat-showcase" id="volFeatShowcase">
+<div class="vol-feat-tip" id="vft1"><span class="vol-feat-ic">🧠</span><span class="vol-feat-txt"><b>AI Flood Predictor</b> — predicts risk BEFORE floods</span></div>
+<div class="vol-feat-tip" id="vft2"><span class="vol-feat-ic">🚨</span><span class="vol-feat-txt"><b>SOS Emergency</b> — one tap sends GPS to rescue</span></div>
+<div class="vol-feat-tip" id="vft3"><span class="vol-feat-ic">🗺️</span><span class="vol-feat-txt"><b>Live Map</b> — hospitals, shelters, flood zones</span></div>
+<div class="vol-feat-tip" id="vft4"><span class="vol-feat-ic">🌤️</span><span class="vol-feat-txt"><b>Weather Alerts</b> — real-time monsoon tracking</span></div>
+<div class="vol-feat-tip" id="vft5"><span class="vol-feat-ic">🤖</span><span class="vol-feat-txt"><b>AI Chat</b> — اردو · English · Roman Urdu</span></div>
+</div>
+</div>
+
 <div class="role-cards">
 <div class="role-card" onclick="enterApp('user')">
 <div class="role-card-img" style="background:linear-gradient(135deg,rgba(14,165,233,.2),rgba(37,99,235,.2));border:2px solid rgba(14,165,233,.3)">👤</div>
@@ -1241,6 +1361,39 @@ tick();setInterval(tick,1000);
 
 // ═══ SCROLL ═══
 function scrollTo2(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+
+// ═══ FEATURE TOOLTIP CYCLING ═══
+let featTipIdx=0;
+const featTips=['vft1','vft2','vft3','vft4','vft5'];
+function cycleFeatTips(){
+// Remove active from all
+featTips.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('active');});
+// Show all tips first (staggered reveal)
+if(featTipIdx<featTips.length){
+const el=document.getElementById(featTips[featTipIdx]);
+if(el)el.classList.add('show');
+}
+// Set active tip (cycles through all)
+const activeIdx=featTipIdx%featTips.length;
+const activeEl=document.getElementById(featTips[activeIdx]);
+if(activeEl)activeEl.classList.add('active');
+featTipIdx++;
+}
+function startFeatCycle(){
+// Show tips one by one first (1s apart), then start cycling highlight
+let count=0;
+const revealInterval=setInterval(()=>{
+const el=document.getElementById(featTips[count]);
+if(el)el.classList.add('show');
+count++;
+if(count>=featTips.length){clearInterval(revealInterval);featTipIdx=0;cycleFeatTips();setInterval(cycleFeatTips,3000);}
+},600);
+// Set first active immediately
+setTimeout(()=>{
+const el=document.getElementById(featTips[0]);
+if(el)el.classList.add('active');
+},400);
+}
 
 // ═══ SCROLL REVEAL (IntersectionObserver) ═══
 function initScrollReveal(){
@@ -2919,6 +3072,8 @@ btn.disabled=false;btn.textContent='🤝 Register Now';
 
 // Load volunteers on page load
 loadVolunteers();
+// Start volunteer character feature cycle on landing page
+setTimeout(startFeatCycle,1500);
 </script>
 </body>
 </html>
