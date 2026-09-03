@@ -1,0 +1,23 @@
+/** ReliefLink — Shared Types Barrel */
+export type {
+  DisasterType,
+  SeverityLevel,
+  AlertStatus,
+  SOSStatus,
+  SOSUrgency,
+  TeamStatus,
+  TeamType,
+  UserRole,
+  ShelterType,
+  ShelterStatus,
+  SupportedLanguage,
+  GeoPoint,
+  GeoPolygon,
+  DisasterAlert,
+  SOSRequest,
+  Shelter,
+  RescueTeam,
+  Volunteer,
+  AIChatMessage,
+  AIAction,
+} from './disaster';

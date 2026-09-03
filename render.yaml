@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: relieflink-api
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: cd relieflink/backend && pip install -r requirements.txt
+    startCommand: cd relieflink/backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: WEATHER_PROVIDER
+        value: openweathermap
+      - key: WEATHER_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
