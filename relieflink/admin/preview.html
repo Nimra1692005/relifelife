@@ -282,6 +282,21 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden;padding-bottom:60
 .safe-card-badge.open{background:#dcfce7;color:var(--green)}
 .safe-card-badge.full{background:#fef2f2;color:var(--red)}
 
+/* ═══ API KEY SETUP MODAL ═══ */
+.apikey-overlay{display:none;position:fixed;inset:0;background:rgba(10,22,40,.85);z-index:300;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.apikey-overlay.show{display:flex}
+.apikey-box{width:100%;max-width:420px;background:white;border-radius:var(--rl);padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.apikey-head{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.apikey-desc{font-size:12px;color:var(--g500);margin-bottom:20px;line-height:1.5}
+.apikey-field{margin-bottom:16px}
+.apikey-field label{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.apikey-field input{width:100%;padding:10px 12px;border:1px solid var(--g200);border-radius:var(--r);font-size:13px;font-family:inherit;outline:none;color:var(--navy)}
+.apikey-field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(14,165,233,.12)}
+.apikey-field small{display:block;font-size:10px;color:var(--g400);margin-top:4px}
+.apikey-field a{color:var(--cyan);text-decoration:none}
+.apikey-save{width:100%;padding:12px;border-radius:var(--r);background:var(--cyan);color:white;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+.apikey-save:hover{background:var(--cyan2)}
+
 /* ═══ SOS MODAL ═══ */
 .sos-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .sos-overlay.open{display:flex}
@@ -767,6 +782,25 @@ body{padding-bottom:64px}
 </style>
 </head>
 <body>
+
+<!-- ═══ API KEY SETUP ═══ -->
+<div class="apikey-overlay" id="apikeyOverlay">
+<div class="apikey-box">
+<div class="apikey-head">🔑 Setup API Keys</div>
+<p class="apikey-desc">ReliefLink needs free API keys to show weather and run the AI chat. Your keys are saved only in this browser.</p>
+<div class="apikey-field">
+<label>OpenWeatherMap API Key</label>
+<input type="text" id="owmKeyInput" placeholder="Paste your OpenWeatherMap key">
+<small>Get free key from <a href="https://home.openweathermap.org/api_keys" target="_blank">openweathermap.org</a></small>
+</div>
+<div class="apikey-field">
+<label>Groq API Key</label>
+<input type="text" id="groqKeyInput" placeholder="Paste your Groq key">
+<small>Get free key from <a href="https://console.groq.com/keys" target="_blank">console.groq.com</a></small>
+</div>
+<button class="apikey-save" onclick="saveApiKeys()">Save & Continue</button>
+</div>
+</div>
 
 <!-- ═══ LANDING PAGE ═══ -->
 <div class="landing" id="landingPage">
@@ -2392,6 +2426,25 @@ const GROQ_KEY=localStorage.getItem('groq_key')||'';
 const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 let chatHistory=[];
 
+// ═══ API KEY SETUP ═══
+function checkApiKeys(){
+const needsOwm=!OWM_KEY;
+const needsGroq=!GROQ_KEY;
+if(needsOwm||needsGroq){
+const ov=document.getElementById('apikeyOverlay');
+if(ov)ov.classList.add('show');
+}
+}
+function saveApiKeys(){
+const owm=document.getElementById('owmKeyInput').value.trim();
+const groq=document.getElementById('groqKeyInput').value.trim();
+if(owm)localStorage.setItem('owm_key',owm);
+if(groq)localStorage.setItem('groq_key',groq);
+const ov=document.getElementById('apikeyOverlay');
+if(ov)ov.classList.remove('show');
+window.location.reload();
+}
+
 
 
 const sysPrompt=`You are ReliefLink AI Assistant — a helpful AI that helps people in Pakistan with weather AND disaster/emergency questions. You ALWAYS reply in clear, simple English. You understand English, Roman Urdu (e.g. \"islamabad ka mausam kaisa hai\", \"flood agaya to kya karna chahiye\", \"meray pass pani bohat hai\") and Urdu script inputs perfectly.
@@ -3039,6 +3092,8 @@ alert('✅ Registered locally! (Backend not connected yet)');
 btn.disabled=false;btn.textContent='Register as volunteer';
 }
 
+// Check API keys on page load
+setTimeout(checkApiKeys,500);
 // Load volunteers on page load
 loadVolunteers();
 // Start volunteer character feature cycle on landing page
