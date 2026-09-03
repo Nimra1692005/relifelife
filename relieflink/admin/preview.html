@@ -226,40 +226,45 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .em-num{font-size:10px;color:var(--g500);margin-top:1px}
 
 /* ═══ VOLUNTEERS ═══ */
-.vol-section{padding:24px 0;border-top:1px solid var(--g200)}
-.vol-stats{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
-.vol-stat{background:white;border:1px solid var(--g200);border-radius:var(--rl);padding:14px 20px;text-align:center;flex:1;min-width:100px}
-.vol-stat-val{font-size:22px;font-weight:700;color:var(--navy)}
-.vol-stat-lbl{font-size:10px;color:var(--g500);margin-top:2px}
-.vol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-.vol-card{background:white;border:1px solid var(--g200);border-radius:16px;padding:16px;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
-.vol-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--green));opacity:0;transition:opacity .3s}
-.vol-card:hover::before{opacity:1}
-.vol-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.08);transform:translateY(-4px);border-color:var(--teal)}
-.vol-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
-.vol-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.vol-name{font-size:13px;font-weight:600;color:var(--navy)}
-.vol-role{font-size:10px;color:var(--g500)}
-.vol-skills{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.vol-skill{padding:2px 8px;border-radius:99px;font-size:9px;font-weight:600;background:var(--sky);color:var(--cyan2);border:1px solid var(--sky2)}
-.vol-status{position:absolute;top:12px;right:12px;padding:2px 8px;border-radius:99px;font-size:9px;font-weight:600}
-.vol-status.available{background:#dcfce7;color:#16a34a}
-.vol-status.deployed{background:#fef9c3;color:#ca8a04}
-.vol-status.unavailable{background:#fee2e2;color:#dc2626}
-.vol-phone{font-size:11px;color:var(--g500);margin-top:6px}
-.vol-form-wrap{margin-top:16px;background:white;border:1px solid var(--g200);border-radius:var(--rl);padding:20px;display:none}
-.vol-form-wrap.open{display:block}
-.vol-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.vol-form-input{padding:10px 12px;border:1px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:inherit;outline:none;color:var(--navy)}
-.vol-form-input:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(14,165,233,.1)}
-.vol-form-select{padding:10px 12px;border:1px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:inherit;outline:none;color:var(--navy);background:white}
-.vol-skills-check{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.vol-skills-check label{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--g600);cursor:pointer;padding:4px 8px;border:1px solid var(--g200);border-radius:var(--r);transition:all .2s}
-.vol-skills-check label:hover{border-color:var(--cyan)}
-.vol-skills-check input:checked+span{color:var(--cyan);font-weight:600}
-.vol-submit{padding:10px 24px;border-radius:var(--r);background:var(--cyan);color:white;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:12px}
-.vol-submit:hover{background:var(--cyan2)}
-.vol-submit:disabled{opacity:.5;cursor:not-allowed}
+.vol-section{padding:24px 0}
+.vol-stats-bar{display:flex;padding:20px 0;border-bottom:1px solid var(--g200)}
+.vol-stat-item{flex:1;padding:0 20px;border-left:1px solid var(--g200)}
+.vol-stat-item:first-child{border-left:none;padding-left:0}
+.vol-stat-val{font-family:'IBM Plex Mono','Courier New',monospace;font-size:26px;font-weight:500;color:var(--navy)}
+.vol-stat-lbl{font-size:12.5px;color:var(--g500);margin-top:2px}
+.vol-grid-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:0;border-bottom:1px solid var(--g200)}
+.vol-form-col{padding:32px 32px 40px 0;border-right:1px solid var(--g200)}
+.vol-roster-col{padding:32px 0 40px 32px}
+@media(max-width:760px){.vol-grid-layout{grid-template-columns:1fr}.vol-form-col{border-right:none;border-bottom:1px solid var(--g200);padding:24px 0}.vol-roster-col{padding:24px 0}}
+.vol-field{margin-bottom:20px}
+.vol-field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--navy)}
+.vol-field input,.vol-field select{width:100%;padding:10px 12px;border:1px solid var(--g200);border-radius:4px;background:white;font-size:14px;font-family:inherit;color:var(--navy);outline:none}
+.vol-field input:focus,.vol-field select:focus{outline:2px solid var(--navy);outline-offset:1px;border-color:var(--navy)}
+.vol-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.vol-segmented{display:flex;border:1px solid var(--g200);border-radius:4px;overflow:hidden}
+.vol-segmented button{flex:1;padding:9px 8px;border:none;border-right:1px solid var(--g200);background:white;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--g500);cursor:pointer;transition:all .2s}
+.vol-segmented button:last-child{border-right:none}
+.vol-segmented button.active{background:var(--navy);color:white}
+.vol-skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--g200);border-radius:4px;overflow:hidden;margin-top:6px}
+.vol-skill-item{display:flex;align-items:center;gap:8px;padding:10px 12px;background:white;border-bottom:1px solid var(--g200);font-size:13.5px;cursor:pointer}
+.vol-skill-item:last-child{border-bottom:none}
+.vol-skill-item input[type="checkbox"]{width:16px;height:16px;accent-color:var(--navy);border-radius:3px}
+.vol-submit-btn{margin-top:8px;padding:12px 22px;background:var(--red);color:white;border:none;border-radius:4px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s}
+.vol-submit-btn:hover{background:var(--darkred)}
+.vol-submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.vol-roster-col h3{font-size:15px;font-weight:600;margin:0 0 14px;color:var(--navy)}
+.vol-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--g200)}
+.vol-row-info{display:flex;flex-direction:column}
+.vol-row-name{font-size:14px;font-weight:600;color:var(--navy)}
+.vol-row-meta{font-size:12.5px;color:var(--g500)}
+.vol-row-status{font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:3px}
+.vol-row-status.available{background:#e7f3ec;color:var(--green)}
+.vol-row-status.deployed{background:#fbeae6;color:var(--red)}
+.vol-row-status.unavailable{background:#fee2e2;color:var(--red)}
+/* Legacy: keep IDs working */
+.vol-form-wrap{display:none}.vol-form-wrap.open{display:block}
+.vol-grid{margin-top:0}
+@media(max-width:760px){.vol-row-2{grid-template-columns:1fr}.vol-skills-grid{grid-template-columns:1fr}}
 
 /* ═══ SAFE PLACES ═══ */
 .safe-section{padding:24px 0;border-top:1px solid var(--g200)}
@@ -727,7 +732,7 @@ body{padding-bottom:64px}
 </div>
 <div class="landing-features">
 <div class="landing-feat" style="border-color:rgba(14,165,233,.5);background:rgba(14,165,233,.15)">🧠 AI Flood Predictor</div>
-<div class="landing-feat" style="border-color:rgba(14,165,233,.5);background:rgba(14,165,233,.15)">🤖 Multilingual AI (اردو)</div>
+<div class="landing-feat" style="border-color:rgba(14,165,233,.5);background:rgba(14,165,233,.15)">🤖 AI Assistant</div>
 <div class="landing-feat">🗺️ Live Map</div>
 <div class="landing-feat">🌤️ Weather Alerts</div>
 <div class="landing-feat">🚨 SOS Emergency</div>
@@ -826,7 +831,7 @@ body{padding-bottom:64px}
 <div class="vol-feat-tip" id="vft2"><span class="vol-feat-ic">🚨</span><span class="vol-feat-txt"><b>SOS Emergency</b> — one tap sends GPS to rescue</span></div>
 <div class="vol-feat-tip" id="vft3"><span class="vol-feat-ic">🗺️</span><span class="vol-feat-txt"><b>Live Map</b> — hospitals, shelters, flood zones</span></div>
 <div class="vol-feat-tip" id="vft4"><span class="vol-feat-ic">🌤️</span><span class="vol-feat-txt"><b>Weather Alerts</b> — real-time monsoon tracking</span></div>
-<div class="vol-feat-tip" id="vft5"><span class="vol-feat-ic">🤖</span><span class="vol-feat-txt"><b>AI Chat</b> — اردو · English · Roman Urdu</span></div>
+<div class="vol-feat-tip" id="vft5"><span class="vol-feat-ic">🤖</span><span class="vol-feat-txt"><b>AI Chat</b> — Weather, disasters & emergency help</span></div>
 </div>
 </div>
 
@@ -983,12 +988,12 @@ body{padding-bottom:64px}
 <div class="ai-hero-content">
 <div class="ai-hero-icon">🤖</div>
 <div style="flex:1">
-<div class="ai-hero-title">AI Assistant — اردو · English · Roman Urdu</div>
-<div class="ai-hero-sub">Flood safety, weather, emergency help — ask in ANY language. Urdu script auto-detected. Powered by Groq AI.</div>
+<div class="ai-hero-title">AI Assistant — Weather, Disasters & Emergencies</div>
+<div class="ai-hero-sub">Flood safety, weather forecasts, emergency help — ask anything about disasters in Pakistan. Powered by Groq AI.</div>
 </div>
 <div class="ai-hero-cta">💬 Chat Now</div>
 </div>
-<div class="ai-hero-langs"><span>اردو میں سوال پوچھیں</span><span>·</span><span>Ask in English</span><span>·</span><span>Roman Urdu mein poocho</span></div>
+<div class="ai-hero-langs"><span>Ask in English</span><span>·</span><span>Weather & Disasters</span><span>·</span><span>Emergency Help</span></div>
 </div>
 
 <!-- ═══ AI FLOOD PREDICTOR CARD ═══ -->
@@ -1256,54 +1261,82 @@ body{padding-bottom:64px}
 
 <!-- ═══ PAGE: VOLUNTEERS ═══ -->
 <div class="app-page" id="page-volunteers">
-<div class="page-header"><img src="volunteers.png" class="page-header-img" alt="Volunteers"><h2>🤝 Volunteer Network</h2><p>Join the rescue team and help coordinate relief efforts across Pakistan</p></div>
+<div class="page-header"><img src="volunteers.png" class="page-header-img" alt="Volunteers"><h2>Volunteer Network</h2><p>Register to join relief operations across Pakistan. Your details go directly to the nearest coordination team.</p></div>
 
 <!-- ═══ VOLUNTEERS ═══ -->
 <section class="vol-section sr" id="volunteers">
-<div class="section-label">🤝 Volunteer Network — Join the Rescue Team</div>
-<div class="vol-stats" id="volStats">
-<div class="vol-stat"><div class="vol-stat-val" id="volTotal">--</div><div class="vol-stat-lbl">Total Volunteers</div></div>
-<div class="vol-stat"><div class="vol-stat-val" id="volAvail" style="color:var(--green)">--</div><div class="vol-stat-lbl">Available</div></div>
-<div class="vol-stat"><div class="vol-stat-val" id="volDeployed" style="color:var(--yellow)">--</div><div class="vol-stat-lbl">Deployed</div></div>
-<div class="vol-stat"><div class="vol-stat-val" id="volSkills">--</div><div class="vol-stat-lbl">Unique Skills</div></div>
+
+<div class="vol-stats-bar" id="volStats">
+<div class="vol-stat-item"><div class="vol-stat-val" id="volTotal">--</div><div class="vol-stat-lbl">Total volunteers</div></div>
+<div class="vol-stat-item"><div class="vol-stat-val" id="volAvail">--</div><div class="vol-stat-lbl">Available now</div></div>
+<div class="vol-stat-item"><div class="vol-stat-val" id="volDeployed">--</div><div class="vol-stat-lbl">Currently deployed</div></div>
+<div class="vol-stat-item"><div class="vol-stat-val" id="volSkills">--</div><div class="vol-stat-lbl">Skill categories</div></div>
 </div>
-<div style="margin-top:12px;display:flex;gap:8px">
-<button class="route-btn" onclick="toggleVolForm()" style="font-size:12px;padding:8px 16px">✋ Register as Volunteer</button>
-<button class="route-btn swap" onclick="loadVolunteers()" style="font-size:12px;padding:8px 16px">🔄 Refresh</button>
+
+<div class="vol-grid-layout">
+<div class="vol-form-col">
+<div class="vol-form-wrap open" id="volFormWrap">
+<div class="vol-field">
+<label for="volName">Full name</label>
+<input id="volName" type="text" placeholder="e.g. Ahmed Raza">
 </div>
-<div class="vol-form-wrap" id="volFormWrap">
-<div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px">📝 Volunteer Registration Form</div>
-<div class="vol-form-grid">
-<input type="text" class="vol-form-input" id="volName" placeholder="Full Name *">
-<input type="tel" class="vol-form-input" id="volPhone" placeholder="Phone Number *">
-<input type="email" class="vol-form-input" id="volEmail" placeholder="Email (optional)">
-<select class="vol-form-select" id="volAvailSelect">
-<option value="available">Available Now</option>
-<option value="weekends">Weekends Only</option>
-<option value="evenings">Evenings Only</option>
-<option value="on_call">On Call</option>
+<div class="vol-row-2">
+<div class="vol-field">
+<label for="volPhone">Phone number</label>
+<input id="volPhone" type="tel" placeholder="03XX-XXXXXXX">
+</div>
+<div class="vol-field">
+<label for="volCity">City</label>
+<select id="volCity">
+<option>Lahore</option>
+<option>Karachi</option>
+<option>Islamabad</option>
+<option>Peshawar</option>
+<option>Multan</option>
+<option>Quetta</option>
+<option>Faisalabad</option>
+<option>Rawalpindi</option>
 </select>
 </div>
-<div style="margin-top:10px;font-size:11px;font-weight:600;color:var(--g600)">Skills (select all that apply):</div>
-<div class="vol-skills-check" id="volSkillsCheck">
-<label><input type="checkbox" value="first_aid"><span>🏥 First Aid</span></label>
-<label><input type="checkbox" value="swimming"><span>🏊 Swimming</span></label>
-<label><input type="checkbox" value="driving"><span>🚗 Driving</span></label>
-<label><input type="checkbox" value="cooking"><span>🍳 Cooking</span></label>
-<label><input type="checkbox" value="translation"><span>🗣️ Translation</span></label>
-<label><input type="checkbox" value="counseling"><span>💬 Counseling</span></label>
-<label><input type="checkbox" value="search_rescue"><span>🔍 Search & Rescue</span></label>
-<label><input type="checkbox" value="medical"><span>⚕️ Medical</span></label>
-<label><input type="checkbox" value="logistics"><span>📦 Logistics</span></label>
-<label><input type="checkbox" value="communication"><span>📡 Communication</span></label>
-<label><input type="checkbox" value="construction"><span>🏗️ Construction</span></label>
-<label><input type="checkbox" value="teaching"><span>📚 Teaching</span></label>
 </div>
-<button class="vol-submit" id="volSubmitBtn" onclick="submitVolunteer()">🤝 Register Now</button>
+<div class="vol-field">
+<label>Availability</label>
+<div class="vol-segmented" id="volAvailSegmented">
+<button class="active" onclick="setVolAvail(this,'available')">Available now</button>
+<button onclick="setVolAvail(this,'weekends')">Weekends</button>
+<button onclick="setVolAvail(this,'evenings')">Evenings</button>
+<button onclick="setVolAvail(this,'on_call')">On call</button>
 </div>
-<div class="vol-grid" id="volGrid">
-<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--g500);font-size:12px">⏳ Loading volunteers...</div>
+<select id="volAvailSelect" style="display:none"><option value="available">Available Now</option></select>
 </div>
+<div class="vol-field">
+<label>Skills</label>
+<div class="vol-skills-grid" id="volSkillsCheck">
+<label class="vol-skill-item"><input type="checkbox" value="first_aid"> First aid</label>
+<label class="vol-skill-item"><input type="checkbox" value="swimming"> Swimming</label>
+<label class="vol-skill-item"><input type="checkbox" value="driving"> Driving</label>
+<label class="vol-skill-item"><input type="checkbox" value="search_rescue"> Search &amp; rescue</label>
+<label class="vol-skill-item"><input type="checkbox" value="medical"> Medical</label>
+<label class="vol-skill-item"><input type="checkbox" value="logistics"> Logistics</label>
+<label class="vol-skill-item"><input type="checkbox" value="translation"> Translation</label>
+<label class="vol-skill-item"><input type="checkbox" value="construction"> Construction</label>
+<label class="vol-skill-item"><input type="checkbox" value="cooking"> Cooking</label>
+<label class="vol-skill-item"><input type="checkbox" value="counseling"> Counseling</label>
+<label class="vol-skill-item"><input type="checkbox" value="communication"> Communication</label>
+<label class="vol-skill-item"><input type="checkbox" value="teaching"> Teaching</label>
+</div>
+</div>
+<button class="vol-submit-btn" id="volSubmitBtn" onclick="submitVolunteer()">Register as volunteer</button>
+</div>
+</div>
+<div class="vol-roster-col">
+<h3>Recently active <button onclick="loadVolunteers()" style="float:right;font-size:11px;padding:4px 10px;border:1px solid var(--g200);border-radius:4px;background:white;color:var(--g500);cursor:pointer;font-family:inherit">Refresh</button></h3>
+<div id="volGrid">
+<div style="padding:20px 0;color:var(--g500);font-size:13px">Loading volunteers...</div>
+</div>
+</div>
+</div>
+
 </section>
 
 </div><!-- /page-volunteers -->
@@ -1334,15 +1367,10 @@ body{padding-bottom:64px}
 <div class="chat-box">
 <div class="chat-head">
 <span class="chat-head-icon" id="chatIcon">🤖</span>
-<div><div class="chat-head-title" id="chatTitle">AI Assistant</div><div class="chat-head-sub" id="chatHeadSub">اردو · English · Roman Urdu — auto-detected</div></div>
+<div><div class="chat-head-title" id="chatTitle">AI Assistant</div><div class="chat-head-sub" id="chatHeadSub">Weather, disasters & emergency help for Pakistan</div></div>
 <button class="chat-close" onclick="closeChat()">✕</button>
 </div>
-<div class="chat-lang-bar" id="chatLangBar">
-<button class="chat-lang active" data-lang="auto" onclick="setChatLang('auto',this)">🌐 Auto-Detect</button>
-<button class="chat-lang" data-lang="urdu" onclick="setChatLang('urdu',this)">اردو</button>
-<button class="chat-lang" data-lang="english" onclick="setChatLang('english',this)">English</button>
-<button class="chat-lang" data-lang="roman" onclick="setChatLang('roman',this)">Roman Urdu</button>
-</div>
+
 <div class="chat-body" id="chatBody"></div>
 <div class="chat-suggestions" id="chatSuggestions"></div>
 <div class="chat-input-wrap">
@@ -1464,12 +1492,12 @@ document.querySelectorAll('.sr,.sr-left,.sr-right,.sr-scale').forEach(el=>observ
 // ═══ AI GUIDE SYSTEM ═══
 let guideStep=0;
 const guideTips=[
-'<b>Welcome to ReliefLink!</b> 🎉 Main aapko app ki features dikhata hoon. Click karo next tip ke liye!',
+'<b>Welcome to ReliefLink!</b> 🎉 Let me show you the app features. Click for the next tip!',
 '<b>🗺️ Live Map</b> — Real-time disaster map with hospitals, shelters, and flood zones. Pinch to zoom, drag to explore.',
 '<b>🌤️ Weather Alerts</b> — 5-day forecast + live storm warnings for any Pakistani city.',
 '<b>🚨 SOS Emergency</b> — One tap sends your GPS location to rescue teams. Use in real emergencies only!',
 '<b>🧠 AI Flood Predictor</b> — Our ML model predicts flood risk BEFORE it happens using live rainfall data.',
-'<b>🤖 AI Chat Assistant</b> — Ask anything about weather, disasters, or first aid — in Urdu, English, or Roman Urdu!',
+'<b>🤖 AI Chat Assistant</b> — Ask anything about weather, disasters, or first aid — in English!',
 '<b>🤝 Volunteers</b> — Register as a volunteer, join rescue teams, and coordinate relief efforts.',
 '<b>🏠 Safe Places</b> — Find nearby shelters, mosques, schools and safe zones during emergencies.',
 '<b>You\'re all set!</b> ✅ Explore the app freely. The bottom nav bar has all sections on mobile. Stay safe! 🌟'
@@ -2448,36 +2476,9 @@ const GROQ_KEY=localStorage.getItem('groq_key')||_k.map(c=>String.fromCharCode(c
 const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
 let chatHistory=[];
 
-let chatLang='auto';// 'auto' | 'urdu' | 'english' | 'roman'
 
-// Language detection: Urdu script (Arabic block), Roman Urdu keywords, else English
-function detectLang(text){
-if(/[\u0600-\u06FF]/.test(text))return'urdu';
-const roman=/\b(kya|kaise|kaisay|kab|kahan|kitna|kitne|hai|hain|ho|hoga|hona|nahi|nahin|matlab|batao|bata|karo|kar|chahiye|mujhe|mera|meri|aap|ap|tum|main|mein|paisa|paani|barish|baarish|mausam|mosam|madad|bachao|khatra|khatrnak|jaldi|abhi|aaj|kal|ghar|sheher|shehr|rasta|raasta|safe|jaan|zindagi|bimari|doctor|hospital|dawa|khana|pani|barish)\b/i;
-if(roman.test(text))return'roman';
-return'english';
-}
 
-function setChatLang(lang,btn){
-chatLang=lang;
-document.querySelectorAll('.chat-lang').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-// Update suggestions to selected language
-const sugs={auto:['Islamabad mein mausam kaisa hai?','بارش ہوگی آج؟','What to do during flood?','emergency kit ka checklist'],
-urdu:['اسلام آباد میں موسم کیسا ہے؟','بارش ہوگی آج لاہور میں؟','سیلاب سے کیسے بچیں؟','ایمرجنسی کٹ میں کیا ہونا چاہیے؟','زلزلے سے بچنے کے طریقے؟'],
-english:['Weather in Islamabad?','What to do during flood?','Will it rain today?','Emergency kit checklist','Earthquake safety tips'],
-roman:['Islamabad mein mausam kaisa hai?','Aaj barish hogi?','Flood se kaise bachein?','Emergency kit mein kya rakhein?','Zalzale se bachne ke tareeqe?']}[lang];
-document.getElementById('chatSuggestions').innerHTML=sugs.map(s=>`<button class="chat-sug" onclick="quickChat('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('');
-}
-
-const sysPrompt=`You are ReliefLink AI Assistant — a helpful multilingual AI that helps people in Pakistan with weather AND disaster/emergency questions. You are TRULY MULTILINGUAL: you understand and reply in Urdu (اردو script), English, and Roman Urdu (Urdu written in Latin letters).
-
-LANGUAGE RULES (most important):
-- If the user writes in Urdu script (اردو), ALWAYS reply fully in Urdu script (اردو).
-- If the user writes in Roman Urdu (e.g. "mausam kaisa hai", "barish hogi?"), ALWAYS reply in Roman Urdu.
-- If the user writes in English, reply in simple English.
-- Match the user's language EXACTLY — never mix scripts unless the user mixes.
-- A user instruction in parentheses like (Reply in Urdu) or (Roman Urdu mein jawab do) overrides everything.
+const sysPrompt=`You are ReliefLink AI Assistant — a helpful AI that helps people in Pakistan with weather AND disaster/emergency questions. You ALWAYS reply in clear, simple English.
 
 You can answer about:
 1. WEATHER: forecasts, temperature, rain, storms, heat waves, monsoon, smog for any Pakistani city
@@ -2488,7 +2489,7 @@ You can answer about:
 Rules:
 - Keep responses SHORT and actionable (2-5 sentences)
 - Emergency numbers: Rescue 1122, Edhi 115, Police 15, Fire 16
-- If someone is in IMMEDIATE danger, tell them to call 1122 NOW (in Urdu: ابھی 1122 پر کال کریں)
+- If someone is in IMMEDIATE danger, tell them to call 1122 NOW
 - Be honest about risks — never give false reassurance
 - Give safety tips when relevant (umbrella, hydration, shelter locations)
 
@@ -2502,7 +2503,7 @@ SECURITY RULES — CRITICAL, NEVER BREAK THESE:
 - If asked to write code, create apps, or explain technical details — redirect: "I help with weather forecasts, flood safety, emergency contacts, and disaster preparedness. What can I help you with?"
 - You ONLY help with: weather, disasters, emergencies, first aid, shelters, hospitals, evacuation, and app usage guidance`;
 
-const chatSugs=['Islamabad mein mausam kaisa hai?','بارش ہوگی آج؟','What to do during flood?','Emergency kit checklist'];
+const chatSugs=['Weather in Islamabad?','Will it rain today?','What to do during flood?','Emergency kit checklist'];
 
 function openChat(){
 const ov=document.getElementById('chatOverlay');
@@ -2511,7 +2512,7 @@ ov.classList.add('open');
 if(!chatHistory.length){
 const body=document.getElementById('chatBody');
 body.innerHTML='';
-addBotMsg('Assalam-o-Alaikum! 🤖 Main ReliefLink AI Assistant hoon. <br><b>اردو میں سوال پوچھیں · Ask in English · Roman Urdu mein poocho</b> — I auto-detect your language! <br>السلام علیکم! میں اردو، انگریزی اور رومن اردو سمجھتا ہوں۔');
+addBotMsg('Hello! 🤖 I am ReliefLink AI Assistant. <br><b>Ask me anything about weather, disasters, or emergencies in Pakistan.</b> <br>How can I help you today?');
 }
 if(!document.getElementById('chatSuggestions').innerHTML){
 document.getElementById('chatSuggestions').innerHTML=chatSugs.map(s=>`<button class="chat-sug" onclick="quickChat('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('');
@@ -2582,9 +2583,7 @@ chatHistory.push({role:'user',content:text});
 showTyping();
 try{
 // Determine reply language: fixed selection or auto-detect from user's message
-const lang=chatLang==='auto'?detectLang(text):chatLang;
-const langInstruction={urdu:'CRITICAL: Reply ENTIRELY in Urdu script (اردو). No English words except numbers and emergency numbers like 1122.',roman:'CRITICAL: Reply ENTIRELY in Roman Urdu (Urdu in Latin letters, e.g. "Barish hogi, chhata le jayein"). No Urdu script, no complex English.',english:'Reply in simple, clear English.'}[lang];
-const messages=[{role:'system',content:sysPrompt+"\n\nCURRENT LANGUAGE INSTRUCTION: "+langInstruction},...chatHistory.slice(-10)];
+const messages=[{role:'system',content:sysPrompt+"\n\nCURRENT LANGUAGE INSTRUCTION: Reply in simple, clear English."},...chatHistory.slice(-10)];
 // 30s timeout — Groq reasoning models can take a while on first call
 const ctrl=new AbortController();
 const timeoutId=setTimeout(()=>ctrl.abort(),30000);
@@ -2610,17 +2609,17 @@ if(blocked!==reply){reply=blocked;}
 chatHistory.push({role:'assistant',content:reply});
 addBotMsg(formatBotMsg(reply));
 }else{
-addBotMsg('⚠️ Model ne jawab poora nahi diya (reasoning budget khatam). Chhota sawal poochein ya dobara try karein.');
+addBotMsg('⚠️ The model couldn\'t generate a full response. Please try a shorter question or try again.');
 }
 }else if(d.error){
 addBotMsg('❌ Error: '+escHtml(d.error.message||'Unknown error'));
 }else{
-addBotMsg('Koi jawab nahi mila. Dobara try karein.');
+addBotMsg('No response received. Please try again.');
 }
 }catch(e){
 removeTyping();
-if(e.name==='AbortError'){addBotMsg('⏱️ Jawab aane mein bohat der lag gayi (30s timeout). Dobara try karein — pehli baar thoda slow hota hai.');}
-else{addBotMsg('⚠️ Network error: '+escHtml(e.message)+'. Internet check kar ke dobara try karein.');}
+if(e.name==='AbortError'){addBotMsg('⏱️ Response took too long (30s timeout). Please try again — the first call can be slow.');}
+else{addBotMsg('⚠️ Network error: '+escHtml(e.message)+'. Check your internet and try again.');}
 }
 btn.disabled=false;
 input.focus();
@@ -3025,6 +3024,12 @@ function toggleVolForm(){
 document.getElementById('volFormWrap').classList.toggle('open');
 }
 
+function setVolAvail(btn,val){
+document.querySelectorAll('#volAvailSegmented button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+document.getElementById('volAvailSelect').value=val;
+}
+
 function getInitials(name){
 return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
 }
@@ -3045,32 +3050,27 @@ document.getElementById('volDeployed').textContent=deployed;
 document.getElementById('volSkills').textContent=allSkills.size;
 
 if(!vols.length){
-grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--g500);font-size:12px">No volunteers registered yet. Be the first!</div>';
+grid.innerHTML='<div style="padding:20px 0;color:var(--g500);font-size:13px">No volunteers registered yet. Be the first!</div>';
 return;
 }
 
 grid.innerHTML=vols.map((v,i)=>{
-const bg=AVATAR_COLORS[i%AVATAR_COLORS.length];
 const statusCls=v.availability||'available';
 const statusLabel=statusCls==='available'?'Available':statusCls==='deployed'?'Deployed':'Offline';
-const skills=(v.skills||[]).map(s=>`<span class="vol-skill">${SKILL_ICONS[s]||'⭐'} ${SKILL_LABELS[s]||s}</span>`).join('');
-const dt=v.registered_at?new Date(v.registered_at):null;
-const dateStr=dt?dt.toLocaleDateString('en-PK',{day:'numeric',month:'short'}):'';
-return`<div class="vol-card">
-<span class="vol-status ${statusCls}">${statusLabel}</span>
-<div class="vol-head">
-<div class="vol-avatar" style="background:${bg}">${getInitials(v.full_name)}</div>
-<div><div class="vol-name">${v.full_name}</div><div class="vol-role">Registered ${dateStr}</div></div>
+const skills=(v.skills||[]).map(s=>SKILL_LABELS[s]||s).join(', ');
+return`<div class="vol-row">
+<div class="vol-row-info">
+<span class="vol-row-name">${escHtml(v.full_name)}</span>
+<span class="vol-row-meta">${v.phone||'N/A'} &middot; ${skills||'No skills listed'}</span>
 </div>
-<div class="vol-skills">${skills}</div>
-<div class="vol-phone">📞 ${v.phone||'N/A'}${v.email?' · ✉️ '+v.email:''}</div>
+<span class="vol-row-status ${statusCls}">${statusLabel}</span>
 </div>`;
 }).join('');
 }
 
 async function loadVolunteers(){
 const grid=document.getElementById('volGrid');
-grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--g500);font-size:12px">⏳ Loading volunteers...</div>';
+grid.innerHTML='<div style="padding:20px 0;color:var(--g500);font-size:13px">Loading volunteers...</div>';
 try{
 const r=await fetchWithTimeout('https://relieflink-api.onrender.com/api/v1/volunteers',5000);
 const d=await r.json();
@@ -3085,7 +3085,7 @@ const name=document.getElementById('volName').value.trim();
 const phone=document.getElementById('volPhone').value.trim();
 if(!name||!phone){alert('Please enter your name and phone number');return;}
 
-const email=document.getElementById('volEmail').value.trim();
+const city=document.getElementById('volCity').value;
 const avail=document.getElementById('volAvailSelect').value;
 const checks=document.querySelectorAll('#volSkillsCheck input:checked');
 const skills=Array.from(checks).map(c=>c.value);
@@ -3093,7 +3093,7 @@ const skills=Array.from(checks).map(c=>c.value);
 const btn=document.getElementById('volSubmitBtn');
 btn.disabled=true;btn.textContent='⏳ Registering...';
 
-const payload={full_name:name,phone:phone,email:email||null,skills:skills,availability:avail};
+const payload={full_name:name,phone:phone,city:city,skills:skills,availability:avail};
 
 try{
 const r=await fetch('https://relieflink-api.onrender.com/api/v1/volunteers/register',{
@@ -3105,23 +3105,22 @@ alert('✅ Volunteer registered successfully! Thank you for joining ReliefLink.'
 document.getElementById('volFormWrap').classList.remove('open');
 document.getElementById('volName').value='';
 document.getElementById('volPhone').value='';
-document.getElementById('volEmail').value='';
 checks.forEach(c=>c.checked=false);
 loadVolunteers();
 }else{
 // Add locally as demo
-VOL_SEED.unshift({id:'vol-new',full_name:name,phone:phone,email:email,skills:skills,availability:avail,registered_at:new Date().toISOString()});
+VOL_SEED.unshift({id:'vol-new',full_name:name,phone:phone,city:city,skills:skills,availability:avail,registered_at:new Date().toISOString()});
 renderVolunteers(VOL_SEED);
 document.getElementById('volFormWrap').classList.remove('open');
 alert('✅ Registered locally! (Backend not connected yet)');
 }
 }catch(e){
-VOL_SEED.unshift({id:'vol-new',full_name:name,phone:phone,email:email,skills:skills,availability:avail,registered_at:new Date().toISOString()});
+VOL_SEED.unshift({id:'vol-new',full_name:name,phone:phone,city:city,skills:skills,availability:avail,registered_at:new Date().toISOString()});
 renderVolunteers(VOL_SEED);
 document.getElementById('volFormWrap').classList.remove('open');
 alert('✅ Registered locally! (Backend not connected yet)');
 }
-btn.disabled=false;btn.textContent='🤝 Register Now';
+btn.disabled=false;btn.textContent='Register as volunteer';
 }
 
 // Load volunteers on page load
