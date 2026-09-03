@@ -29,9 +29,9 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .topbar-links a{color:var(--g300);text-decoration:none;font-size:11px;transition:color .2s}
 .topbar-links a:hover{color:var(--cyan)}
 
-.navbar{background:white;border-bottom:1px solid var(--g200);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.navbar{background:white;border-bottom:1px solid var(--g200);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:40;box-shadow:0 2px 12px rgba(0,0,0,.04)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;border-radius:var(--r);background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(14,165,233,.3)}
 .logo-icon svg{width:18px;height:18px;color:white}
 .logo-text{font-weight:700;font-size:16px;color:var(--navy);letter-spacing:.5px}
 .logo-sub{font-size:9px;color:var(--g500);text-transform:uppercase;letter-spacing:1px}
@@ -46,23 +46,25 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 
 /* ═══ HERO ═══ */
 .hero{padding:60px 0 40px;text-align:center}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:var(--sky2);border:1px solid rgba(14,165,233,.25);color:var(--cyan2);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:99px;background:linear-gradient(135deg,var(--sky2),var(--sky));border:1px solid rgba(14,165,233,.25);color:var(--cyan2);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;animation:breathe 3s ease infinite}
 .hero h1{font-family:'Playfair Display';font-size:48px;font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--navy)}
 .hero p{font-size:15px;color:var(--g600);max-width:600px;margin:0 auto 28px;line-height:1.7}
 .hero-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.action-btn{padding:12px 24px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
-.action-btn.primary{background:var(--cyan);color:white}
-.action-btn.primary:hover{background:var(--cyan2)}
-.action-btn.secondary{background:white;color:var(--navy);border:1px solid var(--g200);box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.action-btn.secondary:hover{background:var(--sky);border-color:var(--cyan)}
+.action-btn{padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;border:none;transition:all .3s cubic-bezier(.4,0,.2,1);display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden}
+.action-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transform:translateX(-100%);transition:transform .5s}
+.action-btn:hover::before{transform:translateX(100%)}
+.action-btn.primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:white;box-shadow:0 4px 15px rgba(14,165,233,.3)}
+.action-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(14,165,233,.4)}
+.action-btn.secondary{background:white;color:var(--navy);border:1px solid var(--g200);box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.action-btn.secondary:hover{background:var(--sky);border-color:var(--cyan);transform:translateY(-2px)}
 .action-btn svg{width:16px;height:16px}
 
 /* ═══ RIVER STATUS BAR ═══ */
 .rivers-section{padding:24px 0;border-top:1px solid var(--g200);border-bottom:1px solid var(--g200)}
 .section-label{font-size:10px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
 .rivers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.river-chip{padding:12px 16px;border-radius:var(--rl);background:white;border:1px solid var(--g200);display:flex;align-items:center;gap:10px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.river-chip:hover{border-color:var(--cyan);box-shadow:0 3px 12px rgba(0,0,0,.06)}
+.river-chip{padding:12px 16px;border-radius:12px;background:white;border:1px solid var(--g200);display:flex;align-items:center;gap:10px;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.river-chip:hover{border-color:var(--cyan);box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-2px)}
 .river-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .river-dot.low{background:var(--blue)}.river-dot.below{background:var(--green)}
 .river-dot.normal{background:var(--green)}.river-dot.medium{background:var(--yellow)}
@@ -82,9 +84,11 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 
 /* ═══ STATS ROW ═══ */
 .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:32px 0}
-.stat-box{text-align:center;padding:20px;border-radius:var(--rl);background:white;border:1px solid var(--g200);box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.stat-num{font-family:'Playfair Display';font-size:32px;font-weight:800;color:var(--navy)}
-.stat-num.cyan{color:var(--cyan)}.stat-num.green{color:var(--green)}.stat-num.orange{color:var(--orange)}.stat-num.red{color:var(--red)}
+.stat-box{text-align:center;padding:24px;border-radius:16px;background:white;border:1px solid var(--g200);box-shadow:0 2px 8px rgba(0,0,0,.04),0 0 0 1px rgba(0,0,0,.02);position:relative;overflow:hidden}
+.stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--teal));opacity:0;transition:opacity .3s}
+.stat-box:hover::before{opacity:1}
+.stat-num{font-family:'Playfair Display';font-size:36px;font-weight:800;color:var(--navy)}
+.stat-num.cyan{color:#0891b2}.stat-num.green{color:#059669}.stat-num.orange{color:#d97706}.stat-num.red{color:#dc2626}
 .stat-lbl{font-size:10px;color:var(--g500);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
 
 /* ═══ MAP SECTION ═══ */
@@ -228,8 +232,10 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .vol-stat-val{font-size:22px;font-weight:700;color:var(--navy)}
 .vol-stat-lbl{font-size:10px;color:var(--g500);margin-top:2px}
 .vol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-.vol-card{background:white;border:1px solid var(--g200);border-radius:var(--rl);padding:16px;transition:all .2s;position:relative}
-.vol-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.vol-card{background:white;border:1px solid var(--g200);border-radius:16px;padding:16px;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.vol-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--green));opacity:0;transition:opacity .3s}
+.vol-card:hover::before{opacity:1}
+.vol-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.08);transform:translateY(-4px);border-color:var(--teal)}
 .vol-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
 .vol-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .vol-name{font-size:13px;font-weight:600;color:var(--navy)}
@@ -261,8 +267,10 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .safe-filter{padding:6px 14px;border-radius:99px;background:white;border:1px solid var(--g200);color:var(--g600);font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .2s}
 .safe-filter:hover,.safe-filter.active{background:var(--cyan);color:white;border-color:var(--cyan)}
 .safe-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
-.safe-card{background:white;border:1px solid var(--g200);border-radius:var(--rl);padding:16px;transition:all .2s}
-.safe-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.safe-card{background:white;border:1px solid var(--g200);border-radius:16px;padding:16px;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.safe-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--blue));opacity:0;transition:opacity .3s}
+.safe-card:hover::before{opacity:1}
+.safe-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.08);transform:translateY(-4px);border-color:var(--cyan)}
 .safe-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .safe-card-icon{width:32px;height:32px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px}
 .safe-card-name{font-size:13px;font-weight:600;color:var(--navy);flex:1}
@@ -278,7 +286,9 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .sos-overlay.open{display:flex}
 .sos-box{width:460px;background:white;border-radius:var(--rl);box-shadow:0 16px 60px rgba(0,0,0,.2);overflow:hidden;animation:sosSlide .3s ease}
 @keyframes sosSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.sos-head{padding:20px;background:linear-gradient(135deg,var(--red),var(--darkred));color:white;text-align:center}
+.sos-head{padding:20px;background:linear-gradient(135deg,var(--red),var(--darkred));color:white;text-align:center;position:relative;overflow:hidden}
+.sos-head::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,.1),transparent 60%);pointer-events:none}
+.sos-pulse-icon{display:inline-block;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);font-size:28px;line-height:60px;text-align:center;animation:pulseRed 1.5s ease infinite;margin-bottom:8px}
 .sos-head h2{font-size:18px;font-weight:700;margin-bottom:4px}
 .sos-head p{font-size:12px;opacity:.8}
 .sos-close{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px}
@@ -295,8 +305,8 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .sos-loc-btn{padding:4px 12px;border-radius:var(--r);background:var(--cyan);color:white;border:none;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
 .sos-msg{width:100%;padding:10px;border:1px solid var(--g200);border-radius:var(--r);font-size:12px;font-family:inherit;resize:none;height:60px;margin-bottom:16px;outline:none;color:var(--navy)}
 .sos-msg:focus{border-color:var(--cyan)}
-.sos-send{width:100%;padding:14px;border-radius:var(--r);background:var(--red);color:white;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
-.sos-send:hover{background:var(--darkred)}
+.sos-send{width:100%;padding:14px;border-radius:var(--r);background:linear-gradient(135deg,var(--red),var(--darkred));color:white;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;animation:pulseRed 2s ease infinite}
+.sos-send:hover{transform:scale(1.03);box-shadow:0 8px 30px rgba(220,38,38,.4)}
 .sos-send:disabled{opacity:.5;cursor:not-allowed}
 
 /* SOS Tracking */
@@ -357,8 +367,8 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .alert-tab .count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;background:rgba(0,0,0,.1)}
 .alert-tab.active .count{background:rgba(255,255,255,.25)}
 .alerts-list{display:grid;gap:8px}
-.alert-card{display:flex;align-items:flex-start;gap:12px;padding:14px;background:white;border:1px solid var(--g200);border-radius:var(--r);transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.03)}
-.alert-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.08);border-color:var(--g300)}
+.alert-card{display:flex;align-items:flex-start;gap:12px;padding:14px;background:white;border:1px solid var(--g200);border-radius:12px;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.alert-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.08);border-color:var(--g300);transform:translateY(-2px)}
 .alert-card.severity-red{border-left:4px solid var(--red)}
 .alert-card.severity-orange{border-left:4px solid var(--orange)}
 .alert-card.severity-yellow{border-left:4px solid var(--yellow)}
@@ -413,9 +423,9 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .chat-sug:hover{background:var(--cyan);color:white;border-color:var(--cyan)}
 
 /* ═══ AI HERO CARD (dashboard) ═══ */
-.ai-hero-card{background:linear-gradient(135deg,var(--navy) 0%,#1a3a5c 100%);border-radius:var(--rl);padding:24px;margin-top:20px;cursor:pointer;transition:all .3s;border:1px solid rgba(14,165,233,.3);position:relative;overflow:hidden}
-.ai-hero-card:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(14,165,233,.25);border-color:var(--cyan)}
-.ai-hero-card::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(14,165,233,.15),transparent 70%);pointer-events:none}
+.ai-hero-card{background:linear-gradient(135deg,var(--navy) 0%,#1a3a5c 50%,#0f2d4a 100%);border-radius:16px;padding:24px;margin-top:20px;cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);border:1px solid rgba(14,165,233,.3);position:relative;overflow:hidden}
+.ai-hero-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(14,165,233,.3);border-color:var(--cyan)}
+.ai-hero-card::before{content:'';position:absolute;top:-50%;right:-10%;width:300px;height:300px;background:radial-gradient(circle,rgba(14,165,233,.15),transparent 70%);pointer-events:none;animation:breathe 4s ease infinite}
 .ai-hero-content{display:flex;align-items:center;gap:18px}
 .ai-hero-icon{font-size:44px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);width:72px;height:72px;border-radius:var(--rl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ai-hero-title{color:white;font-size:17px;font-weight:700;margin-bottom:4px}
@@ -425,8 +435,9 @@ body{background:var(--sky);color:var(--navy);overflow-x:hidden}
 .ai-hero-langs span:first-child{font-family:'Noto Nastaliq Urdu',serif;font-size:12px;color:var(--cyan)}
 
 /* ═══ FLOOD PREDICTOR CARD ═══ */
-.flood-card{background:linear-gradient(135deg,#7c2d12,#9a3412);border-radius:var(--rl);padding:20px 24px;margin-top:14px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(251,146,60,.3)}
-.flood-card:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(154,52,18,.35)}
+.flood-card{background:linear-gradient(135deg,#7c2d12,#9a3412,#b45309);border-radius:16px;padding:20px 24px;margin-top:14px;cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(251,146,60,.3);position:relative;overflow:hidden}
+.flood-card:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(154,52,18,.4)}
+.flood-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 50%,rgba(255,255,255,.08),transparent 60%);pointer-events:none}
 .flood-card-left{display:flex;align-items:center;gap:16px}
 .flood-card-icon{font-size:36px;background:rgba(255,255,255,.1);width:60px;height:60px;border-radius:var(--rl);display:flex;align-items:center;justify-content:center}
 .flood-card-title{color:white;font-size:15px;font-weight:700}
@@ -531,6 +542,73 @@ body{padding-bottom:64px}
 @keyframes ping{75%,100%{transform:scale(2);opacity:0}}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes floatY3D{0%,100%{transform:translateY(0) rotateX(0deg)}50%{transform:translateY(-10px) rotateX(3deg)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 12px rgba(14,165,233,.3)}50%{box-shadow:0 0 30px rgba(14,165,233,.6)}}
+@keyframes pulseRed{0%,100%{box-shadow:0 0 8px rgba(220,38,38,.3)}50%{box-shadow:0 0 24px rgba(220,38,38,.7)}}
+@keyframes slideInL{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInR{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes particleFloat{0%{transform:translateY(0) translateX(0);opacity:.6}50%{transform:translateY(-80px) translateX(30px);opacity:.3}100%{transform:translateY(-160px) translateX(-20px);opacity:0}}
+@keyframes guideWave{0%,100%{transform:rotate(0deg)}25%{transform:rotate(20deg)}50%{transform:rotate(-10deg)}75%{transform:rotate(15deg)}}
+@keyframes guideBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.05)}}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes spin3D{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* Scroll reveal */
+.sr{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.sr.visible{opacity:1;transform:translateY(0)}
+.sr-delay-1{transition-delay:.1s}
+.sr-delay-2{transition-delay:.2s}
+.sr-delay-3{transition-delay:.3s}
+.sr-delay-4{transition-delay:.4s}
+.sr-delay-5{transition-delay:.5s}
+.sr-left{opacity:0;transform:translateX(-40px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.sr-left.visible{opacity:1;transform:translateX(0)}
+.sr-right{opacity:0;transform:translateX(40px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.sr-right.visible{opacity:1;transform:translateX(0)}
+.sr-scale{opacity:0;transform:scale(.8);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.sr-scale.visible{opacity:1;transform:scale(1)}
+
+/* 3D perspective containers */
+.perspective-3d{perspective:800px}
+.card-3d{transition:transform .4s cubic-bezier(.4,0,.2,1),box-shadow .4s;transform-style:preserve-3d}
+.card-3d:hover{transform:translateY(-8px) rotateX(4deg) rotateY(-2deg);box-shadow:0 20px 60px rgba(0,0,0,.12)}
+
+/* Floating particles */
+.particle{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(14,165,233,.5);pointer-events:none;animation:particleFloat 4s infinite ease-in-out}
+.particle:nth-child(2){left:20%;animation-delay:.8s;width:3px;height:3px;background:rgba(20,184,166,.5)}
+.particle:nth-child(3){left:45%;animation-delay:1.6s;width:5px;height:5px;background:rgba(14,165,233,.3)}
+.particle:nth-child(4){left:65%;animation-delay:2.4s;width:3px;height:3px;background:rgba(20,184,166,.4)}
+.particle:nth-child(5){left:85%;animation-delay:3.2s;width:4px;height:4px;background:rgba(14,165,233,.4)}
+
+/* Gradient text */
+.gradient-text{background:linear-gradient(135deg,var(--cyan),var(--teal),var(--blue));background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease infinite}
+
+/* Glow effects */
+.glow-cyan{box-shadow:0 0 20px rgba(14,165,233,.25),0 0 60px rgba(14,165,233,.08)}
+.glow-red{box-shadow:0 0 20px rgba(220,38,38,.25),0 0 60px rgba(220,38,38,.08)}
+.glow-teal{box-shadow:0 0 20px rgba(20,184,166,.25),0 0 60px rgba(20,184,166,.08)}
+
+/* AI Guide */
+.ai-guide{position:fixed;bottom:80px;right:20px;z-index:998;display:none;flex-direction:column;align-items:flex-end;gap:8px;animation:slideInR .5s ease}
+.ai-guide.show{display:flex}
+.ai-guide-bubble{background:white;border-radius:var(--rl);padding:14px 18px;box-shadow:0 8px 40px rgba(0,0,0,.15);max-width:280px;font-size:12px;line-height:1.6;color:var(--navy);border:1px solid var(--g200);position:relative;animation:scaleIn .4s ease .2s both}
+.ai-guide-bubble::after{content:'';position:absolute;bottom:-8px;right:28px;width:16px;height:16px;background:white;border:1px solid var(--g200);border-top:none;border-left:none;transform:rotate(45deg)}
+.ai-guide-bubble b{color:var(--cyan)}
+.ai-guide-close{position:absolute;top:6px;right:8px;background:none;border:none;font-size:14px;color:var(--g400);cursor:pointer;padding:2px}
+.ai-guide-close:hover{color:var(--red)}
+.ai-guide-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--teal));display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;box-shadow:0 4px 20px rgba(14,165,233,.4);animation:guideBounce 2s infinite ease-in-out;transition:transform .3s}
+.ai-guide-avatar:hover{transform:scale(1.1)}
+.ai-guide-avatar .wave{display:inline-block;animation:guideWave 1.5s ease infinite}
+@media(max-width:768px){
+.ai-guide{bottom:calc(72px + env(safe-area-inset-bottom,0px));right:12px}
+.ai-guide-bubble{max-width:240px;font-size:11px;padding:12px 14px}
+.ai-guide-avatar{width:48px;height:48px;font-size:22px}
+}
 
 @media(max-width:900px){
 .stats-row{grid-template-columns:repeat(3,1fr)}
@@ -546,34 +624,39 @@ body{padding-bottom:64px}
 }
 
 /* ═══ LANDING PAGE ═══ */
-.landing{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:opacity .6s,transform .6s}
-.landing.hidden{opacity:0;pointer-events:none;transform:scale(1.05)}
-.landing-bg{position:fixed;inset:0;background:url('hero.png') center/cover no-repeat;opacity:.25}
-.landing-overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(10,22,40,.7) 0%,rgba(10,22,40,.4) 40%,rgba(10,22,40,.85) 100%)}
+.landing{position:fixed;inset:0;z-index:999;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1)}
+.landing.hidden{opacity:0;pointer-events:none;transform:scale(1.03);filter:blur(8px)}
+.landing-bg{position:fixed;inset:0;background:url('hero.png') center/cover no-repeat;opacity:.2}
+.landing-overlay{position:fixed;inset:0;background:linear-gradient(160deg,rgba(10,22,40,.8) 0%,rgba(14,30,50,.5) 30%,rgba(20,40,70,.6) 60%,rgba(10,22,40,.9) 100%)}
+.landing-particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .landing-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center}
-.landing-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);color:var(--cyan);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px;backdrop-filter:blur(8px)}
-.landing-hero h1{font-family:'Playfair Display';font-size:64px;font-weight:800;color:white;line-height:1.1;margin-bottom:16px;text-shadow:0 2px 40px rgba(0,0,0,.5)}
-.landing-hero h1 span{background:linear-gradient(135deg,var(--cyan),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.landing-hero p{font-size:18px;color:var(--g300);max-width:650px;line-height:1.6;margin-bottom:40px}
-.landing-features{display:flex;gap:16px;margin-bottom:48px;flex-wrap:wrap;justify-content:center}
-.landing-feat{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);color:var(--g300);font-size:12px}
-.role-cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
-.role-card{width:260px;padding:32px 24px;border-radius:var(--rl);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px);cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
-.role-card:hover{background:rgba(255,255,255,.12);border-color:var(--cyan);transform:translateY(-4px);box-shadow:0 20px 60px rgba(14,165,233,.2)}
-.role-card-img{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.landing-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:99px;background:rgba(14,165,233,.15);border:1px solid rgba(14,165,233,.3);color:var(--cyan);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px;backdrop-filter:blur(8px);opacity:0;animation:slideInUp .6s ease .3s forwards}
+.landing-hero h1{font-family:'Playfair Display';font-size:64px;font-weight:800;color:white;line-height:1.1;margin-bottom:16px;text-shadow:0 4px 60px rgba(0,0,0,.5);opacity:0;animation:scaleIn .8s ease .5s forwards}
+.landing-hero h1 span{background:linear-gradient(135deg,#38bdf8,#2dd4bf,#818cf8,#38bdf8);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease infinite}
+.landing-hero p{font-size:18px;color:var(--g300);max-width:650px;line-height:1.6;margin-bottom:40px;opacity:0;animation:slideInUp .7s ease .7s forwards}
+.landing-features{display:flex;gap:16px;margin-bottom:48px;flex-wrap:wrap;justify-content:center;opacity:0;animation:slideInUp .7s ease .9s forwards}
+.landing-feat{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);color:var(--g300);font-size:12px;transition:all .3s cubic-bezier(.4,0,.2,1)}
+.landing-feat:hover{background:rgba(14,165,233,.2);border-color:rgba(14,165,233,.5);color:white;transform:translateY(-3px) scale(1.05);box-shadow:0 8px 24px rgba(14,165,233,.2)}
+.role-cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;perspective:800px;opacity:0;animation:slideInUp .8s ease 1.1s forwards}
+.role-card{width:260px;padding:32px 24px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px);cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);text-align:center;position:relative;overflow:hidden;transform-style:preserve-3d}
+.role-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(14,165,233,.08) 0%,transparent 50%,rgba(20,184,166,.08) 100%);opacity:0;transition:opacity .4s}
+.role-card:hover::before{opacity:1}
+.role-card:hover{background:rgba(255,255,255,.12);border-color:var(--cyan);transform:translateY(-8px) rotateX(4deg) rotateY(-3deg);box-shadow:0 24px 80px rgba(14,165,233,.25)}
+.role-card-img{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:36px;transition:transform .4s}
+.role-card:hover .role-card-img{animation:breathe 1.5s ease infinite}
 .role-card h3{color:white;font-size:18px;font-weight:700;margin-bottom:8px}
 .role-card p{color:var(--g400);font-size:13px;line-height:1.5;margin-bottom:16px}
-.role-card-btn{padding:10px 28px;border-radius:99px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
-.role-card-btn.user{background:var(--cyan);color:white}
-.role-card-btn.vol{background:var(--teal);color:white}
-.role-card-btn:hover{transform:scale(1.05)}
-.landing-footer{position:relative;z-index:2;padding:16px;text-align:center;font-size:10px;color:var(--g500);border-top:1px solid rgba(255,255,255,.06)}
+.role-card-btn{padding:10px 28px;border-radius:99px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .3s;position:relative;z-index:1}
+.role-card-btn.user{background:linear-gradient(135deg,var(--cyan),var(--blue));color:white}
+.role-card-btn.vol{background:linear-gradient(135deg,var(--teal),var(--green));color:white}
+.role-card-btn:hover{transform:scale(1.08);box-shadow:0 8px 24px rgba(14,165,233,.4)}
+.landing-footer{position:relative;z-index:2;padding:16px;text-align:center;font-size:10px;color:var(--g500);border-top:1px solid rgba(255,255,255,.06);opacity:0;animation:fadeUp .6s ease 1.4s forwards}
 
 /* ═══ PAGE SYSTEM ═══ */
 .app-page{display:none}
 .app-page.active{display:block;animation:fadeUp .4s ease}
 .page-header{padding:24px 0 16px;margin-bottom:8px}
-.page-header-img{width:100%;height:160px;object-fit:cover;border-radius:var(--rl);margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.page-header-img{width:100%;height:160px;object-fit:cover;border-radius:16px;margin-bottom:16px;box-shadow:0 8px 30px rgba(0,0,0,.1);transition:transform .4s}
 .page-header h2{font-family:'Playfair Display';font-size:28px;font-weight:700;color:var(--navy)}
 .page-header p{color:var(--g500);font-size:13px;margin-top:4px}
 .page-nav-items{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
@@ -590,13 +673,20 @@ body{padding-bottom:64px}
 <div class="landing" id="landingPage">
 <div class="landing-bg"></div>
 <div class="landing-overlay"></div>
+<div class="landing-particles">
+<div class="particle" style="left:10%;bottom:30%"></div>
+<div class="particle" style="left:25%;bottom:20%"></div>
+<div class="particle" style="left:50%;bottom:40%"></div>
+<div class="particle" style="left:72%;bottom:25%"></div>
+<div class="particle" style="left:90%;bottom:35%"></div>
+</div>
 <div class="landing-content">
 <div class="landing-hero">
 <div class="landing-badge">🌍 Disaster Emergency Response Platform</div>
 <h1><span>ReliefLink</span></h1>
 <p>Real-time disaster monitoring, nearby hospitals & shelters, weather intelligence, route planning, and AI-powered emergency response for Pakistan.</p>
-<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--rl);background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(20,184,166,.15));border:1px solid rgba(14,165,233,.35);margin-bottom:28px;backdrop-filter:blur(8px)">
-<span style="font-size:20px">🧠</span>
+<div style="display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:var(--rl);background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(20,184,166,.15));border:1px solid rgba(14,165,233,.35);margin-bottom:28px;backdrop-filter:blur(8px);opacity:0;animation:slideInUp .7s ease .8s forwards">
+<span style="font-size:20px;animation:breathe 2s ease infinite">🧠</span>
 <span style="color:#e0f2fe;font-size:14px;font-weight:600">Not just a map — our AI model predicts flood risk BEFORE it happens. No other app does this.</span>
 </div>
 </div>
@@ -626,6 +716,17 @@ body{padding-bottom:64px}
 </div>
 </div>
 <div class="landing-footer">© 2026 ReliefLink — Powered by OpenStreetMap + OpenWeatherMap + Groq AI</div>
+</div>
+
+<!-- ═══ AI GUIDE ═══ -->
+<div class="ai-guide" id="aiGuide">
+<div class="ai-guide-bubble" id="aiGuideBubble">
+<button class="ai-guide-close" onclick="closeGuide()">✕</button>
+<div id="aiGuideText"></div>
+</div>
+<div class="ai-guide-avatar" onclick="nextGuideStep()" title="Click for next tip">
+<span class="wave">🤖</span>
+</div>
 </div>
 
 <!-- ═══ TOP BAR ═══ -->
@@ -677,11 +778,11 @@ body{padding-bottom:64px}
 <div class="app-page active" id="page-dashboard">
 
 <!-- ═══ HERO ═══ -->
-<section class="hero" id="hero">
-<div class="hero-tag">🌍 Live Disaster Emergency Response</div>
-<h1>ReliefLink</h1>
-<p>Real-time disaster monitoring, nearby hospitals & shelters, weather intelligence, and AI-powered risk analysis for Pakistan — all in one platform.</p>
-<div class="hero-actions">
+<section class="hero sr" id="hero">
+<div class="hero-tag sr sr-delay-1">🌍 Live Disaster Emergency Response</div>
+<h1 class="sr sr-delay-2">ReliefLink</h1>
+<p class="sr sr-delay-3">Real-time disaster monitoring, nearby hospitals & shelters, weather intelligence, and AI-powered risk analysis for Pakistan — all in one platform.</p>
+<div class="hero-actions sr sr-delay-4">
 <button class="action-btn primary" onclick="showPage('map')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/></svg>Live Map</button>
 <button class="action-btn secondary" onclick="showPage('nearby')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Find Nearby</button>
 <button class="action-btn secondary" onclick="showPage('weather')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>Weather</button>
@@ -689,22 +790,22 @@ body{padding-bottom:64px}
 </section>
 
 <!-- ═══ RIVER STATUS ═══ -->
-<section class="rivers-section">
+<section class="rivers-section sr">
 <div class="section-label">🏞️ River Levels — Live Monitoring Stations <span style="font-size:9px;color:var(--g400);text-transform:none;letter-spacing:0"> · Updated: <span id="riverUpdateTime">--:--</span> PKT · Source: FFD baselines + live OpenWeatherMap rainfall</span></div>
 <div class="rivers-grid" id="riversGrid"></div>
 </section>
 
 <!-- ═══ STATS ═══ -->
-<div class="stats-row">
-<div class="stat-box"><div class="stat-num red" id="statSOS">--</div><div class="stat-lbl">Active SOS</div></div>
-<div class="stat-box"><div class="stat-num cyan" id="statHelp">--</div><div class="stat-lbl">People Helped</div></div>
-<div class="stat-box"><div class="stat-num green" id="statShelters">--</div><div class="stat-lbl">Active Shelters</div></div>
-<div class="stat-box"><div class="stat-num orange" id="statZones">--</div><div class="stat-lbl">High-Risk Zones</div></div>
-<div class="stat-box"><div class="stat-num" style="color:var(--cyan)">24/7</div><div class="stat-lbl">Monitoring</div></div>
+<div class="stats-row perspective-3d">
+<div class="stat-box card-3d sr sr-delay-1"><div class="stat-num red" id="statSOS">--</div><div class="stat-lbl">Active SOS</div></div>
+<div class="stat-box card-3d sr sr-delay-2"><div class="stat-num cyan" id="statHelp">--</div><div class="stat-lbl">People Helped</div></div>
+<div class="stat-box card-3d sr sr-delay-3"><div class="stat-num green" id="statShelters">--</div><div class="stat-lbl">Active Shelters</div></div>
+<div class="stat-box card-3d sr sr-delay-4"><div class="stat-num orange" id="statZones">--</div><div class="stat-lbl">High-Risk Zones</div></div>
+<div class="stat-box card-3d sr sr-delay-5"><div class="stat-num" style="color:var(--cyan)">24/7</div><div class="stat-lbl">Monitoring</div></div>
 </div>
 
 <!-- ═══ AI ASSISTANT HERO CARD (multilingual) ═══ -->
-<div class="ai-hero-card" onclick="openChat()">
+<div class="ai-hero-card sr card-3d" onclick="openChat()">
 <div class="ai-hero-content">
 <div class="ai-hero-icon">🤖</div>
 <div style="flex:1">
@@ -717,7 +818,7 @@ body{padding-bottom:64px}
 </div>
 
 <!-- ═══ AI FLOOD PREDICTOR CARD ═══ -->
-<div class="flood-card" onclick="showPage('predictor')">
+<div class="flood-card sr card-3d" onclick="showPage('predictor')">
 <div class="flood-card-left">
 <div class="flood-card-icon">🧠</div>
 <div>
@@ -747,7 +848,7 @@ body{padding-bottom:64px}
 <div class="app-page" id="page-alerts">
 
 <!-- ═══ REAL-TIME DISASTER ALERTS ═══ -->
-<section class="alerts-section" id="alertsSection">
+<section class="alerts-section sr" id="alertsSection">
 <div class="section-label">🚨 Real-Time Disaster Alerts — Live Data</div>
 <div class="alerts-tabs">
 <button class="alert-tab active" onclick="switchAlertTab('all',this)">All <span class="count" id="cntAll">...</span></button>
@@ -781,7 +882,7 @@ body{padding-bottom:64px}
 <div class="app-page" id="page-map">
 
 <!-- ═══ MAIN MAP ═══ -->
-<section class="map-section" id="mapSection">
+<section class="map-section sr" id="mapSection">
 <div class="map-header">
 <div class="map-title">🗺️ Live Operations Map</div>
 <div class="map-filters">
@@ -984,7 +1085,7 @@ body{padding-bottom:64px}
 <div class="page-header"><img src="volunteers.png" class="page-header-img" alt="Volunteers"><h2>🤝 Volunteer Network</h2><p>Join the rescue team and help coordinate relief efforts across Pakistan</p></div>
 
 <!-- ═══ VOLUNTEERS ═══ -->
-<section class="vol-section" id="volunteers">
+<section class="vol-section sr" id="volunteers">
 <div class="section-label">🤝 Volunteer Network — Join the Rescue Team</div>
 <div class="vol-stats" id="volStats">
 <div class="vol-stat"><div class="vol-stat-val" id="volTotal">--</div><div class="vol-stat-lbl">Total Volunteers</div></div>
@@ -1038,7 +1139,7 @@ body{padding-bottom:64px}
 <div class="page-header"><img src="safe-places.png" class="page-header-img" alt="Safe Places"><h2>🏠 Safe Places</h2><p>Find nearby shelters, mosques, schools and safe zones during emergencies</p></div>
 
 <!-- ═══ SAFE PLACES ═══ -->
-<section class="safe-section" id="safePlaces">
+<section class="safe-section sr" id="safePlaces">
 <div class="section-label">🏠 Find Safe Place — Nearby Shelters & Safe Zones <span style="font-size:10px;color:var(--g400)">(Live from OpenStreetMap)</span></div>
 <div class="safe-filters" id="safeFilters">
 <button class="safe-filter active" onclick="filterSafe('all',this)">🏠 All</button>
@@ -1088,6 +1189,7 @@ body{padding-bottom:64px}
 <img src="sos.png" alt="SOS Rescue" style="width:100%;height:120px;object-fit:cover;object-position:center 35%;display:block">
 <div class="sos-head">
 <button class="sos-close" onclick="closeSOS()">✕</button>
+<div class="sos-pulse-icon">🆘</div>
 <h2 id="sosHeadTitle">🚨 Emergency SOS</h2>
 <p id="sosHeadSub">Send your location to rescue teams instantly</p>
 </div>
@@ -1140,13 +1242,62 @@ tick();setInterval(tick,1000);
 // ═══ SCROLL ═══
 function scrollTo2(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 
+// ═══ SCROLL REVEAL (IntersectionObserver) ═══
+function initScrollReveal(){
+const observer=new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add('visible');
+}
+});
+},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.sr,.sr-left,.sr-right,.sr-scale').forEach(el=>observer.observe(el));
+}
+
+// ═══ AI GUIDE SYSTEM ═══
+let guideStep=0;
+const guideTips=[
+'<b>Welcome to ReliefLink!</b> 🎉 Main aapko app ki features dikhata hoon. Click karo next tip ke liye!',
+'<b>🗺️ Live Map</b> — Real-time disaster map with hospitals, shelters, and flood zones. Pinch to zoom, drag to explore.',
+'<b>🌤️ Weather Alerts</b> — 5-day forecast + live storm warnings for any Pakistani city.',
+'<b>🚨 SOS Emergency</b> — One tap sends your GPS location to rescue teams. Use in real emergencies only!',
+'<b>🧠 AI Flood Predictor</b> — Our ML model predicts flood risk BEFORE it happens using live rainfall data.',
+'<b>🤖 AI Chat Assistant</b> — Ask anything about weather, disasters, or first aid — in Urdu, English, or Roman Urdu!',
+'<b>🤝 Volunteers</b> — Register as a volunteer, join rescue teams, and coordinate relief efforts.',
+'<b>🏠 Safe Places</b> — Find nearby shelters, mosques, schools and safe zones during emergencies.',
+'<b>You\'re all set!</b> ✅ Explore the app freely. The bottom nav bar has all sections on mobile. Stay safe! 🌟'
+];
+function showGuide(){
+const g=document.getElementById('aiGuide');
+if(!g||guideStep>=guideTips.length)return;
+g.classList.add('show');
+updateGuideText();
+}
+function updateGuideText(){
+const t=document.getElementById('aiGuideText');
+if(t&&guideTips[guideStep])t.innerHTML=guideTips[guideStep];
+}
+function nextGuideStep(){
+guideStep++;
+if(guideStep>=guideTips.length){closeGuide();return;}
+const bubble=document.getElementById('aiGuideBubble');
+if(bubble){bubble.style.animation='none';bubble.offsetHeight;bubble.style.animation='scaleIn .3s ease forwards';}
+updateGuideText();
+}
+function closeGuide(){
+const g=document.getElementById('aiGuide');
+if(g)g.classList.remove('show');
+guideStep=guideTips.length;
+}
+
 // ═══ PAGE ROUTING ═══
 let currentPage='dashboard';
 function enterApp(role){
 document.getElementById('landingPage').classList.add('hidden');
 document.body.style.overflow='auto';
+initScrollReveal();
 if(role==='volunteer'){showPage('volunteers');setTimeout(()=>{const fw=document.getElementById('volFormWrap');if(fw&&fw.classList.contains('open'))fw.scrollIntoView({behavior:'smooth',block:'start'})},400);}
-else{showPage('dashboard');}
+else{showPage('dashboard');setTimeout(()=>showGuide(),1200);}
 }
 function showPage(page){
 document.querySelectorAll('.app-page').forEach(p=>p.classList.remove('active'));
@@ -1169,6 +1320,7 @@ if(page==='map'){ensureMapInit();}
 if(page==='nearby'){setTimeout(()=>{if(document.getElementById('nearbyContent').innerHTML.includes('Search a location')){/* already showing placeholder */}},300);}
 if(page==='volunteers'){loadVolunteers();const fw=document.getElementById('volFormWrap');if(fw&&!fw.classList.contains('open'))fw.classList.add('open');}
 if(page==='alerts'){/* alerts auto-load on page load */}
+setTimeout(()=>initScrollReveal(),100);
 }
 function backToLanding(){
 document.getElementById('landingPage').classList.remove('hidden');
