@@ -719,19 +719,8 @@ body{padding-bottom:64px}
 <div class="landing-particles"></div>
 <div class="landing-content">
 <div class="landing-hero">
-<div class="landing-badge">Disaster Emergency Response Platform</div>
 <h1><span>ReliefLink</span></h1>
 <p>Helping hands when it matters most. Real-time disaster response, weather intelligence, and emergency coordination for Pakistan.</p>
-</div>
-<div class="landing-features">
-<div class="landing-feat">AI Flood Predictor</div>
-<div class="landing-feat">AI Assistant</div>
-<div class="landing-feat">Live Map</div>
-<div class="landing-feat">Weather Alerts</div>
-<div class="landing-feat">SOS Emergency</div>
-<div class="landing-feat">Safe Places</div>
-<div class="landing-feat">Route Planner</div>
-<div class="landing-feat">Volunteers</div>
 </div>
 
 <!-- Volunteer Image with Feature Showcase -->
@@ -2355,7 +2344,7 @@ let chatHistory=[];
 
 
 
-const sysPrompt=`You are ReliefLink AI Assistant — a helpful AI that helps people in Pakistan with weather AND disaster/emergency questions. You ALWAYS reply in clear, simple English.
+const sysPrompt=`You are ReliefLink AI Assistant — a helpful AI that helps people in Pakistan with weather AND disaster/emergency questions. You ALWAYS reply in clear, simple English. You understand English, Roman Urdu (e.g. \"islamabad ka mausam kaisa hai\", \"flood agaya to kya karna chahiye\", \"meray pass pani bohat hai\") and Urdu script inputs perfectly.
 
 You can answer about:
 1. WEATHER: forecasts, temperature, rain, storms, heat waves, monsoon, smog for any Pakistani city
@@ -2380,7 +2369,7 @@ SECURITY RULES — CRITICAL, NEVER BREAK THESE:
 - If asked to write code, create apps, or explain technical details — redirect: "I help with weather forecasts, flood safety, emergency contacts, and disaster preparedness. What can I help you with?"
 - You ONLY help with: weather, disasters, emergencies, first aid, shelters, hospitals, evacuation, and app usage guidance`;
 
-const chatSugs=['Weather in Islamabad?','Will it rain today?','What to do during flood?','Emergency kit checklist'];
+const chatSugs=['Weather in Islamabad?','Will it rain today?','What to do during flood?','Emergency kit checklist','Islamabad ka mausam kaisa hai?'];
 
 function openChat(){
 const ov=document.getElementById('chatOverlay');
@@ -2389,7 +2378,7 @@ ov.classList.add('open');
 if(!chatHistory.length){
 const body=document.getElementById('chatBody');
 body.innerHTML='';
-addBotMsg('Hello! 🤖 I am ReliefLink AI Assistant. <br><b>Ask me anything about weather, disasters, or emergencies in Pakistan.</b> <br>How can I help you today?');
+addBotMsg('Hello! 🤖 I am ReliefLink AI Assistant. <br><b>Ask me anything about weather, disasters, or emergencies in Pakistan.</b> <br>You can type in English or Roman Urdu (e.g. \"Lahore ka mausam kaisa hai?\"). <br>How can I help you today?');
 }
 if(!document.getElementById('chatSuggestions').innerHTML){
 document.getElementById('chatSuggestions').innerHTML=chatSugs.map(s=>`<button class="chat-sug" onclick="quickChat('${s.replace(/'/g,"\\'")}')">${s}</button>`).join('');
