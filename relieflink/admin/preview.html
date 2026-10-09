@@ -645,59 +645,71 @@ body{padding-bottom:64px}
 }
 
 /* ═══ LANDING PAGE ═══ */
-.landing{position:fixed;inset:0;z-index:999;background:#faf8f5;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:opacity .6s ease,transform .6s ease}
+.landing{position:fixed;inset:0;z-index:999;background:#f6f1ea;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:opacity .6s ease,transform .6s ease}
 .landing.hidden{opacity:0;pointer-events:none;transform:scale(1.02)}
 .landing-bg{position:absolute;inset:0;background-image:url('https://raw.githubusercontent.com/Nimra1692005/relifelife/main/relieflink/admin/landing-bg.png');background-size:cover;background-position:center;z-index:0}
-.landing-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(250,248,245,.55) 0%,rgba(250,248,245,.85) 55%,#faf8f5 100%);z-index:1}
+.landing-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(246,241,234,.55) 0%,rgba(246,241,234,.88) 55%,#f6f1ea 100%);z-index:1}
 .landing-particles{display:none}
 .landing-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center}
 .landing-badge{display:none}
 .landing-hero{display:flex;flex-direction:column;align-items:center}
-.landing-hero h1{font-family:'Inter',sans-serif;font-size:56px;font-weight:800;color:#1a1a2e;line-height:1.1;margin-bottom:12px;opacity:0;animation:scaleIn .7s ease .2s forwards}
-.landing-hero h1 span{background:none;-webkit-text-fill-color:#1a1a2e;color:#1a1a2e}
-.landing-hero p{font-size:15px;color:#6b7280;max-width:480px;line-height:1.5;margin-bottom:24px;opacity:0;animation:slideInUp .6s ease .4s forwards}
+.landing-hero h1{font-family:'Inter',sans-serif;font-size:56px;font-weight:800;color:#0f3d2e;line-height:1.1;margin-bottom:12px;opacity:0;animation:scaleIn .7s ease .2s forwards}
+.landing-hero h1 span{background:none;-webkit-text-fill-color:#0f3d2e;color:#0f3d2e}
+.landing-hero p{font-size:15px;color:#4a6b5a;max-width:480px;line-height:1.5;margin-bottom:24px;opacity:0;animation:slideInUp .6s ease .4s forwards}
 .landing-features{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;justify-content:center;opacity:0;animation:slideInUp .6s ease .6s forwards}
-.landing-feat{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:4px;background:#f3f0eb;border:1px solid #e5e0d8;color:#4a4a5a;font-size:11px;font-weight:500;transition:all .2s}
-.landing-feat:hover{background:#ebe7e0;border-color:#d4cfc6;color:#1a1a2e}
+.landing-feat{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:4px;background:#ede7d9;border:1px solid #d4cfc6;color:#0f3d2e;font-size:11px;font-weight:500;transition:all .2s}
+.landing-feat:hover{background:#e2d9c8;border-color:#c9893a;color:#0f3d2e}
+
+/* role cards — no button, just clickable card */
 .role-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;opacity:0;animation:slideInUp .6s ease .8s forwards}
-.role-card{width:220px;padding:24px 20px;border-radius:10px;background:white;border:1px solid #e5e0d8;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
+.role-card{width:220px;padding:24px 20px;border-radius:10px;background:white;border:1.5px solid #d4cfc6;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
 .role-card::before{display:none}
-.role-card:hover{border-color:#d4a574;transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.role-card:hover{border-color:#c9893a;transform:translateY(-4px);box-shadow:0 8px 24px rgba(15,61,46,.12)}
 .role-card-img{width:70px;height:70px;border-radius:8px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:28px;transition:transform .3s}
 .role-card:hover .role-card-img{transform:scale(1.05)}
-.role-card h3{color:#1a1a2e;font-size:16px;font-weight:700;margin-bottom:6px}
-.role-card p{color:#6b7280;font-size:12px;line-height:1.4;margin-bottom:14px}
-.role-card-btn{padding:10px 24px;border-radius:4px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s;position:relative;z-index:1}
-.role-card-btn.user{background:#e8734a;color:white}
-.role-card-btn.user:hover{background:#d4633c}
-.role-card-btn.vol{background:#2d8a6e;color:white}
-.role-card-btn.vol:hover{background:#247a5e}
+.role-card h3{color:#0f3d2e;font-size:16px;font-weight:700;margin-bottom:6px}
+.role-card p{color:#4a6b5a;font-size:12px;line-height:1.4;margin-bottom:0}
+/* hide the buttons inside role cards */
+.role-card-btn{display:none}
 
 /* SOS button in role card */
-.role-sos-img{background:#fef2ee !important;border:2px solid #f5d0c0 !important;position:relative;overflow:visible}
-.sos-ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(232,115,74,.4);animation:pulseRing 2s ease-in-out infinite}
-.sos-text{font-family:'Inter',sans-serif;font-size:20px;font-weight:800;color:#e8734a;letter-spacing:2px;position:relative;z-index:1}
-@keyframes pulseRing{0%,100%{transform:scale(1);opacity:.6;border-color:rgba(232,115,74,.4)}50%{transform:scale(1.15);opacity:1;border-color:rgba(232,115,74,.8)}}
+.role-sos-img{background:#f0fdf4 !important;border:2px solid #a7f3d0 !important;position:relative;overflow:visible}
+.sos-ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(15,61,46,.35);animation:pulseRing 2s ease-in-out infinite}
+.sos-text{font-family:'Inter',sans-serif;font-size:20px;font-weight:800;color:#0f3d2e;letter-spacing:2px;position:relative;z-index:1}
+@keyframes pulseRing{0%,100%{transform:scale(1);opacity:.6;border-color:rgba(15,61,46,.35)}50%{transform:scale(1.15);opacity:1;border-color:rgba(201,137,58,.8)}}
 
 /* Volunteer image in role card */
-.role-vol-img{background:#f0ede8 !important;border:2px solid #e5e0d8 !important;padding:4px;overflow:hidden}
+.role-vol-img{background:#f6f1ea !important;border:2px solid #d4cfc6 !important;padding:4px;overflow:hidden}
 .role-vol-img img{width:56px;height:56px;object-fit:cover;border-radius:4px}
 .role-vol-img svg{display:none}
-.landing-footer{position:relative;z-index:2;padding:16px;text-align:center;font-size:10px;color:#9ca3af;border-top:1px solid #e5e0d8;opacity:0;animation:fadeUp .6s ease 1.2s forwards}
+.landing-footer{position:relative;z-index:2;padding:16px;text-align:center;font-size:10px;color:#7d857f;border-top:1px solid #d4cfc6;opacity:0;animation:fadeUp .6s ease 1.2s forwards}
 
-/* ═══ VOLUNTEER CHARACTER (replaced with image) ═══ */
+/* ═══ VOLUNTEER CHARACTER (feature tips) ═══ */
 .vol-character-section{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:24px;margin:0 0 28px;opacity:0;animation:slideInUp .6s ease .5s forwards}
-.vol-character{width:160px;height:220px;flex-shrink:0;border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.vol-character{width:160px;height:220px;flex-shrink:0;border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(15,61,46,.12)}
 .vol-character img{width:100%;height:100%;object-fit:cover}
 .vol-character svg{display:none}
 .vol-feat-showcase{display:flex;flex-direction:column;gap:8px;max-width:280px}
-.vol-feat-tip{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:6px;background:white;border:1px solid #e5e0d8;color:#4a4a5a;font-size:12px;opacity:0;transform:translateX(20px);transition:all .4s ease}
+/* feature tips — now look clickable */
+.vol-feat-tip{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:8px;
+  background:white;border:1.5px solid #d4cfc6;
+  color:#0f3d2e;font-size:12px;
+  opacity:0;transform:translateX(20px);
+  transition:all .35s ease;
+  cursor:pointer;
+  user-select:none;
+}
 .vol-feat-tip.show{opacity:1;transform:translateX(0)}
-.vol-feat-tip.active{background:#fef2ee;border-color:#e8734a;color:#1a1a2e;box-shadow:none}
-.vol-feat-tip::before{display:none}
+.vol-feat-tip:hover{background:#f6f1ea;border-color:#c9893a;box-shadow:0 3px 12px rgba(201,137,58,.18);transform:translateX(0) translateY(-1px)}
+.vol-feat-tip.active{background:#ede7d9;border-color:#c9893a;color:#0f3d2e;box-shadow:0 3px 14px rgba(201,137,58,.2)}
 .vol-feat-ic{font-size:16px;flex-shrink:0}
-.vol-feat-txt{font-size:11px;line-height:1.3}
-.vol-feat-txt b{color:#e8734a}
+.vol-feat-txt{font-size:11px;line-height:1.3;flex:1}
+.vol-feat-txt b{color:#c9893a}
+/* small arrow hint on each tip */
+.vol-feat-tip::after{content:"›";font-size:16px;color:#c9893a;opacity:0;transition:opacity .2s,transform .2s;transform:translateX(-4px)}
+.vol-feat-tip:hover::after,.vol-feat-tip.active::after{opacity:1;transform:translateX(0)}
 @keyframes charPoint{0%,100%{transform:rotate(0deg)}30%,70%{transform:rotate(-15deg)}}
 @keyframes charNod{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .vol-character .pointing-arm{transform-origin:28px 82px;animation:charPoint 3s ease-in-out infinite}
@@ -3100,6 +3112,31 @@ btn.disabled=false;btn.textContent='Register as volunteer';
 loadVolunteers();
 // Start volunteer character feature cycle on landing page
 setTimeout(startFeatCycle,1500);
+
+// ═══ FEATURE TIP CLICK → open that feature ═══
+const featPageMap={
+  vft1:'predictor',
+  vft2:'sos',      // SOS opens modal
+  vft3:'map',
+  vft4:'weather',
+  vft5:'chat'      // AI chat opens modal
+};
+document.querySelectorAll('.vol-feat-tip').forEach(function(tip){
+  tip.style.cursor='pointer';
+  tip.addEventListener('click',function(){
+    const id=tip.id;
+    const target=featPageMap[id];
+    if(!target) return;
+    // hide landing first
+    const landing=document.getElementById('landingPage');
+    if(landing) landing.classList.add('hidden');
+    setTimeout(function(){
+      if(target==='sos'){ openSOS(); }
+      else if(target==='chat'){ openChat(); }
+      else { showPage(target); }
+    },300);
+  });
+});
 </script>
 </body>
 </html>
