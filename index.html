@@ -374,7 +374,7 @@ body::after{
         </select>
       </div>
       <div class="field" style="--i:4"><input aria-label="Area" placeholder="Area / city" required></div>
-      <div class="row" style="--i:5"><label><input type="checkbox"> This is urgent</label></div>
+      <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> This is urgent</label></div>
       <button class="btn" style="--i:6">Request help</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
     </form>
@@ -524,7 +524,7 @@ body::after{
         <select required><option value="" disabled selected>Choose type…</option><option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option></select>
       </div>
       <div class="m-field"><label>Area / City</label><input type="text" placeholder="Your location" required></div>
-      <label class="m-check"><input type="checkbox"> Mark as urgent</label>
+      <label class="m-check"><input type="checkbox" id="mUrgentCheck"> Mark as urgent</label>
       <button type="submit" class="m-btn">Send Request for Help</button>
       <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a></p>
     </form>
@@ -650,8 +650,29 @@ document.querySelectorAll('[data-go]').forEach(function(a){
 });
 
 document.querySelectorAll('.desktop-wrap form').forEach(function(f){
-  f.addEventListener('submit',function(e){e.preventDefault();showToast(f.dataset.msg);f.reset();});
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    // help form — open full app
+    if(f.dataset.role === 'help'){
+      showToast('Request sent! Opening the app…');
+      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
+      return;
+    }
+    showToast(f.dataset.msg);
+    f.reset();
+  });
 });
+
+// urgent checkbox — desktop: open app immediately on tick
+var urgentCheck = document.getElementById('urgentCheck');
+if(urgentCheck){
+  urgentCheck.addEventListener('change', function(){
+    if(urgentCheck.checked){
+      showToast('Urgent! Opening the app now…');
+      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 900);
+    }
+  });
+}
 
 var pw=document.getElementById('pw'),eye=document.getElementById('eye');
 if(eye)eye.addEventListener('click',function(){var s=pw.type==='password';pw.type=s?'text':'password';eye.textContent=s?'Hide':'Show';});
@@ -730,8 +751,33 @@ document.querySelectorAll('[data-mopen]').forEach(function(a){
 
 /* mobile form submit */
 document.querySelectorAll('.m-sheet-form').forEach(function(f){
-  f.addEventListener('submit',function(e){e.preventDefault();showToast(f.dataset.mmsg);f.reset();closeSheet();});
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var sheet = f.closest('.m-sheet');
+    // help sheet — open full app
+    if(sheet && sheet.id === 'sheet-help'){
+      showToast('Request sent! Opening the app…');
+      closeSheet();
+      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
+      return;
+    }
+    showToast(f.dataset.mmsg);
+    f.reset();
+    closeSheet();
+  });
 });
+
+// urgent checkbox — mobile: open app immediately on tick
+var mUrgentCheck = document.getElementById('mUrgentCheck');
+if(mUrgentCheck){
+  mUrgentCheck.addEventListener('change', function(){
+    if(mUrgentCheck.checked){
+      showToast('Urgent! Opening the app now…');
+      closeSheet();
+      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 900);
+    }
+  });
+}
 
 /* mobile password toggle */
 var mpw=document.getElementById('mpw'),meye=document.getElementById('meye');
