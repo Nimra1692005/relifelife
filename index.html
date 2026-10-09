@@ -1,27 +1,757 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0;url=relieflink/admin/preview.html">
-<title>ReliefLink — AI Disaster Response Platform</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReliefLink – Help, Volunteer, Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#020617;color:#e2e8f0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;text-align:center}
-.wrap{padding:24px}
-h1{font-size:28px;margin:0 0 6px;background:linear-gradient(90deg,#0ea5e9,#14b8a6);-webkit-background-clip:text;background-clip:text;color:transparent}
-p{color:#94a3b8;font-size:14px;margin:0 0 24px}
-a.btn{display:inline-block;padding:12px 32px;border-radius:10px;background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
-.spin{width:36px;height:36px;margin:0 auto 20px;border:3px solid rgba(14,165,233,.2);border-top-color:#0ea5e9;border-radius:50%;animation:sp 1s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
+:root{
+  --bg:#07120d; --cream:#f6f1ea; --ink:#16231c; --muted:#7d857f;
+  --green:#0f3d2e; --green2:#0a2a20; --gold:#c9893a; --line:#d9d1c4;
+  --ease:cubic-bezier(.77,0,.18,1);
+}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;height:100%}
+
+body{
+  background:var(--bg);
+  color:#fff;
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ══════════════════════════════
+   BACKGROUND SLIDESHOW
+══════════════════════════════ */
+.bg-slide{
+  position:fixed;inset:0;z-index:0;
+  background-size:cover;background-position:center;
+  opacity:0;transition:opacity 2s ease-in-out;
+  filter:brightness(0.48) saturate(0.7);
+}
+.bg-slide.visible{opacity:1}
+body::after{
+  content:"";position:fixed;inset:0;z-index:1;
+  background:radial-gradient(900px 500px at 50% -10%,rgba(18,61,45,.5) 0%,rgba(7,18,13,.35) 70%),
+             linear-gradient(180deg,rgba(7,18,13,.25) 0%,rgba(7,18,13,.6) 100%);
+  pointer-events:none;
+}
+
+/* ══════════════════════════════
+   DESKTOP LAYOUT (≥761px)
+══════════════════════════════ */
+.desktop-wrap{
+  position:relative;z-index:2;
+  display:flex;flex-direction:column;align-items:center;
+  padding:48px 16px 64px;
+  min-height:100vh;
+}
+
+.head{text-align:center;margin-bottom:28px}
+.head small{display:block;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#8da398;margin-bottom:12px}
+.head h1{font-size:clamp(26px,5vw,40px);line-height:1.15;font-weight:700;letter-spacing:-.02em}
+.head h1 span{color:var(--gold);display:block}
+
+/* tabs */
+.tabs{display:flex;gap:6px;padding:5px;border-radius:999px;background:rgba(255,255,255,.07);margin-bottom:22px;flex-wrap:wrap;justify-content:center}
+.tabs button{font:600 14px "Plus Jakarta Sans",sans-serif;color:#cfd9d3;background:none;border:0;padding:10px 20px;border-radius:999px;cursor:pointer;transition:background .35s,color .35s}
+.tabs button[aria-selected="true"]{background:var(--gold);color:#1b1206}
+.tabs button:focus-visible,.f a:focus-visible,.btn:focus-visible,.eye:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* split card */
+.card{position:relative;width:min(920px,100%);height:560px;background:var(--cream);color:var(--ink);border-radius:18px;overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.8);animation:cardIn 1s var(--ease) both;touch-action:pan-y;transition:opacity .5s var(--ease),transform .5s var(--ease),margin .5s var(--ease)}
+@keyframes cardIn{from{opacity:0;transform:translateY(32px) scale(.97)}to{opacity:1;transform:none}}
+.card.closed{opacity:0;transform:translateY(20px) scale(.97);pointer-events:none;margin-top:-560px}
+
+.info{position:absolute;top:0;bottom:0;left:46%;width:54%;z-index:2;color:#f3ece0;background:radial-gradient(420px 320px at 70% 20%,rgba(201,137,58,.16),transparent 70%),linear-gradient(135deg,var(--green),var(--green2));clip-path:polygon(16% 0,100% 0,100% 100%,0 100%);transition:left .85s var(--ease),clip-path .85s var(--ease)}
+.card[data-side="left"] .info{left:0;clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
+.edge{position:absolute;top:0;bottom:0;left:45.4%;width:54.6%;z-index:1;background:linear-gradient(180deg,#e6a955,var(--gold));clip-path:polygon(16% 0,100% 0,100% 100%,0 100%);transition:left .85s .09s var(--ease),width .85s .09s var(--ease),clip-path .85s .09s var(--ease)}
+.card[data-side="left"] .edge{left:0;clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}
+
+.msg{position:absolute;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.msg.r{left:26%;right:9%}.msg.l{left:9%;right:26%}
+.msg.active{opacity:1;visibility:visible;transition:opacity .6s .5s,visibility 0s .5s}
+.msg .brand{font-size:11px;letter-spacing:.3em;font-weight:600;color:#a9c0b3;margin-bottom:18px}
+.msg h2{font:400 clamp(34px,5vw,50px)/1.05 "Fraunces",serif;letter-spacing:-.02em}
+.msg h2 em{color:var(--gold);display:block}
+.msg p{margin-top:18px;font-size:14px;line-height:1.65;color:#bfd0c6;max-width:30ch}
+
+.form{position:absolute;top:0;bottom:0;width:46%;padding:0 48px;display:flex;flex-direction:column;justify-content:center;opacity:0;visibility:hidden;transform:translateX(var(--shift));transition:opacity .35s,transform .7s var(--ease),visibility 0s .7s}
+.form[data-pos="left"]{left:0;--shift:-28px}
+.form[data-pos="right"]{left:54%;--shift:28px}
+.form.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s .3s,transform .8s .2s var(--ease),visibility 0s}
+.form>*{opacity:0;transform:translateY(12px);transition:opacity .2s,transform .2s}
+.form.active>*{opacity:1;transform:none;transition:opacity .5s calc(.45s + var(--i)*70ms),transform .5s calc(.45s + var(--i)*70ms)}
+.form h3{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.form h3::after{content:"";display:block;width:34px;height:3px;background:var(--gold);margin-top:10px;border-radius:2px}
+.sub{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5}
+
+.field{position:relative;margin-top:22px}
+.field input,.field select{width:100%;border:0;border-bottom:1.5px solid var(--line);background:transparent;font:500 14px "Plus Jakarta Sans",sans-serif;color:var(--ink);padding:10px 34px 10px 0;outline:0;border-radius:0;appearance:none}
+.field select{cursor:pointer}
+.field::before{content:"";position:absolute;left:0;bottom:0;height:1.5px;width:100%;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--ease);z-index:1}
+.field:focus-within::before{transform:scaleX(1)}
+.field input::placeholder{color:#8b8f8a}
+.eye{position:absolute;right:0;top:8px;background:none;border:0;font:600 12px "Plus Jakarta Sans";color:var(--muted);cursor:pointer;padding:4px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px;font-size:12px}
+.row label{display:flex;align-items:center;gap:8px;cursor:pointer;color:#4b564f}
+.row input{accent-color:var(--green);width:15px;height:15px}
+.f a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--gold);cursor:pointer}
+.btn{margin-top:24px;width:100%;border:0;border-radius:999px;background:var(--green);color:#fff;font:600 14px "Plus Jakarta Sans",sans-serif;padding:14px;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(15,61,46,.7);background:#134a38}
+.alt{margin-top:18px;font-size:12px;color:var(--muted)}
+
+/* close & reopen */
+.close-btn{position:absolute;top:14px;right:14px;z-index:10;width:34px;height:34px;border-radius:50%;background:rgba(22,35,28,.18);border:1.5px solid rgba(22,35,28,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,transform .2s;color:var(--ink)}
+.close-btn:hover{background:rgba(201,137,58,.18);transform:scale(1.1)}
+.close-btn svg{width:16px;height:16px;pointer-events:none}
+.reopen-btn{display:none;margin-top:16px;padding:12px 32px;border-radius:999px;background:rgba(201,137,58,.15);border:1.5px solid var(--gold);color:var(--gold);font:600 14px "Plus Jakarta Sans",sans-serif;cursor:pointer;transition:background .25s,transform .2s;letter-spacing:.03em}
+.reopen-btn:hover{background:rgba(201,137,58,.28);transform:translateY(-2px)}
+.reopen-btn.visible{display:inline-flex;align-items:center;gap:8px}
+
+.hint{margin-top:18px;font-size:12px;color:#7f968a;text-align:center}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--cream);color:var(--ink);padding:12px 20px;border-radius:999px;font-size:14px;font-weight:600;border-left:5px solid var(--gold);transition:opacity .3s,transform .4s var(--ease);z-index:999}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ══════════════════════════════
+   MOBILE LAYOUT (≤760px)
+══════════════════════════════ */
+.mobile-wrap{display:none}
+
+@media(max-width:760px){
+  .desktop-wrap{display:none}
+  .mobile-wrap{
+    display:flex;flex-direction:column;
+    min-height:100vh;
+    position:relative;z-index:2;
+  }
+
+  /* ── hero top section ── */
+  .m-hero{
+    padding:52px 24px 28px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  .m-logo{
+    display:inline-flex;align-items:center;gap:8px;
+    margin-bottom:20px;
+  }
+  .m-logo-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 0 3px rgba(201,137,58,.25);
+    animation:mpulse 2s infinite;
+  }
+  @keyframes mpulse{0%,100%{box-shadow:0 0 0 3px rgba(201,137,58,.25)}50%{box-shadow:0 0 0 7px rgba(201,137,58,.08)}}
+  .m-logo span{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#8da398}
+
+  .m-hero h1{
+    font-size:clamp(28px,7vw,38px);
+    font-weight:700;line-height:1.15;
+    letter-spacing:-.02em;
+    margin-bottom:8px;
+  }
+  .m-hero h1 em{color:var(--gold);font-style:normal;display:block}
+  .m-hero p{font-size:13px;color:#8da398;line-height:1.6}
+
+  /* ── 3 role cards ── */
+  .m-role-cards{
+    display:flex;flex-direction:column;gap:12px;
+    padding:0 16px 24px;
+  }
+  .m-role-card{
+    background:rgba(255,255,255,.07);
+    border:1.5px solid rgba(255,255,255,.1);
+    border-radius:16px;
+    padding:18px 20px;
+    display:flex;align-items:center;gap:16px;
+    cursor:pointer;
+    transition:background .25s,border-color .25s,transform .2s;
+    -webkit-user-select:none;user-select:none;
+  }
+  .m-role-card:active{transform:scale(.98)}
+  .m-role-card.help-card:hover,  .m-role-card.help-card:focus{background:rgba(15,61,46,.45);border-color:rgba(201,137,58,.4)}
+  .m-role-card.vol-card:hover,   .m-role-card.vol-card:focus{background:rgba(15,61,46,.45);border-color:rgba(201,137,58,.4)}
+  .m-role-card.admin-card:hover, .m-role-card.admin-card:focus{background:rgba(15,61,46,.45);border-color:rgba(201,137,58,.4)}
+
+  .m-card-icon{
+    width:46px;height:46px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .help-card  .m-card-icon{background:linear-gradient(135deg,rgba(15,61,46,.9),rgba(22,163,74,.3))}
+  .vol-card   .m-card-icon{background:linear-gradient(135deg,rgba(181,135,58,.3),rgba(201,137,58,.5))}
+  .admin-card .m-card-icon{background:linear-gradient(135deg,rgba(15,61,46,.9),rgba(10,42,32,.9))}
+  .m-card-icon svg{width:22px;height:22px;color:#e8dcc8}
+
+  .m-card-body{flex:1}
+  .m-card-label{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+  .m-card-title{font-size:17px;font-weight:700;color:#f3ece0;line-height:1.2}
+  .m-card-desc{font-size:12px;color:#8da398;margin-top:3px;line-height:1.45}
+
+  .m-card-arrow{color:rgba(255,255,255,.3);flex-shrink:0}
+  .m-card-arrow svg{width:18px;height:18px}
+
+  /* ── bottom sheet overlay ── */
+  .m-sheet-overlay{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(7,18,13,.6);
+    backdrop-filter:blur(4px);
+    opacity:0;pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .m-sheet-overlay.open{opacity:1;pointer-events:all}
+
+  /* ── bottom sheet ── */
+  .m-sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:51;
+    background:var(--cream);
+    border-radius:24px 24px 0 0;
+    max-height:92vh;
+    overflow-y:auto;
+    transform:translateY(100%);
+    transition:transform .45s var(--ease);
+    /* scrollbar */
+    scrollbar-width:thin;
+    scrollbar-color:var(--line) transparent;
+  }
+  .m-sheet.open{transform:translateY(0)}
+
+  /* drag handle */
+  .m-sheet-handle{
+    display:flex;justify-content:center;padding:14px 0 8px;
+    position:sticky;top:0;background:var(--cream);z-index:1;
+  }
+  .m-sheet-handle::before{
+    content:"";width:40px;height:4px;border-radius:2px;
+    background:var(--line);
+  }
+
+  /* sheet header */
+  .m-sheet-head{
+    padding:4px 24px 20px;
+    display:flex;align-items:flex-start;justify-content:space-between;
+    position:sticky;top:36px;background:var(--cream);z-index:1;
+    border-bottom:1px solid var(--line);
+    margin-bottom:4px;
+  }
+  .m-sheet-head-text{}
+  .m-sheet-badge{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+  .m-sheet-title{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+  .m-sheet-title::after{content:"";display:block;width:28px;height:3px;background:var(--gold);margin-top:8px;border-radius:2px}
+
+  /* close X */
+  .m-sheet-close{
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(22,35,28,.08);
+    border:1.5px solid rgba(22,35,28,.12);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;margin-left:12px;margin-top:2px;
+    transition:background .2s;color:var(--ink);
+  }
+  .m-sheet-close:hover{background:rgba(201,137,58,.15)}
+  .m-sheet-close svg{width:16px;height:16px;pointer-events:none}
+
+  /* sheet form */
+  .m-sheet-form{padding:20px 24px 48px}
+  .m-field{position:relative;margin-bottom:20px}
+  .m-field label{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .m-field input,.m-field select,.m-field textarea{
+    width:100%;border:0;border-bottom:1.5px solid var(--line);
+    background:transparent;
+    font:500 16px "Plus Jakarta Sans",sans-serif;/* 16px prevents iOS zoom */
+    color:var(--ink);padding:10px 0;outline:0;border-radius:0;appearance:none;
+  }
+  .m-field textarea{min-height:80px;resize:none;line-height:1.5}
+  .m-field::after{
+    content:"";position:absolute;left:0;bottom:0;height:1.5px;
+    width:100%;background:var(--gold);
+    transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease);
+  }
+  .m-field:focus-within::after{transform:scaleX(1)}
+  .m-field input::placeholder,.m-field textarea::placeholder{color:#aaa}
+  .m-eye{position:absolute;right:0;bottom:10px;background:none;border:0;font:600 12px "Plus Jakarta Sans";color:var(--muted);cursor:pointer;padding:4px}
+
+  .m-check{display:flex;align-items:center;gap:10px;margin-bottom:20px;cursor:pointer;font-size:13px;color:#4b564f}
+  .m-check input{accent-color:var(--green);width:18px;height:18px;flex-shrink:0}
+
+  .m-btn{
+    width:100%;border:0;border-radius:999px;
+    background:var(--green);color:#fff;
+    font:600 16px "Plus Jakarta Sans",sans-serif;
+    padding:16px;cursor:pointer;
+    transition:transform .2s,box-shadow .2s,background .2s;
+    margin-top:8px;
+  }
+  .m-btn:active{transform:scale(.98)}
+  .m-btn:hover{background:#134a38;box-shadow:0 12px 24px -10px rgba(15,61,46,.6)}
+
+  .m-alt{margin-top:20px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
+  .m-alt a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--gold);cursor:pointer}
+
+  /* quote strip inside sheet */
+  .m-quote{
+    margin:0 24px 24px;
+    padding:18px 20px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    color:#f3ece0;
+  }
+  .m-quote-brand{font-size:10px;letter-spacing:.25em;font-weight:700;color:#a9c0b3;margin-bottom:8px;text-transform:uppercase}
+  .m-quote h3{font:400 22px/1.15 "Fraunces",serif;letter-spacing:-.01em}
+  .m-quote h3 em{color:var(--gold);font-style:normal}
+  .m-quote p{font-size:12.5px;color:#bfd0c6;margin-top:8px;line-height:1.55}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms!important;transition-delay:0s!important;animation:none!important}
+}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<div class="spin"></div>
-<h1>ReliefLink</h1>
-<p>AI-Powered Disaster Emergency Response Platform for Pakistan</p>
-<a class="btn" href="relieflink/admin/preview.html">Open App →</a>
+
+<!-- background slides -->
+<div class="bg-slide visible" id="bg0"></div>
+<div class="bg-slide" id="bg1"></div>
+<div class="bg-slide" id="bg2"></div>
+<div class="bg-slide" id="bg3"></div>
+
+<!-- ══════════════════════════════════════
+     DESKTOP
+══════════════════════════════════════ -->
+<div class="desktop-wrap">
+  <header class="head">
+    <small>ReliefLink · AI Disaster Response</small>
+    <h1>When disaster strikes, we respond.<span>Choose your role.</span></h1>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Choose your role">
+    <button role="tab" data-role="help" aria-selected="true">I need help</button>
+    <button role="tab" data-role="volunteer" aria-selected="false">Volunteer</button>
+    <button role="tab" data-role="admin" aria-selected="false">Admin</button>
+  </div>
+
+  <main class="card" id="card" data-side="right">
+    <button class="close-btn" id="closeBtn" aria-label="Close">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div class="edge"></div>
+    <div class="info" aria-live="polite">
+      <div class="msg r active" data-role="help">
+        <span class="brand">RELIEFLINK</span>
+        <h2>Tell us what <em>you need.</em></h2>
+        <p>A trained volunteer near you will be in touch within minutes. Urgent requests are always first.</p>
+      </div>
+      <div class="msg l" data-role="volunteer">
+        <span class="brand">RELIEFLINK</span>
+        <h2>Lend a <em>hand.</em></h2>
+        <p>Choose what you can do and the hours you have. We match you with people who need your skills.</p>
+      </div>
+      <div class="msg r" data-role="admin">
+        <span class="brand">RELIEFLINK</span>
+        <h2>Welcome <em>back.</em></h2>
+        <p>Review live requests, assign volunteers, and track every completed response from one place.</p>
+      </div>
+    </div>
+
+    <form class="form f active" data-role="help" data-pos="left" data-msg="Request sent. A volunteer will contact you soon.">
+      <h3 style="--i:0">I need help</h3>
+      <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required></div>
+      <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone / WhatsApp" required></div>
+      <div class="field" style="--i:3">
+        <select aria-label="What do you need?" required>
+          <option value="" disabled selected>What do you need?</option>
+          <option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field" style="--i:4"><input aria-label="Area" placeholder="Area / city" required></div>
+      <div class="row" style="--i:5"><label><input type="checkbox"> This is urgent</label></div>
+      <button class="btn" style="--i:6">Request help</button>
+      <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
+    </form>
+
+    <form class="form f" data-role="volunteer" data-pos="right" data-msg="Thank you! We will message you with your first task.">
+      <h3 style="--i:0">Join as volunteer</h3>
+      <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required></div>
+      <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone / WhatsApp" required></div>
+      <div class="field" style="--i:3"><input aria-label="Area" placeholder="Area / city" required></div>
+      <div class="field" style="--i:4">
+        <select aria-label="Skill" required>
+          <option value="" disabled selected>How can you help?</option>
+          <option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option>
+        </select>
+      </div>
+      <div class="row" style="--i:5"><label><input type="checkbox"> Weekends only</label></div>
+      <button class="btn" style="--i:6">Join as volunteer</button>
+      <p class="alt" style="--i:7">Need help? <a data-go="help" tabindex="0" role="button">Ask for help</a></p>
+    </form>
+
+    <form class="form f" data-role="admin" data-pos="left" data-msg="Signed in (demo). Connect your backend here.">
+      <h3 style="--i:0">Admin sign in</h3>
+      <p class="sub" style="--i:1">For ReliefLink team members only.</p>
+      <div class="field" style="--i:2"><input type="email" aria-label="Email" placeholder="Admin email" required></div>
+      <div class="field" style="--i:3">
+        <input id="pw" type="password" aria-label="Password" placeholder="Password" required>
+        <button type="button" class="eye" id="eye" aria-label="Show password">Show</button>
+      </div>
+      <div class="row" style="--i:4">
+        <label><input type="checkbox" checked> Keep me signed in</label>
+        <a tabindex="0" role="button">Forgot?</a>
+      </div>
+      <button class="btn" style="--i:5">Sign in</button>
+      <p class="alt" style="--i:6">Not admin? <a data-go="help" tabindex="0" role="button">Back to help</a></p>
+    </form>
+  </main>
+
+  <button class="reopen-btn" id="reopenBtn">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    Open panel again
+  </button>
+
+  <p class="hint">Swipe, use arrow keys, or tap a role above to switch.</p>
 </div>
-<script>location.replace('relieflink/admin/preview.html');</script>
+
+<!-- ══════════════════════════════════════
+     MOBILE
+══════════════════════════════════════ -->
+<div class="mobile-wrap">
+
+  <!-- hero -->
+  <div class="m-hero">
+    <div class="m-logo">
+      <div class="m-logo-dot"></div>
+      <span>ReliefLink · AI Disaster Response</span>
+    </div>
+    <h1>When disaster strikes,<em>we respond.</em></h1>
+    <p style="margin-top:10px">Choose how you want to connect with our relief network.</p>
+  </div>
+
+  <!-- 3 role tap cards -->
+  <div class="m-role-cards">
+
+    <div class="m-role-card help-card" data-open="help" tabindex="0" role="button" aria-label="I need help">
+      <div class="m-card-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+        </svg>
+      </div>
+      <div class="m-card-body">
+        <div class="m-card-label">Affected Person</div>
+        <div class="m-card-title">I Need Help</div>
+        <div class="m-card-desc">Send SOS · Find shelter · AI guidance</div>
+      </div>
+      <div class="m-card-arrow">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="m-role-card vol-card" data-open="volunteer" tabindex="0" role="button" aria-label="Volunteer">
+      <div class="m-card-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </div>
+      <div class="m-card-body">
+        <div class="m-card-label">Community Hero</div>
+        <div class="m-card-title">I Want to Volunteer</div>
+        <div class="m-card-desc">Join the network · Get matched · Save lives</div>
+      </div>
+      <div class="m-card-arrow">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="m-role-card admin-card" data-open="admin" tabindex="0" role="button" aria-label="Admin">
+      <div class="m-card-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+        </svg>
+      </div>
+      <div class="m-card-body">
+        <div class="m-card-label">Command Center</div>
+        <div class="m-card-title">Admin / Manager</div>
+        <div class="m-card-desc">Dashboard · Assign volunteers · Monitor</div>
+      </div>
+      <div class="m-card-arrow">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+        </svg>
+      </div>
+    </div>
+
+  </div><!-- /m-role-cards -->
+
+  <!-- bottom sheet overlay -->
+  <div class="m-sheet-overlay" id="mOverlay"></div>
+
+  <!-- bottom sheet: I need help -->
+  <div class="m-sheet" id="sheet-help" role="dialog" aria-label="I need help">
+    <div class="m-sheet-handle"></div>
+    <div class="m-sheet-head">
+      <div class="m-sheet-head-text">
+        <div class="m-sheet-badge">Affected Person</div>
+        <div class="m-sheet-title">I Need Help</div>
+      </div>
+      <button class="m-sheet-close" data-close aria-label="Close">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="m-quote">
+      <div class="m-quote-brand">RELIEFLINK</div>
+      <h3>Tell us what <em>you need.</em></h3>
+      <p>A trained volunteer near you will be in touch within minutes.</p>
+    </div>
+    <form class="m-sheet-form" data-mmsg="Request sent! A volunteer will contact you soon.">
+      <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required></div>
+      <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92 3xx-xxxxxxx" required></div>
+      <div class="m-field">
+        <label>What do you need?</label>
+        <select required><option value="" disabled selected>Choose type…</option><option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option></select>
+      </div>
+      <div class="m-field"><label>Area / City</label><input type="text" placeholder="Your location" required></div>
+      <label class="m-check"><input type="checkbox"> Mark as urgent</label>
+      <button type="submit" class="m-btn">Send Request for Help</button>
+      <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a></p>
+    </form>
+  </div>
+
+  <!-- bottom sheet: Volunteer -->
+  <div class="m-sheet" id="sheet-volunteer" role="dialog" aria-label="Volunteer">
+    <div class="m-sheet-handle"></div>
+    <div class="m-sheet-head">
+      <div class="m-sheet-head-text">
+        <div class="m-sheet-badge">Community Hero</div>
+        <div class="m-sheet-title">Join as Volunteer</div>
+      </div>
+      <button class="m-sheet-close" data-close aria-label="Close">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="m-quote">
+      <div class="m-quote-brand">RELIEFLINK</div>
+      <h3>Lend a <em>hand.</em></h3>
+      <p>We match you with people who need your skills, close to you.</p>
+    </div>
+    <form class="m-sheet-form" data-mmsg="Thank you! We'll message you with your first task.">
+      <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required></div>
+      <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92 3xx-xxxxxxx" required></div>
+      <div class="m-field"><label>Area / City</label><input type="text" placeholder="Where are you based?" required></div>
+      <div class="m-field">
+        <label>How can you help?</label>
+        <select required><option value="" disabled selected>Choose skill…</option><option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option></select>
+      </div>
+      <label class="m-check"><input type="checkbox"> Available weekends only</label>
+      <button type="submit" class="m-btn">Register as Volunteer</button>
+      <p class="m-alt">Need help yourself? <a data-mopen="help">Ask for help</a></p>
+    </form>
+  </div>
+
+  <!-- bottom sheet: Admin -->
+  <div class="m-sheet" id="sheet-admin" role="dialog" aria-label="Admin sign in">
+    <div class="m-sheet-handle"></div>
+    <div class="m-sheet-head">
+      <div class="m-sheet-head-text">
+        <div class="m-sheet-badge">Command Center</div>
+        <div class="m-sheet-title">Admin Sign In</div>
+      </div>
+      <button class="m-sheet-close" data-close aria-label="Close">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="m-quote">
+      <div class="m-quote-brand">RELIEFLINK</div>
+      <h3>Welcome <em>back.</em></h3>
+      <p>Review live requests and manage your response teams.</p>
+    </div>
+    <form class="m-sheet-form" data-mmsg="Signed in (demo). Connect your backend here.">
+      <p style="font-size:12.5px;color:var(--muted);margin-bottom:20px">For ReliefLink team members only.</p>
+      <div class="m-field"><label>Admin Email</label><input type="email" placeholder="admin@relieflink.pk" required></div>
+      <div class="m-field">
+        <label>Password</label>
+        <input id="mpw" type="password" placeholder="••••••••••" required>
+        <button type="button" class="m-eye" id="meye">Show</button>
+      </div>
+      <label class="m-check"><input type="checkbox" checked> Keep me signed in</label>
+      <button type="submit" class="m-btn" style="background:var(--green)">Sign In to Dashboard</button>
+      <p class="m-alt">Not an admin? <a data-mopen="help">Back to help</a></p>
+    </form>
+  </div>
+
+</div><!-- /mobile-wrap -->
+
+<div id="toast" role="status"></div>
+
+<script>
+(function(){
+
+/* ══ BACKGROUND SLIDESHOW ══ */
+var bgImages=[
+  "https://images.pexels.com/photos/1557547/pexels-photo-1557547.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/3876394/pexels-photo-3876394.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/1543772/pexels-photo-1543772.jpeg?auto=compress&cs=tinysrgb&w=1600"
+];
+var slides=document.querySelectorAll('.bg-slide'),bgCur=0;
+bgImages.forEach(function(src,i){slides[i].style.backgroundImage='url("'+src+'")';});
+function nextSlide(){slides[bgCur].classList.remove('visible');bgCur=(bgCur+1)%slides.length;slides[bgCur].classList.add('visible');}
+setInterval(nextSlide,5000);
+
+/* ══ TOAST ══ */
+var toast=document.getElementById('toast'),tt;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show');},3200);}
+
+/* ══════════════════════════════
+   DESKTOP LOGIC
+══════════════════════════════ */
+var card=document.getElementById('card');
+var sides={help:'right',volunteer:'left',admin:'right'};
+var roles=['help','volunteer','admin'];
+var cur='help',stopped=false,dtimer=null;
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function setRole(r,push){
+  if(roles.indexOf(r)<0)r='help';
+  cur=r; card.dataset.side=sides[r];
+  document.querySelectorAll('[data-role]').forEach(function(el){
+    var on=el.dataset.role===r;
+    if(el.getAttribute('role')==='tab')el.setAttribute('aria-selected',on);
+    else el.classList.toggle('active',on);
+  });
+  if(push){try{history.replaceState(null,'','#'+r);}catch(e){}}
+}
+function dstop(){stopped=true;clearInterval(dtimer);}
+function step(d){setRole(roles[(roles.indexOf(cur)+d+roles.length)%roles.length],false);}
+function startDemo(){if(reduce)return;dtimer=setInterval(function(){if(!stopped&&!document.hidden)step(1);},3800);}
+
+document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){dstop();setRole(b.dataset.role,true);});});
+document.querySelectorAll('[data-go]').forEach(function(a){
+  function go(){dstop();setRole(a.dataset.go,true);}
+  a.addEventListener('click',go);
+  a.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+});
+
+document.querySelectorAll('.desktop-wrap form').forEach(function(f){
+  f.addEventListener('submit',function(e){e.preventDefault();showToast(f.dataset.msg);f.reset();});
+});
+
+var pw=document.getElementById('pw'),eye=document.getElementById('eye');
+if(eye)eye.addEventListener('click',function(){var s=pw.type==='password';pw.type=s?'text':'password';eye.textContent=s?'Hide':'Show';});
+
+var sx=null,sy=null;
+if(card){
+  card.addEventListener('pointerdown',function(e){if(e.target.closest('input,select,button,a')){sx=null;return;}sx=e.clientX;sy=e.clientY;});
+  card.addEventListener('pointerup',function(e){if(sx===null)return;var dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1);});
+  ['pointerdown','keydown','focusin'].forEach(function(ev){card.addEventListener(ev,dstop,{passive:true});});
+}
+var tabsEl=document.querySelector('.tabs');
+if(tabsEl)['pointerdown','keydown','focusin'].forEach(function(ev){tabsEl.addEventListener(ev,dstop,{passive:true});});
+
+document.addEventListener('keydown',function(e){
+  if(e.target.closest&&e.target.closest('input,select,textarea'))return;
+  if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1);
+});
+
+var closeBtn=document.getElementById('closeBtn'),reopenBtn=document.getElementById('reopenBtn');
+if(closeBtn)closeBtn.addEventListener('click',function(){card.classList.add('closed');reopenBtn.classList.add('visible');dstop();});
+if(reopenBtn)reopenBtn.addEventListener('click',function(){card.classList.remove('closed');reopenBtn.classList.remove('visible');});
+
+setRole(location.hash.replace('#',''),false);
+if(!location.hash)setTimeout(startDemo,2500);
+
+/* ══════════════════════════════
+   MOBILE BOTTOM SHEET LOGIC
+══════════════════════════════ */
+var overlay=document.getElementById('mOverlay');
+var currentSheet=null;
+
+function openSheet(name){
+  if(currentSheet)closeSheet(function(){_open(name);});
+  else _open(name);
+}
+function _open(name){
+  var sh=document.getElementById('sheet-'+name);
+  if(!sh)return;
+  currentSheet=sh;
+  overlay.classList.add('open');
+  sh.classList.add('open');
+  document.body.style.overflow='hidden';
+  /* focus first input */
+  setTimeout(function(){var inp=sh.querySelector('input,select');if(inp)inp.focus();},450);
+}
+function closeSheet(cb){
+  if(!currentSheet)return;
+  currentSheet.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow='';
+  var sh=currentSheet; currentSheet=null;
+  setTimeout(function(){if(cb)cb();},450);
+}
+
+/* open on card tap */
+document.querySelectorAll('[data-open]').forEach(function(el){
+  function act(){openSheet(el.dataset.open);}
+  el.addEventListener('click',act);
+  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}});
+});
+
+/* close on X button */
+document.querySelectorAll('[data-close]').forEach(function(btn){
+  btn.addEventListener('click',function(){closeSheet();});
+});
+
+/* close on overlay tap */
+overlay.addEventListener('click',function(){closeSheet();});
+
+/* switch sheet via links inside sheets */
+document.querySelectorAll('[data-mopen]').forEach(function(a){
+  function go(){closeSheet(function(){openSheet(a.dataset.mopen);});}
+  a.addEventListener('click',go);
+  a.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});
+});
+
+/* mobile form submit */
+document.querySelectorAll('.m-sheet-form').forEach(function(f){
+  f.addEventListener('submit',function(e){e.preventDefault();showToast(f.dataset.mmsg);f.reset();closeSheet();});
+});
+
+/* mobile password toggle */
+var mpw=document.getElementById('mpw'),meye=document.getElementById('meye');
+if(meye)meye.addEventListener('click',function(){var s=mpw.type==='password';mpw.type=s?'text':'password';meye.textContent=s?'Hide':'Show';});
+
+/* swipe down on sheet to close */
+document.querySelectorAll('.m-sheet').forEach(function(sh){
+  var sy2=null;
+  sh.addEventListener('touchstart',function(e){sy2=e.touches[0].clientY;},{passive:true});
+  sh.addEventListener('touchend',function(e){
+    if(sy2===null)return;
+    var dy=e.changedTouches[0].clientY-sy2; sy2=null;
+    if(dy>80&&sh.scrollTop<=0)closeSheet();
+  });
+});
+
+/* close on Escape */
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSheet();});
+
+})();
+</script>
 </body>
 </html>
