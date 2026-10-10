@@ -1106,62 +1106,61 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 
 
 /* ═══ NEW DASHBOARD (dark green / cream / gold) ═══ */
-#page-dashboard .rl{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;padding:24px 0 90px;align-items:start;color:#f0e9d6;font-family:'Inter',system-ui,sans-serif}
+#page-dashboard .rl{--card1:#0e3829;--card2:#0a2e22;--bd:#235a45;--tx:#f0e9d6;--tx2:#f6f1ea;--mu:#b3ad98;--track:rgba(255,255,255,.08);--soft:rgba(255,255,255,.05);--acc:#f0cf72;--livec:#7ff0c0;display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;padding:24px 0 90px;align-items:start;color:var(--tx);font-family:'Inter',system-ui,sans-serif}
 .rl *{box-sizing:border-box}
-.rl-side{position:sticky;top:92px;background:linear-gradient(170deg,#124f3b,#0a2a20 70%);border:1px solid #235a45;border-radius:24px;padding:16px 12px;display:flex;flex-direction:column;gap:3px;box-shadow:0 24px 50px -24px #000}
+.rl-side{position:sticky;top:92px;background:linear-gradient(170deg,#124f3b,#0a2a20 70%);border:1px solid var(--bd);border-radius:24px;padding:16px 12px;display:flex;flex-direction:column;gap:3px;box-shadow:0 24px 50px -24px #000}
 .rl-sh{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc2ae;margin:12px 10px 6px}
 .rl-sh:first-child{margin-top:2px}
 .rl-side a{display:block;padding:10px 12px;border-radius:12px;color:#d6cfb9;font-size:13px;font-weight:600;cursor:pointer;transition:.25s}
 .rl-side a:hover{background:rgba(212,175,55,.1);color:#f0cf72;transform:translateX(3px)}
 .rl-side a.on{background:linear-gradient(135deg,#d4af37,#f0cf72);color:#061a14;box-shadow:0 10px 22px -10px #d4af37}
 .rl-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
-.rl-head h2{font-family:'Fraunces','Inter',serif;font-size:34px;font-weight:600;color:#f6f1ea;line-height:1.1}
-.rl-head p{font-size:13px;color:#b3ad98;margin-top:4px}
+.rl-head h2{font-family:'Fraunces','Inter',serif;font-size:34px;font-weight:600;color:var(--tx2);line-height:1.1}
+.rl-head p{font-size:13px;color:var(--mu);margin-top:4px}
 .rl-quick{display:flex;gap:8px;flex-wrap:wrap}
-.rl-quick button{background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.45);color:#f0cf72;padding:9px 16px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;transition:.25s}
+.rl-quick button{background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.55);color:var(--acc);padding:9px 16px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;transition:.25s}
 .rl-quick button:hover{background:#d4af37;color:#061a14}
-.rl-card{background:linear-gradient(160deg,#0e3829,#0a2e22);border:1px solid #235a45;border-radius:22px;padding:18px;box-shadow:0 18px 40px -24px #000;opacity:0;transform:translateY(16px);animation:rlUp .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0)*60ms);transition:transform .3s,border-color .3s}
+.rl-card{background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--bd);border-radius:22px;padding:18px;box-shadow:0 18px 40px -24px #000;opacity:0;transform:translateY(16px);animation:rlUp .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0)*60ms);transition:transform .3s,border-color .3s}
 .rl-card:hover{transform:translateY(-3px);border-color:#d4af37}
 @keyframes rlUp{to{opacity:1;transform:none}}
 .rl-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:16px}
 .rl-kpi{display:flex;align-items:center;gap:12px;padding:14px}
 .rl-kpi i{font-style:normal;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:19px;background:color-mix(in srgb,var(--k) 22%,transparent);border:1px solid color-mix(in srgb,var(--k) 55%,transparent);flex:none}
-.rl-kpi b{display:block;font-size:24px;line-height:1.05;font-weight:800;color:#f6f1ea;font-variant-numeric:tabular-nums}
-.rl-kpi span{font-size:11px;color:#b3ad98;font-weight:600}.rl-kpi small{font-size:9px;opacity:.8}
+.rl-kpi b{display:block;font-size:24px;line-height:1.05;font-weight:800;color:var(--tx2);font-variant-numeric:tabular-nums}
+.rl-kpi span{font-size:11px;color:var(--mu);font-weight:600}.rl-kpi small{font-size:9px;opacity:.8}
 .rl-g3{display:grid;grid-template-columns:1.05fr 1.5fr .85fr;gap:16px;margin-bottom:16px}
 .rl-g2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
 .rl-g2+.rl-g2{grid-template-columns:1fr 1fr}
 .rl-ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
-.rl-ch h3{font-size:14px;font-weight:700;color:#f6f1ea;position:relative;padding-bottom:8px;line-height:1.3}
+.rl-ch h3{font-size:14px;font-weight:700;color:var(--tx2);position:relative;padding-bottom:8px;line-height:1.3}
 .rl-ch h3::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:3px;border-radius:2px;background:#d4af37}
-.rl-ch h3 small{font-weight:500;color:#b3ad98;font-size:11px}
+.rl-ch h3 small{font-weight:500;color:var(--mu);font-size:11px}
 .rl-ch em{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;flex:none}
-.rl-ch em.live{background:rgba(62,207,142,.16);color:#7ff0c0}.rl-ch em.demo{background:rgba(212,175,55,.18);color:#f0cf72}
+.rl-ch em.live{background:rgba(62,207,142,.18);color:var(--livec)}.rl-ch em.demo{background:rgba(212,175,55,.2);color:var(--acc)}
 .rl-hz{display:flex;flex-direction:column;gap:15px}
 .rl-hr .t{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin-bottom:7px}
 .rl-hr .t em{font-style:normal;font-weight:800}
 .rl-lv{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;color:#fff;background:var(--k);margin-left:6px}
-.rl-bar{height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.rl-bar{height:10px;background:var(--track);border-radius:99px;overflow:hidden}
 .rl-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--k),color-mix(in srgb,var(--k) 55%,#fff));transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
-.rl-note{font-size:11px;color:#b3ad98;margin-top:12px;line-height:1.5}
-.rl-main{min-width:0}.rl-g3>*,.rl-g2>*,.rl-kpis>*{min-width:0}.rl-cv,.rl-donut{width:100%;min-width:0;overflow:hidden}.rl-cv canvas,.rl-donut canvas{max-width:100%}
+.rl-note{font-size:11px;color:var(--mu);margin-top:12px;line-height:1.5}
 .rl-cv{position:relative;height:250px}.rl-tall{height:340px;margin-bottom:14px}
 .rl-donut{position:relative;height:190px}
 .rl-donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
-.rl-donut .mid b{font-size:28px;font-weight:800;color:#f6f1ea;line-height:1}.rl-donut .mid span{font-size:11px;color:#b3ad98}
-.rl-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12px;color:#d6cfb9}
+.rl-donut .mid b{font-size:28px;font-weight:800;color:var(--tx2);line-height:1}.rl-donut .mid span{font-size:11px;color:var(--mu)}
+.rl-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12px;color:var(--tx)}
 .rl-leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .rl-city{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .rl-city .n{width:84px;font-weight:700;font-size:13px}.rl-city .rl-bar{flex:1}.rl-city b{width:42px;text-align:right;font-size:13px}
 .rl-fn{display:flex;flex-direction:column;align-items:center;gap:8px}
 .rl-fn div{height:42px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;color:#061a14;font-weight:800;font-size:13px;background:var(--k);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
 .rl-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.rl-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.05);font-size:13px;border-left:3px solid var(--k)}
-.rl-list li small{display:block;color:#b3ad98;font-size:11px}
+.rl-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:var(--soft);font-size:13px;border-left:3px solid var(--k)}
+.rl-list li small{display:block;color:var(--mu);font-size:11px}
 .rl-list li b{margin-left:auto;font-weight:800;color:var(--k)}
 .rl-rivers{margin-bottom:16px}
 .rl-rivers .rivers-grid{margin-top:4px}
-.rl-src{font-size:11px;color:#b3ad98;text-align:center;margin-top:8px}
+.rl-src{font-size:11px;color:var(--mu);text-align:center;margin-top:8px}
 @media(max-width:1250px){.rl-kpis{grid-template-columns:repeat(3,1fr)}.rl-g3{grid-template-columns:1fr 1fr}.rl-g3>:nth-child(2){grid-column:1/-1;order:3}}
 @media(max-width:900px){
   #page-dashboard .rl{grid-template-columns:1fr;padding:14px 0 100px}
@@ -1171,6 +1170,25 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   .rl-head h2{font-size:28px}
 }
 @media(prefers-reduced-motion:reduce){.rl-card{animation-duration:.01ms!important}}
+
+/* light theme (cream cards, dark green sidebar, gold accents) */
+#page-dashboard .rl[data-theme="light"]{--card1:#fffdf6;--card2:#f7f0de;--bd:#d8cba8;--tx:#14231c;--tx2:#0f2a1e;--mu:#55645b;--track:#e3d9bd;--soft:rgba(15,74,55,.07);--acc:#7a4d00;--livec:#0d5c40;
+  --g50:#f8fafc;--g100:#f1f5f9;--g200:#d8cba8;--g300:#cbd5e1;--g400:#6b7a70;--g500:#55645b;--g600:#475569;--g700:#334155;--g800:#14231c;--card:#fffdf6;
+  background:linear-gradient(135deg,#ece2cb,#f4ecd9 55%,#e8dcc0);border-radius:30px;padding:22px 22px 28px;margin:18px 0 90px;box-shadow:0 30px 60px -30px #000}
+.rl[data-theme="light"] .rl-card{box-shadow:0 18px 36px -24px rgba(60,50,25,.5)}
+.rl[data-theme="light"] .river-chip{background:#fff!important;border-color:#d8cba8!important}
+.rl[data-theme="light"] .river-name,.rl[data-theme="light"] .river-lv strong{color:#14231c!important}
+.rl[data-theme="light"] .river-station,.rl[data-theme="light"] .river-lv{color:#55645b!important}
+.rl[data-theme="light"] .rl-kpi b{color:var(--tx2)!important}
+.rl-quick button#rlTheme{background:#d4af37;color:#061a14;border-color:#d4af37}
+/* three views */
+.rl-view{display:none}.rl-view.on{display:block;animation:rlFade .45s ease}
+@keyframes rlFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.rl-g1{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+.rl-gR{display:grid;grid-template-columns:.9fr 1.5fr 1fr;gap:16px;margin-bottom:16px}.rl-gR>*{min-width:0}
+@media(max-width:1250px){.rl-gR{grid-template-columns:1fr 1fr}.rl-gR>:nth-child(2){grid-column:1/-1;order:3}}
+@media(max-width:900px){.rl-gR{grid-template-columns:1fr}.rl-gR>:nth-child(2){order:0;grid-column:auto}#page-dashboard .rl[data-theme="light"]{padding:14px;border-radius:22px}}
+.rl-main{min-width:0}.rl-g3>*,.rl-g2>*,.rl-kpis>*{min-width:0}.rl-cv,.rl-donut{width:100%;min-width:0;overflow:hidden}.rl-cv canvas,.rl-donut canvas{max-width:100%}
 </style>
 </head>
 <body>
@@ -1290,12 +1308,9 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <div class="rl">
   <aside class="rl-side">
     <div class="rl-sh">Dashboard</div>
-    <a class="on" data-t="rl-top">📊 Overview</a>
-    <a data-t="rl-chances">🧠 Disaster chances</a>
-    <a data-t="rl-rivers">🌊 River levels</a>
-    <a data-t="rl-vol">🤝 Volunteers</a>
-    <a data-t="rl-fac">🏥 Shelters &amp; hospitals</a>
-    <a data-t="rl-alerts">🚨 Live alerts</a>
+    <a class="on" data-v="overview">📊 Overview</a>
+    <a data-v="rivers">🌊 River levels</a>
+    <a data-v="resources">🤝 Volunteers &amp; shelters</a>
     <div class="rl-sh">Open</div>
     <a data-p="map">🗺️ Live map</a>
     <a data-p="nearby">📍 Nearby</a>
@@ -1308,7 +1323,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
   <div class="rl-main" id="rl-top">
     <div class="rl-head">
       <div><h2>Dashboard</h2><p>Pakistan disaster response overview · <span id="rlSt">Connecting…</span></p></div>
-      <div class="rl-quick"><button data-p="map">Live Map</button><button data-p="nearby">Find Nearby</button><button data-p="weather">Weather</button></div>
+      <div class="rl-quick"><button data-p="map">Live Map</button><button data-p="nearby">Find Nearby</button><button data-p="weather">Weather</button><button id="rlTheme" aria-label="Switch light or dark theme">☀ Light</button></div>
     </div>
 
     <section class="rl-kpis">
@@ -1320,7 +1335,8 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
       <div class="rl-card rl-kpi" style="--k:#f08a4b;--d:5"><i>⚠️</i><div><b class="stat-num orange" id="statZones">--</b><span>High-risk zones</span></div></div>
     </section>
 
-    <section class="rl-g3">
+    <div class="rl-view on" data-v="overview">
+      <section class="rl-g3">
       <div class="rl-card" id="rl-chances" style="--d:6">
         <div class="rl-ch"><h3>Disaster chances · next 5 days</h3><em class="live">Live</em></div>
         <div class="rl-hz" id="rlHz"></div>
@@ -1330,41 +1346,43 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
         <div class="rl-ch"><h3>Flood probability by city</h3><em class="live">Live</em></div>
         <div class="rl-cv"><canvas id="rlFlood"></canvas></div>
       </div>
-      <div class="rl-card" id="rl-vol" style="--d:8">
-        <div class="rl-ch"><h3>Volunteers</h3><em id="rlVolT" class="demo">Sample</em></div>
-        <div class="rl-donut"><canvas id="rlVolC"></canvas><div class="mid"><b id="rlVolN">0</b><span>total</span></div></div>
-        <div class="rl-leg" id="rlVolL"></div>
+      <div class="rl-card" style="--d:11">
+        <div class="rl-ch"><h3>Most at-risk cities</h3><em class="live">Live</em></div>
+        <div id="rlRisky"></div>
       </div>
-    </section>
-
+      </section>
+      <section class="rl-g1">
+      <div class="rl-card" id="rl-alerts" style="--d:13">
+        <div class="rl-ch"><h3>Latest alerts</h3><em class="live">Live</em></div>
+        <ul class="rl-list" id="rlAl"></ul>
+      </div>
+      </section>
+    </div>
+    <div class="rl-view" data-v="rivers">
     <section class="rl-card rl-rivers" id="rl-rivers" style="--d:9">
       <div class="rl-ch"><h3>River levels — live monitoring stations <small>· Updated: <span id="riverUpdateTime">--:--</span> PKT · FFD baselines + live rainfall</small></h3><em class="live">Live</em></div>
       <div class="rl-cv rl-tall"><canvas id="rlRiverC"></canvas></div>
       <div class="rivers-grid" id="riversGrid"></div>
     </section>
-
-    <section class="rl-g2">
+    </div>
+    <div class="rl-view" data-v="resources">
+      <section class="rl-gR">
+      <div class="rl-card" id="rl-vol" style="--d:8">
+        <div class="rl-ch"><h3>Volunteers</h3><em id="rlVolT" class="demo">Sample</em></div>
+        <div class="rl-donut"><canvas id="rlVolC"></canvas><div class="mid"><b id="rlVolN">0</b><span>total</span></div></div>
+        <div class="rl-leg" id="rlVolL"></div>
+      </div>
       <div class="rl-card" id="rl-fac" style="--d:10">
         <div class="rl-ch"><h3 id="rlFacH">Shelters &amp; hospitals by city</h3><em id="rlFacT" class="demo">Sample</em></div>
         <div class="rl-cv"><canvas id="rlFac"></canvas></div>
         <p class="rl-note" id="rlFacN">Open <b>Nearby</b> or <b>Safe Places</b> and search an area to load live OpenStreetMap counts here.</p>
       </div>
-      <div class="rl-card" style="--d:11">
-        <div class="rl-ch"><h3>Most at-risk cities</h3><em class="live">Live</em></div>
-        <div id="rlRisky"></div>
-      </div>
-    </section>
-
-    <section class="rl-g2">
       <div class="rl-card" style="--d:12">
         <div class="rl-ch"><h3>SOS requests by status</h3><em class="live">Live</em></div>
         <div class="rl-fn" id="rlFn"></div>
       </div>
-      <div class="rl-card" id="rl-alerts" style="--d:13">
-        <div class="rl-ch"><h3>Latest alerts</h3><em class="live">Live</em></div>
-        <ul class="rl-list" id="rlAl"></ul>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <p class="rl-src">Sources: PMD · FFD/WAPDA · USGS · GDACS · OpenWeatherMap · Open-Meteo · OpenStreetMap</p>
   </div>
@@ -3527,7 +3545,7 @@ document.querySelectorAll('.vol-feat-tip').forEach(function(tip){
 var $=function(i){return document.getElementById(i);};
 var GR='#3ecf8e',YE='#f0cf72',OR='#f08a4b',RD='#ef5350',LV=[GR,YE,OR,RD],LAB=['Low','Watch','High','Critical'];
 var TXT='#d6cfb9',GRID='rgba(212,175,55,.14)';
-var ch={},cityRisk=[],quakes=[],weatherOk=false,weatherTried=false;
+var ch={},cityRisk=[],quakes=[],weatherOk=false,weatherTried=false,lastW=null;
 var CITIES=[{n:'Lahore',la:31.55,lo:74.34},{n:'Karachi',la:24.86,lo:67.01},{n:'Islamabad',la:33.68,lo:73.05},{n:'Peshawar',la:34.01,lo:71.58},
  {n:'Quetta',la:30.18,lo:66.99},{n:'Multan',la:30.20,lo:71.47},{n:'Sukkur',la:27.70,lo:68.86},{n:'Chitral',la:35.85,lo:71.79}];
 var SAMPLE_FAC={Lahore:[14,26],Karachi:[18,31],Islamabad:[9,15],Peshawar:[11,17],Quetta:[7,9],Multan:[10,14]};
@@ -3539,13 +3557,11 @@ function setBars(sel){requestAnimationFrame(function(){document.querySelectorAll
 function countUp(el,to){if(!el)return;var s=performance.now();(function f(t){var k=Math.min(1,(t-s)/1000);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f);})(s);}
 if(window.Chart){Chart.defaults.font.family='Inter,system-ui,sans-serif';Chart.defaults.color=TXT;}
 
-/* sidebar */
+/* sidebar: open other pages */
 document.querySelectorAll('.rl-side a').forEach(function(a){a.addEventListener('click',function(){
-  if(a.dataset.t){var t=$(a.dataset.t);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
-    document.querySelectorAll('.rl-side a[data-t]').forEach(function(x){x.classList.remove('on');});a.classList.add('on');}
-  else if(a.dataset.p&&window.showPage)showPage(a.dataset.p);
+  if(a.dataset.p&&window.showPage)showPage(a.dataset.p);
   else if(a.dataset.c&&window.openChat)openChat();});});
-document.querySelectorAll('.rl-quick button').forEach(function(b){b.addEventListener('click',function(){if(window.showPage)showPage(b.dataset.p);});});
+document.querySelectorAll('.rl-quick button[data-p]').forEach(function(b){b.addEventListener('click',function(){if(window.showPage)showPage(b.dataset.p);});});
 
 /* flood model: uses the app's own FLOOD_MODEL weights */
 function prob(r5,pk,h){
@@ -3652,10 +3668,36 @@ function appData(){
 
 var _rlT=null;
 window.rlUpdate=function(){clearTimeout(_rlT);_rlT=setTimeout(function(){try{appData();}catch(e){console.warn('dashboard',e);}},250);};
-function refresh(){loadQuakes().then(function(q){quakes=q;return loadWeather();}).then(function(W){weatherTried=true;compute(W);});}
+function refresh(){loadQuakes().then(function(q){quakes=q;return loadWeather();}).then(function(W){weatherTried=true;lastW=W;compute(W);});}
+
+/* three views (sidebar) */
+function resizeAll(){Object.keys(ch).forEach(function(k){try{ch[k].resize();}catch(e){}});}
+function showView(v){
+  document.querySelectorAll('.rl-view').forEach(function(x){x.classList.toggle('on',x.dataset.v===v);});
+  document.querySelectorAll('.rl-side a[data-v]').forEach(function(x){x.classList.toggle('on',x.dataset.v===v);});
+  setTimeout(resizeAll,60);
+  var m=$('rl-top');if(m&&m.getBoundingClientRect().top<0)m.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('.rl-side a[data-v]').forEach(function(a){a.addEventListener('click',function(){showView(a.dataset.v);});});
+
+/* dark / light theme */
+var rlRoot=document.querySelector('#page-dashboard .rl');
+function setTheme(t){
+  rlRoot.dataset.theme=t;
+  TXT=t==='light'?'#55645b':'#d6cfb9';GRID=t==='light'?'rgba(15,74,55,.14)':'rgba(212,175,55,.14)';
+  if(window.Chart)Chart.defaults.color=TXT;
+  $('rlTheme').textContent=t==='light'?'☾ Dark':'☀ Light';
+  try{localStorage.setItem('rl-theme',t);}catch(e){}
+  try{appData();if(lastW)compute(lastW);}catch(e){}
+}
+$('rlTheme').addEventListener('click',function(){setTheme(rlRoot.dataset.theme==='light'?'dark':'light');});
+var saved='dark';try{saved=localStorage.getItem('rl-theme')||'dark';}catch(e){}
+rlRoot.dataset.theme=saved;
+if(saved==='light'){TXT='#55645b';GRID='rgba(15,74,55,.14)';if(window.Chart)Chart.defaults.color=TXT;$('rlTheme').textContent='☾ Dark';}
 try{appData();}catch(e){console.warn('dashboard',e);}
 refresh();setInterval(refresh,600000);
 })();
 </script>
+
 </body>
 </html>
