@@ -1111,7 +1111,10 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .rl-side{position:sticky;top:92px;background:linear-gradient(170deg,#124f3b,#0a2a20 70%);border:1px solid var(--bd);border-radius:24px;padding:16px 12px;display:flex;flex-direction:column;gap:3px;box-shadow:0 24px 50px -24px #000}
 .rl-sh{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc2ae;margin:12px 10px 6px}
 .rl-sh:first-child{margin-top:2px}
-.rl-side a{display:block;padding:10px 12px;border-radius:12px;color:#d6cfb9;font-size:13px;font-weight:600;cursor:pointer;transition:.25s}
+.rl svg.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.rl-kpi i svg.ic{width:21px;height:21px;stroke:var(--k)}
+.rl[data-theme="light"] .rl-kpi i svg.ic{stroke:color-mix(in srgb,var(--k) 55%,#000)}
+.rl-side a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;color:#d6cfb9;font-size:13px;font-weight:600;cursor:pointer;transition:.25s}
 .rl-side a:hover{background:rgba(212,175,55,.1);color:#f0cf72;transform:translateX(3px)}
 .rl-side a.on{background:linear-gradient(135deg,#d4af37,#f0cf72);color:#061a14;box-shadow:0 10px 22px -10px #d4af37}
 .rl-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -1308,31 +1311,31 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <div class="rl">
   <aside class="rl-side">
     <div class="rl-sh">Dashboard</div>
-    <a class="on" data-v="overview">📊 Overview</a>
-    <a data-v="rivers">🌊 River levels</a>
-    <a data-v="resources">🤝 Volunteers &amp; shelters</a>
+    <a class="on" data-v="overview"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg> Overview</a>
+    <a data-v="rivers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 8c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/><path d="M2 15c2.5-2 4.5-2 7 0s4.5 2 7 0 4.5-2 6 0"/></svg> River levels</a>
+    <a data-v="resources"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg> Volunteers &amp; shelters</a>
     <div class="rl-sh">Open</div>
-    <a data-p="map">🗺️ Live map</a>
-    <a data-p="nearby">📍 Nearby</a>
-    <a data-p="weather">🌤️ Weather</a>
-    <a data-p="predictor">🧠 AI predictor</a>
-    <a data-p="volunteers">➕ Register volunteer</a>
-    <a data-c="1">🤖 AI assistant</a>
+    <a data-p="map"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Live map</a>
+    <a data-p="nearby"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Nearby</a>
+    <a data-p="weather"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4.5 4.5 0 1 1 .8-8.9A6 6 0 0 1 19 11a3.5 3.5 0 0 1-.5 7z"/></svg> Weather</a>
+    <a data-p="predictor"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg> AI predictor</a>
+    <a data-p="volunteers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg> Register volunteer</a>
+    <a data-c="1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.3A8 8 0 1 1 21 12z"/></svg> AI assistant</a>
   </aside>
 
   <div class="rl-main" id="rl-top">
     <div class="rl-head">
       <div><h2>Dashboard</h2><p>Pakistan disaster response overview · <span id="rlSt">Connecting…</span></p></div>
-      <div class="rl-quick"><button data-p="map">Live Map</button><button data-p="nearby">Find Nearby</button><button data-p="weather">Weather</button><button id="rlTheme" aria-label="Switch light or dark theme">☀ Light</button></div>
+      <div class="rl-quick"><button data-p="map">Live Map</button><button data-p="nearby">Find Nearby</button><button data-p="weather">Weather</button><button id="rlTheme" aria-label="Switch light or dark theme">Light</button></div>
     </div>
 
     <section class="rl-kpis">
-      <div class="rl-card rl-kpi" style="--k:#ef5350;--d:0"><i>🚨</i><div><b class="stat-num red" id="statSOS">--</b><span>Active SOS</span></div></div>
-      <div class="rl-card rl-kpi" style="--k:#3ecf8e;--d:1"><i>💚</i><div><b class="stat-num cyan" id="statHelp">--</b><span>People helped</span></div></div>
-      <div class="rl-card rl-kpi" style="--k:#d4af37;--d:2"><i>⛺</i><div><b class="stat-num green" id="statShelters">--</b><span>Shelters &amp; hospitals</span></div></div>
-      <div class="rl-card rl-kpi" style="--k:#6aa8ff;--d:3"><i>🏥</i><div><b id="rlHosp">--</b><span>Hospitals <small id="rlHospT">(sample)</small></span></div></div>
-      <div class="rl-card rl-kpi" style="--k:#f0cf72;--d:4"><i>🤝</i><div><b id="rlVol">--</b><span>Volunteers</span></div></div>
-      <div class="rl-card rl-kpi" style="--k:#f08a4b;--d:5"><i>⚠️</i><div><b class="stat-num orange" id="statZones">--</b><span>High-risk zones</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#ef5350;--d:0"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.5"/></svg></i><div><b class="stat-num red" id="statSOS">--</b><span>Active SOS</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#3ecf8e;--d:1"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></i><div><b class="stat-num cyan" id="statHelp">--</b><span>People helped</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#d4af37;--d:2"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg></i><div><b class="stat-num green" id="statShelters">--</b><span>Shelters &amp; hospitals</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#6aa8ff;--d:3"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg></i><div><b id="rlHosp">--</b><span>Hospitals <small id="rlHospT">(sample)</small></span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#f0cf72;--d:4"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/></svg></i><div><b id="rlVol">--</b><span>Volunteers</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#f08a4b;--d:5"><i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg></i><div><b class="stat-num orange" id="statZones">--</b><span>High-risk zones</span></div></div>
     </section>
 
     <div class="rl-view on" data-v="overview">
@@ -3610,10 +3613,10 @@ function alertsList(){
   var out=[];
   if((function(){try{return allAlerts&&allAlerts.length;}catch(e){return 0;}})()){
     allAlerts.slice(0,6).forEach(function(a){var l=a.severity==='red'?3:a.severity==='orange'?2:a.severity==='yellow'?1:0;
-      out.push({l:l,t:(a.icon||'⚠️')+' '+esc(a.title),s:esc(a.source||'')+(typeof timeAgo==='function'&&a.time?' · '+timeAgo(a.time):''),v:LAB[l]});});
+      out.push({l:l,t:esc(a.title),s:esc(a.source||'')+(typeof timeAgo==='function'&&a.time?' · '+timeAgo(a.time):''),v:LAB[l]});});
   }else{
-    cityRisk.filter(function(c){return c.max>=40;}).forEach(function(c){var l=lvl(c.max);out.push({l:l,t:'🌊 Flood risk — '+c.n,s:'Forecast peak probability',v:c.max+'%'});});
-    quakes.slice(0,4).forEach(function(q){var l=q.m>=5?3:q.m>=4.5?2:1;out.push({l:l,t:'🌍 M'+q.m.toFixed(1)+' earthquake',s:esc(q.place),v:'M'+q.m.toFixed(1)});});
+    cityRisk.filter(function(c){return c.max>=40;}).forEach(function(c){var l=lvl(c.max);out.push({l:l,t:'Flood risk — '+c.n,s:'Forecast peak probability',v:c.max+'%'});});
+    quakes.slice(0,4).forEach(function(q){var l=q.m>=5?3:q.m>=4.5?2:1;out.push({l:l,t:'M'+q.m.toFixed(1)+' earthquake',s:esc(q.place),v:'M'+q.m.toFixed(1)});});
   }
   $('rlAl').innerHTML=out.slice(0,6).map(function(a){return '<li style="--k:'+LV[a.l]+'"><div>'+a.t+'<small>'+a.s+'</small></div><b>'+a.v+'</b></li>';}).join('')||'<li>No active alerts right now</li>';
 }
@@ -3686,14 +3689,14 @@ function setTheme(t){
   rlRoot.dataset.theme=t;
   TXT=t==='light'?'#55645b':'#d6cfb9';GRID=t==='light'?'rgba(15,74,55,.14)':'rgba(212,175,55,.14)';
   if(window.Chart)Chart.defaults.color=TXT;
-  $('rlTheme').textContent=t==='light'?'☾ Dark':'☀ Light';
+  $('rlTheme').textContent=t==='light'?'Dark':'Light';
   try{localStorage.setItem('rl-theme',t);}catch(e){}
   try{appData();if(lastW)compute(lastW);}catch(e){}
 }
 $('rlTheme').addEventListener('click',function(){setTheme(rlRoot.dataset.theme==='light'?'dark':'light');});
 var saved='dark';try{saved=localStorage.getItem('rl-theme')||'dark';}catch(e){}
 rlRoot.dataset.theme=saved;
-if(saved==='light'){TXT='#55645b';GRID='rgba(15,74,55,.14)';if(window.Chart)Chart.defaults.color=TXT;$('rlTheme').textContent='☾ Dark';}
+if(saved==='light'){TXT='#55645b';GRID='rgba(15,74,55,.14)';if(window.Chart)Chart.defaults.color=TXT;$('rlTheme').textContent='Dark';}
 try{appData();}catch(e){console.warn('dashboard',e);}
 refresh();setInterval(refresh,600000);
 })();
