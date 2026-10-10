@@ -1154,7 +1154,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .rl-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12px;color:var(--tx)}
 .rl-leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .rl-city{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.rl-city .n{width:84px;font-weight:700;font-size:13px}.rl-city .rl-bar{flex:1}.rl-city b{width:42px;text-align:right;font-size:13px}
+.rl-city .n{width:122px;font-weight:700;font-size:12px}.rl-city .rl-bar{flex:1}.rl-city b{width:42px;text-align:right;font-size:13px}
 .rl-fn{display:flex;flex-direction:column;align-items:center;gap:8px}
 .rl-fn div{height:42px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;color:#061a14;font-weight:800;font-size:13px;background:var(--k);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
 .rl-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -1271,7 +1271,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <div class="topbar">
 <div class="live-badge"><span class="live-dot"></span>LIVE</div>
 <div class="topbar-links">
-<button class="back-landing" onclick="backToLanding()">🏠 Landing</button>
+<button class="back-landing" onclick="backToLanding()">Landing</button>
 <span id="topClock" style="color:var(--cyan);font-weight:600">--:--:-- PKT</span>
 </div>
 </div>
@@ -1283,14 +1283,14 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <div><div class="logo-text">ReliefLink</div><div class="logo-sub">Disaster Emergency Response</div></div>
 </div>
 <div class="nav-items">
-<button class="nav-btn active" onclick="showPage('dashboard')" id="navDashboard">🏠 Home</button>
-<button class="nav-btn" onclick="showPage('map')" id="navMap">🗺️ Map</button>
-<button class="nav-btn" onclick="showPage('weather')" id="navWeather">🌤️ Weather</button>
-<button class="nav-btn" onclick="showPage('alerts')" id="navAlerts">🚨 Alerts</button>
-<button class="nav-btn" onclick="showPage('nearby')" id="navNearby">📍 Nearby</button>
-<button class="nav-btn" onclick="showPage('route')" id="navRoute">🚗 Route</button>
-<button class="nav-btn" onclick="showPage('predictor')" id="navPredictor">🧠 AI Predictor</button>
-<button class="nav-btn" onclick="showPage('safe')" id="navSafe">🏠 Safe Places</button>
+<button class="nav-btn active" onclick="showPage('dashboard')" id="navDashboard">Home</button>
+<button class="nav-btn" onclick="showPage('map')" id="navMap">Map</button>
+<button class="nav-btn" onclick="showPage('weather')" id="navWeather">Weather</button>
+<button class="nav-btn" onclick="showPage('alerts')" id="navAlerts">Alerts</button>
+<button class="nav-btn" onclick="showPage('nearby')" id="navNearby">Nearby</button>
+<button class="nav-btn" onclick="showPage('route')" id="navRoute">Route</button>
+<button class="nav-btn" onclick="showPage('predictor')" id="navPredictor">AI Predictor</button>
+<button class="nav-btn" onclick="showPage('safe')" id="navSafe">Safe Places</button>
 </div>
 <button class="nav-btn" onclick="toggleNotif()" style="position:relative">🔔<span style="position:absolute;top:0;right:2px;background:var(--red);color:white;font-size:8px;font-weight:700;padding:1px 4px;border-radius:99px">5</span></button>
 </nav>
@@ -1346,11 +1346,11 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
         <p class="rl-note">Flood uses your AI flood model on the live forecast. Earthquakes cannot be predicted, so that bar is recent activity only.</p>
       </div>
       <div class="rl-card" style="--d:7">
-        <div class="rl-ch"><h3>Flood probability by city</h3><em class="live">Live</em></div>
+        <div class="rl-ch"><h3>Flood probability by province</h3><em class="live">Live</em></div>
         <div class="rl-cv"><canvas id="rlFlood"></canvas></div>
       </div>
       <div class="rl-card" style="--d:11">
-        <div class="rl-ch"><h3>Most at-risk cities</h3><em class="live">Live</em></div>
+        <div class="rl-ch"><h3>Most at-risk provinces</h3><em class="live">Live</em></div>
         <div id="rlRisky"></div>
       </div>
       </section>
@@ -1376,7 +1376,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
         <div class="rl-leg" id="rlVolL"></div>
       </div>
       <div class="rl-card" id="rl-fac" style="--d:10">
-        <div class="rl-ch"><h3 id="rlFacH">Shelters &amp; hospitals by city</h3><em id="rlFacT" class="demo">Sample</em></div>
+        <div class="rl-ch"><h3 id="rlFacH">Shelters &amp; hospitals by province</h3><em id="rlFacT" class="demo">Sample</em></div>
         <div class="rl-cv"><canvas id="rlFac"></canvas></div>
         <p class="rl-note" id="rlFacN">Open <b>Nearby</b> or <b>Safe Places</b> and search an area to load live OpenStreetMap counts here.</p>
       </div>
@@ -3549,9 +3549,13 @@ var $=function(i){return document.getElementById(i);};
 var GR='#3ecf8e',YE='#f0cf72',OR='#f08a4b',RD='#ef5350',LV=[GR,YE,OR,RD],LAB=['Low','Watch','High','Critical'];
 var TXT='#d6cfb9',GRID='rgba(212,175,55,.14)';
 var ch={},cityRisk=[],quakes=[],weatherOk=false,weatherTried=false,lastW=null;
-var CITIES=[{n:'Lahore',la:31.55,lo:74.34},{n:'Karachi',la:24.86,lo:67.01},{n:'Islamabad',la:33.68,lo:73.05},{n:'Peshawar',la:34.01,lo:71.58},
- {n:'Quetta',la:30.18,lo:66.99},{n:'Multan',la:30.20,lo:71.47},{n:'Sukkur',la:27.70,lo:68.86},{n:'Chitral',la:35.85,lo:71.79}];
-var SAMPLE_FAC={Lahore:[14,26],Karachi:[18,31],Islamabad:[9,15],Peshawar:[11,17],Quetta:[7,9],Multan:[10,14]};
+var PROVS=[
+ {n:'Punjab',pts:[[31.55,74.34],[30.20,71.47]]},{n:'Sindh',pts:[[24.86,67.01],[27.70,68.86]]},
+ {n:'Khyber Pakhtunkhwa',pts:[[34.01,71.58],[35.85,71.79]]},{n:'Balochistan',pts:[[30.18,66.99],[25.12,62.33]]},
+ {n:'Gilgit-Baltistan',pts:[[35.92,74.31]]},{n:'Azad Kashmir',pts:[[34.37,73.47]]},{n:'Islamabad (ICT)',pts:[[33.68,73.05]]}];
+var NORTH=[2,4,5],PTS=[];
+PROVS.forEach(function(p,i){p.pts.forEach(function(q){PTS.push({pi:i,la:q[0],lo:q[1]});});});
+var SAMPLE_FAC={'Punjab':[38,64],'Sindh':[26,41],'KP':[19,29],'Balochistan':[10,15],'GB':[5,7],'AJK':[6,9]};
 var clamp=function(x){return Math.max(0,Math.min(100,Math.round(x)));};
 var lvl=function(p){return p>=70?3:p>=40?2:p>=20?1:0;};
 var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
@@ -3572,9 +3576,9 @@ function prob(r5,pk,h){
   var m=[6,7,8].indexOf(new Date().getMonth())>=0?1:0;
   return Math.round(100/(1+Math.exp(-(M.w0+M.w1*r5+M.w2*pk+M.w3*h+M.w4*m))));
 }
-var FALL=CITIES.map(function(c,i){return {p:[0,2+i,10+i*4,6,1],t:[34+i,35+i,36+i,35,34],h:[60,66,72,68,62],w:[18+i,22,30,20,16]};});
+var FALL=PTS.map(function(c,i){return {p:[0,2+i,10+i*3,6,1],t:[34+i,35+i,36+i,35,34],h:[60,66,72,68,62],w:[18+i,22,30,20,16]};});
 function loadWeather(){
-  var u='https://api.open-meteo.com/v1/forecast?latitude='+CITIES.map(function(c){return c.la;}).join(',')+'&longitude='+CITIES.map(function(c){return c.lo;}).join(',')+
+  var u='https://api.open-meteo.com/v1/forecast?latitude='+PTS.map(function(c){return c.la;}).join(',')+'&longitude='+PTS.map(function(c){return c.lo;}).join(',')+
    '&daily=precipitation_sum,temperature_2m_max,relative_humidity_2m_mean,wind_speed_10m_max&forecast_days=5&timezone=Asia%2FKarachi';
   return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(j){
     if(!Array.isArray(j))j=[j];weatherOk=true;
@@ -3588,17 +3592,18 @@ function loadQuakes(){
 }
 
 function compute(W){
-  cityRisk=CITIES.map(function(c,i){var w=W[i],cum=0,pk=0;
-    var s=w.p.map(function(p,d){cum+=p||0;pk=Math.max(pk,p||0);return prob(cum,pk,w.h[d]);});
-    return {n:c.n,s:s,max:Math.max.apply(null,s)};});
+  cityRisk=PROVS.map(function(p,i){var s=[0,0,0,0,0];
+    PTS.forEach(function(pt,k){if(pt.pi!==i)return;var w=W[k],cum=0,pk=0;
+      w.p.forEach(function(x,d){cum+=x||0;pk=Math.max(pk,x||0);s[d]=Math.max(s[d],prob(cum,pk,w.h[d]));});});
+    return {n:p.n,s:s,max:Math.max.apply(null,s)};});
   var mx=function(a){return Math.max.apply(null,a.map(function(x){return x||0;}));};
   var maxT=mx(W.map(function(w){return mx(w.t);})),maxW=mx(W.map(function(w){return mx(w.w);}));
-  var hill=mx([7,3,2].map(function(i){return mx(W[i].p);}));
+  var hill=mx(PTS.map(function(pt,k){return NORTH.indexOf(pt.pi)>=0?mx(W[k].p):0;}));
   var qa=clamp(quakes.filter(function(q){return q.m>=3;}).length*4+(quakes.length?mx(quakes.map(function(q){return q.m;})):0)*8);
   var hz=[['Flood',mx(cityRisk.map(function(c){return c.max;}))],['Heatwave',clamp((maxT-36)/12*100)],['Storm / wind',clamp((maxW-20)/40*100)],['Landslide',clamp(hill/40*100)],['Earthquake activity',qa]];
   $('rlHz').innerHTML=hz.map(function(h){var l=lvl(h[1]);return '<div class="rl-hr" style="--k:'+LV[l]+'"><div class="t"><span>'+h[0]+'<span class="rl-lv"'+(l===1?' style="color:#061a14"':'')+'>'+LAB[l]+'</span></span><em>'+h[1]+'%</em></div><div class="rl-bar"><i data-w="'+h[1]+'"></i></div></div>';}).join('');
   setBars('#rlHz .rl-bar i');
-  var top=cityRisk.slice().sort(function(a,b){return b.max-a.max;}).slice(0,6);
+  var top=cityRisk.slice().sort(function(a,b){return b.max-a.max;}).slice(0,7);
   $('rlRisky').innerHTML=top.map(function(c){return '<div class="rl-city" style="--k:'+LV[lvl(c.max)]+'"><span class="n">'+c.n+'</span><div class="rl-bar"><i data-w="'+c.max+'"></i></div><b>'+c.max+'%</b></div>';}).join('');
   setBars('#rlRisky .rl-bar i');
   var pal=[GR,'#d4af37',RD,'#6aa8ff'];
