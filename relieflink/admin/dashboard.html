@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReliefLink — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<style>
+:root{--p:#0f4a37;--p2:#1f7a5a;--gold:#c9893a;--ink:#14231c;--mute:#55645b;--card:rgba(255,253,246,.98);--line:#d8cba8;--track:#e6dcc3;--soft:rgba(15,74,55,.07);--hi:#fff;
+  --c3:#c8352e;--c2:#d9731a;--c1:#d9a21b;--c0:#1f9d6b;
+  --bg:radial-gradient(900px 500px at 85% -10%,#f4dfae 0,transparent 60%),linear-gradient(135deg,#ece2cb,#f4ecd9 50%,#e8dcc0)}
+:root[data-theme="dark"]{--ink:#f6efdc;--mute:#b7c4b8;--card:rgba(14,46,35,.95);--line:#24523f;--track:#1f4636;--soft:rgba(255,255,255,.06);--hi:rgba(255,255,255,.07);
+  --bg:radial-gradient(900px 500px at 85% -10%,#14553f 0,transparent 60%),linear-gradient(135deg,#06150f,#0a231a 55%,#05120d)}
+*{box-sizing:border-box;margin:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);min-height:100vh;
+  background:var(--bg);display:flex}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* sidebar */
+.side{position:sticky;top:16px;margin:16px;height:calc(100vh - 32px);width:244px;flex:none;border-radius:28px;padding:22px 16px;display:flex;flex-direction:column;
+  background:linear-gradient(170deg,#14664b,#0b3326 60%,#06201a);color:#d8e3d4;box-shadow:0 24px 50px -20px rgba(6,32,26,.7)}
+.logo{display:flex;align-items:center;gap:10px;padding:0 8px 22px;color:#fff;font-weight:800;font-size:18px}
+.logo b{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#e8b565);display:grid;place-items:center;box-shadow:0 8px 18px -6px #c9893a}
+.nav{display:flex;flex-direction:column;gap:4px;overflow:auto}
+.nav small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc2ae;margin:14px 10px 6px}
+.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;color:inherit;text-decoration:none;font-size:14px;font-weight:600;transition:.25s}
+.nav a:hover{background:rgba(255,255,255,.08);color:#fff;transform:translateX(3px)}
+.nav a.on{background:linear-gradient(135deg,var(--gold),#e3a850);color:#0f2a1e;box-shadow:0 10px 22px -8px #c9893a}
+.help{margin-top:auto;border-radius:20px;padding:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);font-size:12px;line-height:1.5}
+.help b{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+.help a{display:block;margin-top:10px;text-align:center;background:var(--gold);color:#0f2a1e;font-weight:800;padding:9px;border-radius:12px;text-decoration:none}
+
+/* main */
+.main{flex:1;min-width:0;padding:22px 24px 40px 8px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.menu{display:none;border:0;background:var(--card);border-radius:12px;padding:10px;color:var(--ink);cursor:pointer}
+.top h1{font:600 28px/1.1 "Fraunces",serif;letter-spacing:-.01em}.top h1 small{display:block;font-size:12px;font-weight:500;color:var(--mute);letter-spacing:0;margin-top:2px}
+.sp{flex:1}
+.pill{display:flex;align-items:center;gap:8px;background:var(--card);padding:9px 14px;border-radius:999px;font-size:12px;font-weight:600;box-shadow:0 6px 18px -10px rgba(60,50,25,.5);border:1px solid var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--c0);animation:bl 1.6s infinite}.dot.off{background:var(--c3);animation:none}
+@keyframes bl{0%{box-shadow:0 0 0 0 rgba(47,191,132,.6)}70%,100%{box-shadow:0 0 0 9px transparent}}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#e8b565);color:#0f2a1e;display:grid;place-items:center;font-weight:800}
+
+.g{display:grid;gap:20px;margin-bottom:20px}
+.kpis{grid-template-columns:repeat(5,1fr)}
+.r2{grid-template-columns:1.05fr 1.5fr .85fr}
+.r3{grid-template-columns:1.6fr 1fr}
+.r4{grid-template-columns:1fr 1fr}
+.card{background:var(--card);backdrop-filter:blur(8px);border-radius:24px;padding:20px;border:1px solid var(--line);
+  box-shadow:0 18px 40px -22px rgba(60,50,25,.45),inset 0 1px 0 var(--hi);opacity:0;transform:translateY(16px);animation:up .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0)*70ms);transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-3px);box-shadow:0 26px 50px -22px rgba(60,50,25,.55),inset 0 1px 0 var(--hi)}
+@keyframes up{to{opacity:1;transform:none}}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+.ch h2{font-size:15px;font-weight:700;position:relative;padding-bottom:8px}.ch h2::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:3px;border-radius:2px;background:var(--gold)}
+.tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+.tag.live{background:#d5efe2;color:#0d5c40}.tag.demo{background:#f6e3bd;color:#6b4000}
+:root[data-theme="dark"] .tag.live{background:#0f3d2e;color:#7ff0c0}:root[data-theme="dark"] .tag.demo{background:#4a3410;color:#ffcf85}
+.pill{border:0;font-family:inherit;color:var(--ink)}button.pill{cursor:pointer}
+
+.kpi{display:flex;gap:14px;align-items:center}
+.ico{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:#fff;background:var(--k);box-shadow:0 10px 20px -8px var(--k)}
+.kpi b{display:block;font-size:28px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12px;color:var(--mute);font-weight:600}
+.kpi small{display:block;font-size:10px;margin-top:4px;color:var(--mute)}
+
+.hz{display:flex;flex-direction:column;gap:16px}
+.hr .t{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:7px;align-items:center}
+.hr .t em{font-style:normal;font-weight:800}
+.bar{height:10px;background:var(--track);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--k),color-mix(in srgb,var(--k) 55%,#fff));transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.lv{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;color:#fff;background:var(--k);margin-left:6px}
+.note{font-size:11px;color:var(--mute);margin-top:12px;line-height:1.5}
+
+.cv{position:relative;height:250px}
+.donut{position:relative;height:200px}
+.donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+.donut .mid b{font-size:28px;font-weight:800;line-height:1}.donut .mid span{font-size:11px;color:var(--mute)}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12px;color:var(--mute)}
+.leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+
+.fn{display:flex;flex-direction:column;align-items:center;gap:8px}
+.fn div{height:44px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;color:#fff;font-weight:700;font-size:13px;background:var(--k);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+
+.list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:var(--soft);font-size:13px}
+.list li .d{width:10px;height:10px;border-radius:50%;background:var(--k);flex:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--k) 25%,transparent)}
+.list li small{display:block;color:var(--mute);font-size:11px}
+.list li b{margin-left:auto;font-weight:800}
+.city{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.city .n{width:84px;font-weight:700;font-size:13px}.city .bar{flex:1}.city b{width:42px;text-align:right;font-size:13px}
+
+@media(max-width:1250px){.kpis{grid-template-columns:repeat(3,1fr)}.r2{grid-template-columns:1fr 1fr}.r2>:nth-child(2){grid-column:1/-1;order:3}}
+@media(max-width:900px){
+  .side{position:fixed;z-index:9;left:0;top:0;margin:12px;height:calc(100vh - 24px);transform:translateX(-120%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .side.open{transform:none}.menu{display:block}.main{padding:16px}
+  .kpis{grid-template-columns:1fr 1fr}.r2,.r3,.r4{grid-template-columns:1fr}.r2>:nth-child(2){order:0;grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<aside class="side" id="side">
+  <div class="logo"><b><svg class="i" viewBox="0 0 24 24" style="stroke:#0f2a1e"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></b>ReliefLink</div>
+  <nav class="nav" id="nav">
+    <small>Overview</small>
+    <a href="#top" class="on" data-i="grid">Dashboard</a>
+    <a href="#chances" data-i="spark">Disaster chances</a>
+    <a href="#alerts" data-i="bell">Live alerts</a>
+    <small>Resources</small>
+    <a href="#volunteers" data-i="users">Volunteers</a>
+    <a href="#facilities" data-i="home">Shelters</a>
+    <a href="#facilities" data-i="plus">Hospitals</a>
+    <a href="#sos" data-i="warn">SOS requests</a>
+    <small>Tools</small>
+    <a href="preview.html" data-i="map">Live map</a>
+    <a href="preview.html" data-i="home">User app</a>
+  </nav>
+  <div class="help"><b>Emergency?</b>Call Rescue 1122 right away, then coordinate teams from here.<a href="tel:1122">Call 1122</a></div>
+</aside>
+
+<main class="main" id="top">
+  <div class="top">
+    <button class="menu" id="menu" aria-label="Menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <h1>Admin Dashboard<small>Pakistan disaster response overview</small></h1>
+    <div class="sp"></div>
+    <div class="pill"><span class="dot" id="dot"></span><span id="st">Connecting…</span></div>
+    <div class="pill" id="clock">--:--:--</div>
+    <button class="pill" id="theme" aria-label="Switch light or dark theme">☾ Dark</button>
+    <div class="av">A</div>
+  </div>
+
+  <section class="g kpis" id="kpis"></section>
+
+  <section class="g r2">
+    <div class="card" id="chances" style="--d:5">
+      <div class="ch"><h2>Disaster chances · next 5 days</h2><span class="tag live">Live</span></div>
+      <div class="hz" id="hz"></div>
+      <p class="note">Flood, heat, storm and landslide come from the live forecast. Earthquakes cannot be predicted, so that bar shows recent activity only.</p>
+    </div>
+    <div class="card" style="--d:6">
+      <div class="ch"><h2>Flood probability by city</h2><span class="tag live">Live</span></div>
+      <div class="cv"><canvas id="floodChart"></canvas></div>
+    </div>
+    <div class="card" id="volunteers" style="--d:7">
+      <div class="ch"><h2>Volunteers</h2><span class="tag demo">Sample</span></div>
+      <div class="donut"><canvas id="volChart"></canvas><div class="mid"><b id="vt">0</b><span>total</span></div></div>
+      <div class="leg" id="volLeg"></div>
+    </div>
+  </section>
+
+  <section class="g r3">
+    <div class="card" id="facilities" style="--d:8">
+      <div class="ch"><h2>Shelters &amp; hospitals by city</h2><span class="tag demo">Sample</span></div>
+      <div class="cv"><canvas id="facChart"></canvas></div>
+    </div>
+    <div class="card" style="--d:9">
+      <div class="ch"><h2>Most at-risk cities</h2><span class="tag live">Live</span></div>
+      <div id="risky"></div>
+    </div>
+  </section>
+
+  <section class="g r4">
+    <div class="card" id="sos" style="--d:10">
+      <div class="ch"><h2>SOS pipeline</h2><span class="tag demo">Sample</span></div>
+      <div class="fn" id="fn"></div>
+    </div>
+    <div class="card" id="alerts" style="--d:11">
+      <div class="ch"><h2>Latest alerts</h2><span class="tag live">Live</span></div>
+      <ul class="list" id="al"></ul>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ===== SAMPLE DATA — replace with your database / API (Firebase, Supabase, etc.) ===== */
+var DATA={
+  sos:11,
+  volunteers:{Available:128,Deployed:64,Offline:38},
+  shelters:{Lahore:14,Karachi:18,Islamabad:9,Peshawar:11,Quetta:7,Multan:10},
+  hospitals:{Lahore:26,Karachi:31,Islamabad:15,Peshawar:17,Quetta:9,Multan:14},
+  pipeline:[['Received',42],['Assigned',31],['On the way',22],['Resolved',17]]
+};
+/* ======================================================================================= */
+var CITIES=[{n:'Lahore',la:31.55,lo:74.34},{n:'Karachi',la:24.86,lo:67.01},{n:'Islamabad',la:33.68,lo:73.05},{n:'Peshawar',la:34.01,lo:71.58},
+  {n:'Quetta',la:30.18,lo:66.99},{n:'Multan',la:30.20,lo:71.47},{n:'Sukkur',la:27.70,lo:68.86},{n:'Chitral',la:35.85,lo:71.79}];
+var C=['#1f9d6b','#d9a21b','#d9731a','#c8352e'],LAB=['Low','Watch','High','Critical'],P='#177a58';
+var sum=function(o){return Object.values(o).reduce(function(a,b){return a+b;},0);};
+var clamp=function(x){return Math.max(0,Math.min(100,Math.round(x)));};
+var lvl=function(p){return p>=70?3:p>=40?2:p>=20?1:0;};
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var $=function(id){return document.getElementById(id);};
+var charts={},cityRisk=[],quakes=[];
+try{document.documentElement.dataset.theme=localStorage.getItem('rl-theme')||'light';}catch(e){}
+function gridC(){return document.documentElement.dataset.theme==='dark'?'#24523f':'#dfd3b4';}
+function applyTheme(t){
+  document.documentElement.dataset.theme=t;try{localStorage.setItem('rl-theme',t);}catch(e){}
+  $('theme').textContent=t==='dark'?'☀ Light':'☾ Dark';
+  if(window.Chart){Chart.defaults.color=t==='dark'?'#b7c4b8':'#55645b';
+    ['f','fac'].forEach(function(k){var c=charts[k];if(c){c.options.scales.y.grid.color=gridC();c.update();}});}
+}
+
+/* icons */
+var IC={grid:'<rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/>',
+ spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+ bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+ home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',plus:'<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/>',
+ warn:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.5"/>',map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>'};
+var ico=function(k){return '<svg class="i" viewBox="0 0 24 24">'+IC[k]+'</svg>';};
+document.querySelectorAll('#nav a').forEach(function(a){a.insertAdjacentHTML('afterbegin',ico(a.dataset.i));
+  a.addEventListener('click',function(){document.querySelectorAll('#nav a').forEach(function(x){x.classList.remove('on');});a.classList.add('on');$('side').classList.remove('open');});});
+$('menu').onclick=function(){$('side').classList.toggle('open');};
+
+/* count up */
+function countUp(el,to){var s=performance.now();(function f(t){var k=Math.min(1,(t-s)/1100);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f);})(s);}
+
+/* KPIs */
+function kpis(high,live){
+  var k=[['Active SOS',DATA.sos,'warn','#c8352e','Sample'],['Volunteers',sum(DATA.volunteers),'users',P,'Sample'],
+    ['Shelters',sum(DATA.shelters),'home','#b8761f','Sample'],['Hospitals',sum(DATA.hospitals),'plus','#0f5a42','Sample'],
+    ['High-risk zones',high,'spark','#d9731a',live?'Live':'Sample']];
+  $('kpis').innerHTML=k.map(function(x,i){return '<div class="card kpi" style="--d:'+i+';--k:'+x[3]+'"><div class="ico">'+ico(x[2])+'</div><div><b data-to="'+x[1]+'">0</b><span>'+x[0]+'</span><small>'+x[4]+' data</small></div></div>';}).join('');
+  document.querySelectorAll('#kpis b').forEach(function(b){countUp(b,+b.dataset.to);});
+}
+
+/* flood model (illustrative logistic regression — tune the weights with real data) */
+function prob(r5,peak,hum){var m=[6,7,8].indexOf(new Date().getMonth())>=0?1:0;var z=-4.2+.014*r5+.022*peak+.012*hum+.8*m;return Math.round(100/(1+Math.exp(-z)));}
+
+/* weather */
+var SAMPLE=CITIES.map(function(c,i){return {p:[0,2+i,10+i*3,6,1],t:[34+i,35+i,36+i,35,34],h:[60,65,70,68,62],w:[18+i,22,30,20,16]};});
+function loadWeather(){
+  var u='https://api.open-meteo.com/v1/forecast?latitude='+CITIES.map(function(c){return c.la;}).join(',')+'&longitude='+CITIES.map(function(c){return c.lo;}).join(',')+
+   '&daily=precipitation_sum,temperature_2m_max,relative_humidity_2m_mean,wind_speed_10m_max&forecast_days=5&timezone=Asia%2FKarachi';
+  return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(j){
+    if(!Array.isArray(j))j=[j];
+    return j.map(function(x){return {p:x.daily.precipitation_sum,t:x.daily.temperature_2m_max,h:x.daily.relative_humidity_2m_mean,w:x.daily.wind_speed_10m_max,days:x.daily.time};});
+  }).then(function(d){setLive(true);return d;}).catch(function(){setLive(false);return SAMPLE;});
+}
+function setLive(ok){$('dot').className='dot'+(ok?'':' off');$('st').textContent=ok?'LIVE':'Offline · sample forecast';}
+
+function quakeLoad(){
+  var s=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+  return fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=23&maxlatitude=38&minlongitude=60&maxlongitude=78&minmagnitude=3&limit=20&orderby=time&starttime='+s)
+   .then(function(r){return r.json();}).then(function(j){return j.features.map(function(f){return {m:f.properties.mag,place:f.properties.place||'Pakistan region',t:f.properties.time};});}).catch(function(){return [];});
+}
+
+function compute(W){
+  var days=['Day 1','Day 2','Day 3','Day 4','Day 5'];
+  cityRisk=CITIES.map(function(c,i){var w=W[i],cum=0,pk=0;
+    var s=w.p.map(function(p,d){cum+=p||0;pk=Math.max(pk,p||0);return prob(cum,pk,w.h[d]);});
+    return {n:c.n,s:s,max:Math.max.apply(null,s)};});
+  var maxT=Math.max.apply(null,W.map(function(w){return Math.max.apply(null,w.t);}));
+  var maxW=Math.max.apply(null,W.map(function(w){return Math.max.apply(null,w.w);}));
+  var hill=Math.max.apply(null,[7,3,2].map(function(i){return Math.max.apply(null,W[i].p.map(function(x){return x||0;}));}));
+  var qa=clamp(quakes.filter(function(q){return q.m>=3;}).length*4+(quakes.length?Math.max.apply(null,quakes.map(function(q){return q.m;})):0)*8);
+  var hz=[['Flood',Math.max.apply(null,cityRisk.map(function(c){return c.max;})),'Highest city forecast'],
+    ['Heatwave',clamp((maxT-36)/12*100)],['Storm / wind',clamp((maxW-20)/40*100)],['Landslide',clamp(hill/40*100)],['Earthquake activity',qa]];
+  $('hz').innerHTML=hz.map(function(h){var l=lvl(h[1]);return '<div class="hr" style="--k:'+C[l]+'"><div class="t"><span>'+h[0]+'<span class="lv"'+(l===1?' style="color:#1b1206"':'')+'>'+LAB[l]+'</span></span><em>'+h[1]+'%</em></div><div class="bar"><i data-w="'+h[1]+'"></i></div></div>';}).join('');
+  requestAnimationFrame(function(){document.querySelectorAll('#hz .bar i').forEach(function(b){b.style.width=Math.max(3,b.dataset.w)+'%';});});
+
+  var top=cityRisk.slice().sort(function(a,b){return b.max-a.max;}).slice(0,6);
+  $('risky').innerHTML=top.map(function(c){var l=lvl(c.max);return '<div class="city" style="--k:'+C[l]+'"><span class="n">'+c.n+'</span><div class="bar"><i data-w="'+c.max+'"></i></div><b>'+c.max+'%</b></div>';}).join('');
+  requestAnimationFrame(function(){document.querySelectorAll('#risky .bar i').forEach(function(b){b.style.width=Math.max(3,b.dataset.w)+'%';});});
+
+  var high=cityRisk.filter(function(c){return c.max>=40;}).length;
+  kpis(high,true);
+
+  if(window.Chart){
+    var pal=['#1f8a63','#d29a3d','#c8352e','#6fb79a'];
+    var ds=cityRisk.slice(0,4).map(function(c,i){return {label:c.n,data:c.s,borderColor:pal[i],backgroundColor:pal[i],tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:6};});
+    if(charts.f){charts.f.data.datasets=ds;charts.f.update();}
+    else charts.f=new Chart($('floodChart'),{type:'line',data:{labels:days,datasets:ds},options:{responsive:true,maintainAspectRatio:false,
+      scales:{y:{min:0,max:100,ticks:{callback:function(v){return v+'%';}},grid:{color:gridC()},border:{display:false}},x:{grid:{display:false},border:{display:false}}},
+      plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}}}}});
+  }
+  var al=[];
+  cityRisk.filter(function(c){return c.max>=40;}).sort(function(a,b){return b.max-a.max;}).forEach(function(c){al.push({l:lvl(c.max),t:'Flood risk — '+c.n,s:'Forecast peak probability',v:c.max+'%'});});
+  quakes.slice(0,4).forEach(function(q){al.push({l:q.m>=5?3:q.m>=4.5?2:1,t:'M'+q.m.toFixed(1)+' earthquake',s:esc(q.place)+' · '+new Date(q.t).toLocaleDateString('en-GB'),v:'M'+q.m.toFixed(1)});});
+  $('al').innerHTML=al.slice(0,6).map(function(a){return '<li style="--k:'+C[a.l]+'"><span class="d"></span><div>'+a.t+'<small>'+a.s+'</small></div><b>'+a.v+'</b></li>';}).join('')||'<li>No active alerts</li>';
+}
+
+/* static (sample) widgets */
+function staticWidgets(){
+  var vk=Object.keys(DATA.volunteers),vc=['#1f8a63','#d29a3d','#b9b39c'];
+  $('vt').textContent=sum(DATA.volunteers);
+  $('volLeg').innerHTML=vk.map(function(k,i){return '<span><i style="background:'+vc[i]+'"></i>'+k+' '+DATA.volunteers[k]+'</span>';}).join('');
+  var fc=Object.keys(DATA.shelters);
+  $('fn').innerHTML=DATA.pipeline.map(function(p,i){var cols=['#b8761f','#177a58','#c8661a','#0f5a42'];
+    return '<div style="--k:'+cols[i]+'" data-w="'+Math.round(p[1]/DATA.pipeline[0][1]*100)+'"><span>'+p[0]+'</span><span>'+p[1]+'</span></div>';}).join('');
+  requestAnimationFrame(function(){document.querySelectorAll('#fn div').forEach(function(d){d.style.width=Math.max(38,d.dataset.w)+'%';});});
+  if(!window.Chart)return;
+  Chart.defaults.font.family='"Plus Jakarta Sans",system-ui,sans-serif';Chart.defaults.color=document.documentElement.dataset.theme==='dark'?'#b7c4b8':'#55645b';
+  new Chart($('volChart'),{type:'doughnut',data:{labels:vk,datasets:[{data:vk.map(function(k){return DATA.volunteers[k];}),backgroundColor:vc,borderWidth:0,hoverOffset:6,borderRadius:8}]},
+    options:{cutout:'74%',maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  charts.fac=new Chart($('facChart'),{type:'bar',data:{labels:fc,datasets:[
+    {label:'Shelters',data:fc.map(function(k){return DATA.shelters[k];}),backgroundColor:'#d29a3d',borderRadius:10,maxBarThickness:26},
+    {label:'Hospitals',data:fc.map(function(k){return DATA.hospitals[k];}),backgroundColor:'#1f8a63',borderRadius:10,maxBarThickness:26}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:gridC()},border:{display:false}},x:{grid:{display:false},border:{display:false}}},
+      plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}}}}});
+}
+
+function tick(){$('clock').textContent=new Date().toLocaleTimeString('en-GB',{timeZone:'Asia/Karachi'})+' PKT';}
+setInterval(tick,1000);tick();
+$('theme').onclick=function(){applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');};
+staticWidgets();kpis(0,false);applyTheme(document.documentElement.dataset.theme);
+function refresh(){quakeLoad().then(function(q){quakes=q;return loadWeather();}).then(compute);}
+refresh();setInterval(refresh,600000);
+</script>
+</body>
+</html>
