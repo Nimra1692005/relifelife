@@ -1104,6 +1104,73 @@ input,select,textarea{color-scheme:dark}
 body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.22;
   background:url('https://raw.githubusercontent.com/Nimra1692005/relifelife/main/relieflink/admin/landing-bg.png') center/cover no-repeat}
 
+
+/* ═══ NEW DASHBOARD (dark green / cream / gold) ═══ */
+#page-dashboard .rl{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;padding:24px 0 90px;align-items:start;color:#f0e9d6;font-family:'Inter',system-ui,sans-serif}
+.rl *{box-sizing:border-box}
+.rl-side{position:sticky;top:92px;background:linear-gradient(170deg,#124f3b,#0a2a20 70%);border:1px solid #235a45;border-radius:24px;padding:16px 12px;display:flex;flex-direction:column;gap:3px;box-shadow:0 24px 50px -24px #000}
+.rl-sh{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#9fc2ae;margin:12px 10px 6px}
+.rl-sh:first-child{margin-top:2px}
+.rl-side a{display:block;padding:10px 12px;border-radius:12px;color:#d6cfb9;font-size:13px;font-weight:600;cursor:pointer;transition:.25s}
+.rl-side a:hover{background:rgba(212,175,55,.1);color:#f0cf72;transform:translateX(3px)}
+.rl-side a.on{background:linear-gradient(135deg,#d4af37,#f0cf72);color:#061a14;box-shadow:0 10px 22px -10px #d4af37}
+.rl-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.rl-head h2{font-family:'Fraunces','Inter',serif;font-size:34px;font-weight:600;color:#f6f1ea;line-height:1.1}
+.rl-head p{font-size:13px;color:#b3ad98;margin-top:4px}
+.rl-quick{display:flex;gap:8px;flex-wrap:wrap}
+.rl-quick button{background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.45);color:#f0cf72;padding:9px 16px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;transition:.25s}
+.rl-quick button:hover{background:#d4af37;color:#061a14}
+.rl-card{background:linear-gradient(160deg,#0e3829,#0a2e22);border:1px solid #235a45;border-radius:22px;padding:18px;box-shadow:0 18px 40px -24px #000;opacity:0;transform:translateY(16px);animation:rlUp .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0)*60ms);transition:transform .3s,border-color .3s}
+.rl-card:hover{transform:translateY(-3px);border-color:#d4af37}
+@keyframes rlUp{to{opacity:1;transform:none}}
+.rl-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:16px}
+.rl-kpi{display:flex;align-items:center;gap:12px;padding:14px}
+.rl-kpi i{font-style:normal;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:19px;background:color-mix(in srgb,var(--k) 22%,transparent);border:1px solid color-mix(in srgb,var(--k) 55%,transparent);flex:none}
+.rl-kpi b{display:block;font-size:24px;line-height:1.05;font-weight:800;color:#f6f1ea;font-variant-numeric:tabular-nums}
+.rl-kpi span{font-size:11px;color:#b3ad98;font-weight:600}.rl-kpi small{font-size:9px;opacity:.8}
+.rl-g3{display:grid;grid-template-columns:1.05fr 1.5fr .85fr;gap:16px;margin-bottom:16px}
+.rl-g2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
+.rl-g2+.rl-g2{grid-template-columns:1fr 1fr}
+.rl-ch{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
+.rl-ch h3{font-size:14px;font-weight:700;color:#f6f1ea;position:relative;padding-bottom:8px;line-height:1.3}
+.rl-ch h3::after{content:"";position:absolute;left:0;bottom:0;width:26px;height:3px;border-radius:2px;background:#d4af37}
+.rl-ch h3 small{font-weight:500;color:#b3ad98;font-size:11px}
+.rl-ch em{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;flex:none}
+.rl-ch em.live{background:rgba(62,207,142,.16);color:#7ff0c0}.rl-ch em.demo{background:rgba(212,175,55,.18);color:#f0cf72}
+.rl-hz{display:flex;flex-direction:column;gap:15px}
+.rl-hr .t{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin-bottom:7px}
+.rl-hr .t em{font-style:normal;font-weight:800}
+.rl-lv{font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;color:#fff;background:var(--k);margin-left:6px}
+.rl-bar{height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.rl-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--k),color-mix(in srgb,var(--k) 55%,#fff));transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.rl-note{font-size:11px;color:#b3ad98;margin-top:12px;line-height:1.5}
+.rl-main{min-width:0}.rl-g3>*,.rl-g2>*,.rl-kpis>*{min-width:0}.rl-cv,.rl-donut{width:100%;min-width:0;overflow:hidden}.rl-cv canvas,.rl-donut canvas{max-width:100%}
+.rl-cv{position:relative;height:250px}.rl-tall{height:340px;margin-bottom:14px}
+.rl-donut{position:relative;height:190px}
+.rl-donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none}
+.rl-donut .mid b{font-size:28px;font-weight:800;color:#f6f1ea;line-height:1}.rl-donut .mid span{font-size:11px;color:#b3ad98}
+.rl-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12px;color:#d6cfb9}
+.rl-leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.rl-city{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rl-city .n{width:84px;font-weight:700;font-size:13px}.rl-city .rl-bar{flex:1}.rl-city b{width:42px;text-align:right;font-size:13px}
+.rl-fn{display:flex;flex-direction:column;align-items:center;gap:8px}
+.rl-fn div{height:42px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;color:#061a14;font-weight:800;font-size:13px;background:var(--k);width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.rl-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.rl-list li{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.05);font-size:13px;border-left:3px solid var(--k)}
+.rl-list li small{display:block;color:#b3ad98;font-size:11px}
+.rl-list li b{margin-left:auto;font-weight:800;color:var(--k)}
+.rl-rivers{margin-bottom:16px}
+.rl-rivers .rivers-grid{margin-top:4px}
+.rl-src{font-size:11px;color:#b3ad98;text-align:center;margin-top:8px}
+@media(max-width:1250px){.rl-kpis{grid-template-columns:repeat(3,1fr)}.rl-g3{grid-template-columns:1fr 1fr}.rl-g3>:nth-child(2){grid-column:1/-1;order:3}}
+@media(max-width:900px){
+  #page-dashboard .rl{grid-template-columns:1fr;padding:14px 0 100px}
+  .rl-side{position:static;flex-direction:row;overflow-x:auto;padding:10px;border-radius:18px}
+  .rl-side a{white-space:nowrap}.rl-sh{display:none}
+  .rl-kpis{grid-template-columns:1fr 1fr}.rl-g3,.rl-g2,.rl-g2+.rl-g2{grid-template-columns:1fr}.rl-g3>:nth-child(2){order:0;grid-column:auto}
+  .rl-head h2{font-size:28px}
+}
+@media(prefers-reduced-motion:reduce){.rl-card{animation-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -1220,72 +1287,88 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 
 <!-- ═══ PAGE: DASHBOARD ═══ -->
 <div class="app-page active" id="page-dashboard">
+<div class="rl">
+  <aside class="rl-side">
+    <div class="rl-sh">Dashboard</div>
+    <a class="on" data-t="rl-top">📊 Overview</a>
+    <a data-t="rl-chances">🧠 Disaster chances</a>
+    <a data-t="rl-rivers">🌊 River levels</a>
+    <a data-t="rl-vol">🤝 Volunteers</a>
+    <a data-t="rl-fac">🏥 Shelters &amp; hospitals</a>
+    <a data-t="rl-alerts">🚨 Live alerts</a>
+    <div class="rl-sh">Open</div>
+    <a data-p="map">🗺️ Live map</a>
+    <a data-p="nearby">📍 Nearby</a>
+    <a data-p="weather">🌤️ Weather</a>
+    <a data-p="predictor">🧠 AI predictor</a>
+    <a data-p="volunteers">➕ Register volunteer</a>
+    <a data-c="1">🤖 AI assistant</a>
+  </aside>
 
-<!-- ═══ HERO ═══ -->
-<section class="hero sr" id="hero">
-<div class="hero-tag sr sr-delay-1">Live Disaster Emergency Response</div>
-<h1 class="sr sr-delay-2">ReliefLink</h1>
-<p class="sr sr-delay-3">Real-time disaster monitoring, nearby hospitals & shelters, weather intelligence, and AI-powered risk analysis for Pakistan — all in one platform.</p>
-<div class="hero-actions sr sr-delay-4">
-<button class="action-btn primary" onclick="showPage('map')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/></svg>Live Map</button>
-<button class="action-btn secondary" onclick="showPage('nearby')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>Find Nearby</button>
-<button class="action-btn secondary" onclick="showPage('weather')"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>Weather</button>
-</div>
-</section>
+  <div class="rl-main" id="rl-top">
+    <div class="rl-head">
+      <div><h2>Dashboard</h2><p>Pakistan disaster response overview · <span id="rlSt">Connecting…</span></p></div>
+      <div class="rl-quick"><button data-p="map">Live Map</button><button data-p="nearby">Find Nearby</button><button data-p="weather">Weather</button></div>
+    </div>
 
-<!-- ═══ RIVER STATUS ═══ -->
-<section class="rivers-section sr">
-<div class="section-label">River Levels — Live Monitoring Stations <span style="font-size:11px;color:var(--g400);text-transform:none;letter-spacing:0"> · Updated: <span id="riverUpdateTime">--:--</span> PKT · Source: FFD baselines + live OpenWeatherMap rainfall</span></div>
-<div class="rivers-grid" id="riversGrid"></div>
-</section>
+    <section class="rl-kpis">
+      <div class="rl-card rl-kpi" style="--k:#ef5350;--d:0"><i>🚨</i><div><b class="stat-num red" id="statSOS">--</b><span>Active SOS</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#3ecf8e;--d:1"><i>💚</i><div><b class="stat-num cyan" id="statHelp">--</b><span>People helped</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#d4af37;--d:2"><i>⛺</i><div><b class="stat-num green" id="statShelters">--</b><span>Shelters &amp; hospitals</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#6aa8ff;--d:3"><i>🏥</i><div><b id="rlHosp">--</b><span>Hospitals <small id="rlHospT">(sample)</small></span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#f0cf72;--d:4"><i>🤝</i><div><b id="rlVol">--</b><span>Volunteers</span></div></div>
+      <div class="rl-card rl-kpi" style="--k:#f08a4b;--d:5"><i>⚠️</i><div><b class="stat-num orange" id="statZones">--</b><span>High-risk zones</span></div></div>
+    </section>
 
-<!-- ═══ STATS ═══ -->
-<div class="stats-row perspective-3d">
-<div class="stat-box card-3d sr sr-delay-1"><div class="stat-num red" id="statSOS">--</div><div class="stat-lbl">Active SOS</div></div>
-<div class="stat-box card-3d sr sr-delay-2"><div class="stat-num cyan" id="statHelp">--</div><div class="stat-lbl">People Helped</div></div>
-<div class="stat-box card-3d sr sr-delay-3"><div class="stat-num green" id="statShelters">--</div><div class="stat-lbl">Active Shelters</div></div>
-<div class="stat-box card-3d sr sr-delay-4"><div class="stat-num orange" id="statZones">--</div><div class="stat-lbl">High-Risk Zones</div></div>
-<div class="stat-box card-3d sr sr-delay-5"><div class="stat-num" style="color:var(--cyan)">24/7</div><div class="stat-lbl">Monitoring</div></div>
-</div>
+    <section class="rl-g3">
+      <div class="rl-card" id="rl-chances" style="--d:6">
+        <div class="rl-ch"><h3>Disaster chances · next 5 days</h3><em class="live">Live</em></div>
+        <div class="rl-hz" id="rlHz"></div>
+        <p class="rl-note">Flood uses your AI flood model on the live forecast. Earthquakes cannot be predicted, so that bar is recent activity only.</p>
+      </div>
+      <div class="rl-card" style="--d:7">
+        <div class="rl-ch"><h3>Flood probability by city</h3><em class="live">Live</em></div>
+        <div class="rl-cv"><canvas id="rlFlood"></canvas></div>
+      </div>
+      <div class="rl-card" id="rl-vol" style="--d:8">
+        <div class="rl-ch"><h3>Volunteers</h3><em id="rlVolT" class="demo">Sample</em></div>
+        <div class="rl-donut"><canvas id="rlVolC"></canvas><div class="mid"><b id="rlVolN">0</b><span>total</span></div></div>
+        <div class="rl-leg" id="rlVolL"></div>
+      </div>
+    </section>
 
-<!-- ═══ AI ASSISTANT HERO CARD (multilingual) ═══ -->
-<div class="ai-hero-card sr card-3d" onclick="openChat()">
-<div class="ai-hero-content">
-<div class="ai-hero-icon">🤖</div>
-<div style="flex:1">
-<div class="ai-hero-title">AI Assistant — Weather, Disasters & Emergencies</div>
-<div class="ai-hero-sub">Flood safety, weather forecasts, emergency help — ask anything about disasters in Pakistan. Powered by Groq AI.</div>
-</div>
-<div class="ai-hero-cta">Chat Now</div>
-</div>
-<div class="ai-hero-langs"><span>Ask in English</span><span>·</span><span>Weather & Disasters</span><span>·</span><span>Emergency Help</span></div>
-</div>
+    <section class="rl-card rl-rivers" id="rl-rivers" style="--d:9">
+      <div class="rl-ch"><h3>River levels — live monitoring stations <small>· Updated: <span id="riverUpdateTime">--:--</span> PKT · FFD baselines + live rainfall</small></h3><em class="live">Live</em></div>
+      <div class="rl-cv rl-tall"><canvas id="rlRiverC"></canvas></div>
+      <div class="rivers-grid" id="riversGrid"></div>
+    </section>
 
-<!-- ═══ AI FLOOD PREDICTOR CARD ═══ -->
-<div class="flood-card sr card-3d" onclick="showPage('predictor')">
-<div class="flood-card-left">
-<div class="flood-card-icon">🧠</div>
-<div>
-<div class="flood-card-title">AI Flood-Risk Predictor</div>
-<div class="flood-card-sub">Real ML model · live rainfall forecast · flood probability</div>
-</div>
-</div>
-<div class="flood-card-cta">Predict</div>
-</div>
+    <section class="rl-g2">
+      <div class="rl-card" id="rl-fac" style="--d:10">
+        <div class="rl-ch"><h3 id="rlFacH">Shelters &amp; hospitals by city</h3><em id="rlFacT" class="demo">Sample</em></div>
+        <div class="rl-cv"><canvas id="rlFac"></canvas></div>
+        <p class="rl-note" id="rlFacN">Open <b>Nearby</b> or <b>Safe Places</b> and search an area to load live OpenStreetMap counts here.</p>
+      </div>
+      <div class="rl-card" style="--d:11">
+        <div class="rl-ch"><h3>Most at-risk cities</h3><em class="live">Live</em></div>
+        <div id="rlRisky"></div>
+      </div>
+    </section>
 
-<!-- ═══ DATA SOURCES ═══ -->
-<div class="sources-strip">
-<div class="sources-title">Trusted Data Sources — Live</div>
-<div class="sources-grid">
-<span class="source-chip"><b>PMD</b> · Pakistan Meteorological Dept (weather patterns)</span>
-<span class="source-chip"><b>FFD/WAPDA</b> · Flood Forecasting Division (river thresholds)</span>
-<span class="source-chip"><b>USGS</b> · Earthquake feed (live)</span>
-<span class="source-chip"><b>GDACS</b> · Global disaster alerts (live)</span>
-<span class="source-chip"><b>OpenWeatherMap</b> · Weather + rainfall forecasts (live)</span>
-<span class="source-chip"><b>OpenStreetMap</b> · Hospitals, shelters, routes (live)</span>
-</div>
-</div>
+    <section class="rl-g2">
+      <div class="rl-card" style="--d:12">
+        <div class="rl-ch"><h3>SOS requests by status</h3><em class="live">Live</em></div>
+        <div class="rl-fn" id="rlFn"></div>
+      </div>
+      <div class="rl-card" id="rl-alerts" style="--d:13">
+        <div class="rl-ch"><h3>Latest alerts</h3><em class="live">Live</em></div>
+        <ul class="rl-list" id="rlAl"></ul>
+      </div>
+    </section>
 
+    <p class="rl-src">Sources: PMD · FFD/WAPDA · USGS · GDACS · OpenWeatherMap · Open-Meteo · OpenStreetMap</p>
+  </div>
+</div>
 </div><!-- /page-dashboard -->
 
 <!-- ═══ PAGE: ALERTS ═══ -->
@@ -1801,7 +1884,7 @@ function showPage(page){
 document.querySelectorAll('.app-page').forEach(p=>p.classList.remove('active'));
 const el=document.getElementById('page-'+page);
 if(el){el.classList.add('active');}
-currentPage=page;
+currentPage=page;if(page==='dashboard'&&window.rlUpdate)setTimeout(window.rlUpdate,60);
 // Update nav buttons
  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
 const navBtn=document.getElementById('nav'+page.charAt(0).toUpperCase()+page.slice(1));
@@ -2348,7 +2431,7 @@ const lu=document.getElementById('alertsLastUpdate');
 if(lu)lu.textContent=new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' PKT';
 // Render
 renderAlerts(currentAlertTab);
-updateTicker(allAlerts);
+updateTicker(allAlerts);if(window.rlUpdate)setTimeout(window.rlUpdate,0);
 // Update stats
 const statSOS=document.getElementById('statSOS');if(statSOS)statSOS.textContent=allAlerts.filter(a=>a.severity==='red'||a.severity==='orange').length;
 // Add earthquake markers on map
@@ -2621,7 +2704,7 @@ function renderRivers(){
 const grid=document.getElementById('riversGrid');
 const now=new Date();
 const timeStr=now.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit',hour12:false});
-document.getElementById('riverUpdateTime').textContent=timeStr;
+document.getElementById('riverUpdateTime').textContent=timeStr;if(window.rlUpdate)setTimeout(window.rlUpdate,0);
 grid.innerHTML=riverData.map(r=>{
 const st=getRiverStatus(r.current,r.low,r.normal,r.flood);
 const pct=Math.min((r.current/r.flood)*100,100);
@@ -3319,7 +3402,7 @@ return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
 }
 
 function renderVolunteers(vols){
-volData=vols;
+volData=vols;if(window.rlUpdate)setTimeout(window.rlUpdate,0);
 const grid=document.getElementById('volGrid');
 
 // Stats
@@ -3435,6 +3518,144 @@ document.querySelectorAll('.vol-feat-tip').forEach(function(tip){
     },300);
   });
 });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script>
+/* ═══ NEW DASHBOARD LOGIC (live charts + river data + volunteers) ═══ */
+(function(){
+var $=function(i){return document.getElementById(i);};
+var GR='#3ecf8e',YE='#f0cf72',OR='#f08a4b',RD='#ef5350',LV=[GR,YE,OR,RD],LAB=['Low','Watch','High','Critical'];
+var TXT='#d6cfb9',GRID='rgba(212,175,55,.14)';
+var ch={},cityRisk=[],quakes=[],weatherOk=false,weatherTried=false;
+var CITIES=[{n:'Lahore',la:31.55,lo:74.34},{n:'Karachi',la:24.86,lo:67.01},{n:'Islamabad',la:33.68,lo:73.05},{n:'Peshawar',la:34.01,lo:71.58},
+ {n:'Quetta',la:30.18,lo:66.99},{n:'Multan',la:30.20,lo:71.47},{n:'Sukkur',la:27.70,lo:68.86},{n:'Chitral',la:35.85,lo:71.79}];
+var SAMPLE_FAC={Lahore:[14,26],Karachi:[18,31],Islamabad:[9,15],Peshawar:[11,17],Quetta:[7,9],Multan:[10,14]};
+var clamp=function(x){return Math.max(0,Math.min(100,Math.round(x)));};
+var lvl=function(p){return p>=70?3:p>=40?2:p>=20?1:0;};
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+function mk(id,cfg){var c=$(id);if(!c||!window.Chart)return;if(ch[id])ch[id].destroy();ch[id]=new Chart(c,cfg);}
+function setBars(sel){requestAnimationFrame(function(){document.querySelectorAll(sel).forEach(function(b){b.style.width=Math.max(3,b.dataset.w)+'%';});});}
+function countUp(el,to){if(!el)return;var s=performance.now();(function f(t){var k=Math.min(1,(t-s)/1000);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f);})(s);}
+if(window.Chart){Chart.defaults.font.family='Inter,system-ui,sans-serif';Chart.defaults.color=TXT;}
+
+/* sidebar */
+document.querySelectorAll('.rl-side a').forEach(function(a){a.addEventListener('click',function(){
+  if(a.dataset.t){var t=$(a.dataset.t);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+    document.querySelectorAll('.rl-side a[data-t]').forEach(function(x){x.classList.remove('on');});a.classList.add('on');}
+  else if(a.dataset.p&&window.showPage)showPage(a.dataset.p);
+  else if(a.dataset.c&&window.openChat)openChat();});});
+document.querySelectorAll('.rl-quick button').forEach(function(b){b.addEventListener('click',function(){if(window.showPage)showPage(b.dataset.p);});});
+
+/* flood model: uses the app's own FLOOD_MODEL weights */
+function prob(r5,pk,h){
+  var M;try{M=FLOOD_MODEL;}catch(e){M={w0:-7.2,w1:.028,w2:.045,w3:.035,w4:1.1};}
+  var m=[6,7,8].indexOf(new Date().getMonth())>=0?1:0;
+  return Math.round(100/(1+Math.exp(-(M.w0+M.w1*r5+M.w2*pk+M.w3*h+M.w4*m))));
+}
+var FALL=CITIES.map(function(c,i){return {p:[0,2+i,10+i*4,6,1],t:[34+i,35+i,36+i,35,34],h:[60,66,72,68,62],w:[18+i,22,30,20,16]};});
+function loadWeather(){
+  var u='https://api.open-meteo.com/v1/forecast?latitude='+CITIES.map(function(c){return c.la;}).join(',')+'&longitude='+CITIES.map(function(c){return c.lo;}).join(',')+
+   '&daily=precipitation_sum,temperature_2m_max,relative_humidity_2m_mean,wind_speed_10m_max&forecast_days=5&timezone=Asia%2FKarachi';
+  return fetch(u).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(j){
+    if(!Array.isArray(j))j=[j];weatherOk=true;
+    return j.map(function(x){return {p:x.daily.precipitation_sum,t:x.daily.temperature_2m_max,h:x.daily.relative_humidity_2m_mean,w:x.daily.wind_speed_10m_max};});
+  }).catch(function(){weatherOk=false;return FALL;});
+}
+function loadQuakes(){
+  var s=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+  return fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=23&maxlatitude=38&minlongitude=60&maxlongitude=78&minmagnitude=3&limit=20&orderby=time&starttime='+s)
+   .then(function(r){return r.json();}).then(function(j){return j.features.map(function(f){return {m:f.properties.mag,place:f.properties.place||'Pakistan region',t:f.properties.time};});}).catch(function(){return [];});
+}
+
+function compute(W){
+  cityRisk=CITIES.map(function(c,i){var w=W[i],cum=0,pk=0;
+    var s=w.p.map(function(p,d){cum+=p||0;pk=Math.max(pk,p||0);return prob(cum,pk,w.h[d]);});
+    return {n:c.n,s:s,max:Math.max.apply(null,s)};});
+  var mx=function(a){return Math.max.apply(null,a.map(function(x){return x||0;}));};
+  var maxT=mx(W.map(function(w){return mx(w.t);})),maxW=mx(W.map(function(w){return mx(w.w);}));
+  var hill=mx([7,3,2].map(function(i){return mx(W[i].p);}));
+  var qa=clamp(quakes.filter(function(q){return q.m>=3;}).length*4+(quakes.length?mx(quakes.map(function(q){return q.m;})):0)*8);
+  var hz=[['Flood',mx(cityRisk.map(function(c){return c.max;}))],['Heatwave',clamp((maxT-36)/12*100)],['Storm / wind',clamp((maxW-20)/40*100)],['Landslide',clamp(hill/40*100)],['Earthquake activity',qa]];
+  $('rlHz').innerHTML=hz.map(function(h){var l=lvl(h[1]);return '<div class="rl-hr" style="--k:'+LV[l]+'"><div class="t"><span>'+h[0]+'<span class="rl-lv"'+(l===1?' style="color:#061a14"':'')+'>'+LAB[l]+'</span></span><em>'+h[1]+'%</em></div><div class="rl-bar"><i data-w="'+h[1]+'"></i></div></div>';}).join('');
+  setBars('#rlHz .rl-bar i');
+  var top=cityRisk.slice().sort(function(a,b){return b.max-a.max;}).slice(0,6);
+  $('rlRisky').innerHTML=top.map(function(c){return '<div class="rl-city" style="--k:'+LV[lvl(c.max)]+'"><span class="n">'+c.n+'</span><div class="rl-bar"><i data-w="'+c.max+'"></i></div><b>'+c.max+'%</b></div>';}).join('');
+  setBars('#rlRisky .rl-bar i');
+  var pal=[GR,'#d4af37',RD,'#6aa8ff'];
+  mk('rlFlood',{type:'line',data:{labels:['Day 1','Day 2','Day 3','Day 4','Day 5'],datasets:cityRisk.slice(0,4).map(function(c,i){return {label:c.n,data:c.s,borderColor:pal[i],backgroundColor:pal[i],tension:.4,borderWidth:3,pointRadius:4,pointHoverRadius:6};})},
+    options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{callback:function(v){return v+'%';}},grid:{color:GRID},border:{display:false}},x:{grid:{display:false},border:{display:false}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}}}}});
+  $('rlSt').textContent=weatherOk?'LIVE forecast':'Offline · sample forecast';
+  alertsList();
+}
+
+/* alerts: the app's own live alerts first, else computed ones */
+function alertsList(){
+  var out=[];
+  if((function(){try{return allAlerts&&allAlerts.length;}catch(e){return 0;}})()){
+    allAlerts.slice(0,6).forEach(function(a){var l=a.severity==='red'?3:a.severity==='orange'?2:a.severity==='yellow'?1:0;
+      out.push({l:l,t:(a.icon||'⚠️')+' '+esc(a.title),s:esc(a.source||'')+(typeof timeAgo==='function'&&a.time?' · '+timeAgo(a.time):''),v:LAB[l]});});
+  }else{
+    cityRisk.filter(function(c){return c.max>=40;}).forEach(function(c){var l=lvl(c.max);out.push({l:l,t:'🌊 Flood risk — '+c.n,s:'Forecast peak probability',v:c.max+'%'});});
+    quakes.slice(0,4).forEach(function(q){var l=q.m>=5?3:q.m>=4.5?2:1;out.push({l:l,t:'🌍 M'+q.m.toFixed(1)+' earthquake',s:esc(q.place),v:'M'+q.m.toFixed(1)});});
+  }
+  $('rlAl').innerHTML=out.slice(0,6).map(function(a){return '<li style="--k:'+LV[a.l]+'"><div>'+a.t+'<small>'+a.s+'</small></div><b>'+a.v+'</b></li>';}).join('')||'<li>No active alerts right now</li>';
+}
+
+/* data from the app itself: volunteers, rivers, places, SOS */
+function appData(){
+  /* volunteers */
+  var v=(function(){try{return volData&&volData.length?volData:null;}catch(e){return null;}})();
+  var av=0,dp=0,ot=0;
+  if(v){v.forEach(function(x){if(x.availability==='available')av++;else if(x.availability==='deployed')dp++;else ot++;});}
+  else{av=128;dp=64;ot=38;}
+  var tot=av+dp+ot;
+  $('rlVolT').textContent=v?'Live':'Sample';$('rlVolT').className=v?'live':'demo';
+  countUp($('rlVol'),tot);$('rlVolN').textContent=tot;
+  var vc=[GR,'#d4af37','#9aa08f'],vl=[['Available',av],['Deployed',dp],['Other',ot]];
+  $('rlVolL').innerHTML=vl.map(function(x,i){return '<span><i style="background:'+vc[i]+'"></i>'+x[0]+' '+x[1]+'</span>';}).join('');
+  mk('rlVolC',{type:'doughnut',data:{labels:vl.map(function(x){return x[0];}),datasets:[{data:vl.map(function(x){return x[1];}),backgroundColor:vc,borderWidth:0,hoverOffset:6,borderRadius:8}]},options:{cutout:'74%',maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+
+  /* rivers */
+  if((function(){try{return !!riverData;}catch(e){return false;}})()&&window.Chart){
+    var col=function(r){var s=typeof getRiverStatus==='function'?getRiverStatus(r.current,r.low,r.normal,r.flood).cls:'low';return {vhigh:RD,high:OR,medium:YE,low:'#6aa8ff',below:GR}[s]||GR;};
+    mk('rlRiverC',{type:'bar',data:{labels:riverData.map(function(r){return r.name+' · '+r.station;}),datasets:[{label:'% of flood level',data:riverData.map(function(r){return Math.round(Math.min(r.current/r.flood*100,100)*10)/10;}),backgroundColor:riverData.map(col),borderRadius:8,maxBarThickness:16}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{min:0,max:100,ticks:{callback:function(v){return v+'%';}},grid:{color:GRID},border:{display:false}},y:{grid:{display:false},border:{display:false},ticks:{font:{size:11}}}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){var r=riverData[c.dataIndex];return ' '+r.current.toLocaleString()+' / '+r.flood.toLocaleString()+' cusecs flood level ('+c.parsed.x+'%)';}}}}}});
+  }
+
+  /* facilities: live OSM counts once the user searched an area, else sample by city */
+  var P=window.realSafePlaces||[];
+  var hosp=P.filter(function(p){return p.type==='hospital';}).length,sh=P.filter(function(p){return p.type==='shelter';}).length;
+  if(P.length){
+    var types={};P.forEach(function(p){types[p.type]=(types[p.type]||0)+1;});
+    var tk=Object.keys(types);
+    $('rlFacT').textContent='Live';$('rlFacT').className='live';$('rlFacH').textContent='Safe places in your searched area';$('rlFacN').textContent='Live OpenStreetMap results for the area you searched in Nearby / Safe Places.';
+    $('rlHosp').textContent=hosp;$('rlHospT').textContent='(live)';
+    mk('rlFac',{type:'bar',data:{labels:tk.map(function(k){return k.charAt(0).toUpperCase()+k.slice(1);}),datasets:[{label:'Places',data:tk.map(function(k){return types[k];}),backgroundColor:'#d4af37',borderRadius:10,maxBarThickness:34}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:GRID},border:{display:false}},x:{grid:{display:false},border:{display:false}}},plugins:{legend:{display:false}}}});
+  }else{
+    var fc=Object.keys(SAMPLE_FAC),th=0;fc.forEach(function(k){th+=SAMPLE_FAC[k][1];});
+    $('rlHosp').textContent=th;
+    mk('rlFac',{type:'bar',data:{labels:fc,datasets:[{label:'Shelters',data:fc.map(function(k){return SAMPLE_FAC[k][0];}),backgroundColor:'#d4af37',borderRadius:10,maxBarThickness:24},{label:'Hospitals',data:fc.map(function(k){return SAMPLE_FAC[k][1];}),backgroundColor:GR,borderRadius:10,maxBarThickness:24}]},
+      options:{responsive:true,maintainAspectRatio:false,scales:{y:{grid:{color:GRID},border:{display:false}},x:{grid:{display:false},border:{display:false}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8}}}}});
+  }
+
+  /* SOS by status (from the app's own SOS data) */
+  var sos=(function(){try{return Array.isArray(sosData)?sosData:[];}catch(e){return [];}})(),cnt={};
+  sos.forEach(function(s){var k=String(s.status||'UNKNOWN');cnt[k]=(cnt[k]||0)+1;});
+  var ks=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}),mxv=ks.length?cnt[ks[0]]:1,cols=['#d4af37','#3ecf8e','#f08a4b','#6aa8ff','#ef5350','#9aa08f'];
+  $('rlFn').innerHTML=ks.map(function(k,i){return '<div style="--k:'+cols[i%cols.length]+'" data-w="'+Math.round(cnt[k]/mxv*100)+'"><span>'+esc(k.replace(/_/g,' '))+'</span><span>'+cnt[k]+'</span></div>';}).join('')||'<p class="rl-note">No SOS requests yet.</p>';
+  setBars('#rlFn div');
+  if(weatherTried)alertsList();
+}
+
+var _rlT=null;
+window.rlUpdate=function(){clearTimeout(_rlT);_rlT=setTimeout(function(){try{appData();}catch(e){console.warn('dashboard',e);}},250);};
+function refresh(){loadQuakes().then(function(q){quakes=q;return loadWeather();}).then(function(W){weatherTried=true;compute(W);});}
+try{appData();}catch(e){console.warn('dashboard',e);}
+refresh();setInterval(refresh,600000);
+})();
 </script>
 </body>
 </html>
