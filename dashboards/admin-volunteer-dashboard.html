@@ -57,22 +57,58 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
 .chk{width:20px;height:20px;accent-color:var(--p);flex:none}.done{text-decoration:line-through;opacity:.45}
 .bdg{display:flex;gap:10px;flex-wrap:wrap}.bdg div{text-align:center;font-size:11px;color:var(--mute);width:68px}.bdg .tile{margin:0 auto 6px;width:54px;height:54px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--gold);padding:11px 20px;border-radius:20px;font-size:13px;display:none;z-index:9;box-shadow:var(--sh)}
-.hide{display:none}.mob{display:none}
+.hide{display:none!important}.mob{display:none}
 @media(max-width:760px){aside{display:none}.app{display:block}main{padding:14px}.mob{display:flex;margin-bottom:12px}h1{font-size:20px}}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.ab{width:100%;max-width:470px}
+.ab .logo{color:var(--ink);padding:0 0 4px}.tabs{display:flex;background:var(--bg);border-radius:16px;padding:5px;gap:5px;margin:16px 0}
+.tabs button{flex:1;border:0;padding:11px;border-radius:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--mute);display:flex;justify-content:center;align-items:center;gap:8px;font-size:14px}
+.tabs button.on{background:var(--g);color:#F5EEDB}.f{display:grid;gap:12px}.f label{font-size:12px;color:var(--mute);display:grid;gap:5px;font-weight:600}
+.f input,.f select{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;outline:0;width:100%}
+.f input:focus,.f select:focus{border-color:var(--gold)}.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:var(--r);font-size:12px;min-height:16px}.ab .btn{width:100%;justify-content:center;padding:13px;font-size:14px}
+@media(max-width:480px){.tabs svg{display:none}.tabs button{font-size:12.5px}}
+.lnk{color:inherit;text-decoration:none}
 </style></head><body>
-<div class="app">
+<div class="auth" id="auth"><div class="ab card">
+ <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
+ <div class="sub">Choose how you want to continue, fill the form and your dashboard will open</div>
+ <div class="tabs"><button id="th" class="on" onclick="setTab('help')"><i data-i="mega"></i>I Need Help</button><button id="tv" onclick="setTab('vol')"><i data-i="users"></i>Volunteer</button><button id="ta" onclick="setTab('admin')"><i data-i="award"></i>Admin</button></div>
+ <div class="f" id="fh">
+  <label>Full name<input id="h-name" placeholder="Your name"></label>
+  <div class="f2"><label>Phone<input id="h-phone" placeholder="03xx xxxxxxx"></label><label>People affected<input id="h-n" type="number" min="1" placeholder="e.g. 5"></label></div>
+  <div class="f2"><label>Province<select id="h-prov"><option>Punjab</option><option>Sindh</option><option>KP</option><option>Balochistan</option><option>Gilgit-Baltistan</option><option>AJK</option><option>Islamabad</option></select></label>
+  <label>Help needed<select id="h-type"><option value="Food">Food &amp; water</option><option value="Shelter">Shelter</option><option value="Medical">Medical help</option><option value="Rescue">Rescue / evacuation</option></select></label></div>
+  <label>Area / locality<input id="h-area" placeholder="e.g. Basti Jam, Rajanpur"></label>
+ </div>
+ <div class="f hide" id="fv">
+  <label>Full name<input id="v-name" placeholder="e.g. Ayesha Khan"></label>
+  <div class="f2"><label>Email<input id="v-email" type="email" placeholder="you@email.com"></label><label>Phone<input id="v-phone" placeholder="03xx xxxxxxx"></label></div>
+  <div class="f2"><label>Province<select id="v-prov"><option>Punjab</option><option>Sindh</option><option>KP</option><option>Balochistan</option><option>Gilgit-Baltistan</option><option>AJK</option><option>Islamabad</option></select></label>
+  <label>Work area<select id="v-dept"><option>Food Relief</option><option>Shelter</option><option>Medical</option><option>Rescue</option></select></label></div>
+  <label>Password<input id="v-pass" type="password" placeholder="At least 6 characters"></label>
+ </div>
+ <div class="f hide" id="fa">
+  <label>Full name<input id="a-name" placeholder="Admin name"></label>
+  <label>Email<input id="a-email" type="email" placeholder="admin@email.com"></label>
+  <label>Admin access code<input id="a-code" type="password" placeholder="Demo code: ADMIN123"></label>
+  <label>Password<input id="a-pass" type="password" placeholder="At least 6 characters"></label>
+ </div>
+ <div class="err" id="err"></div>
+ <button class="btn gold" id="sb" onclick="submitForm()">Send Help Request</button>
+</div></div>
+<div class="app hide" id="appwrap">
 <aside>
  <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
  <div id="nav"></div>
- <div class="sw"><p id="who"></p><button class="btn gold" onclick="toggle()"><i data-i="swap"></i>Switch Dashboard</button></div>
+ <div class="sw"><p id="who"></p><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
 </aside>
 <main>
- <div class="mob"><button class="btn gold" onclick="toggle()"><i data-i="swap"></i>Switch Admin / Volunteer</button></div>
+ <div class="mob"><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
 
  <div id="admin">
   <div class="top"><div class="t"><h1>Admin Dashboard</h1><div class="sub">Manage volunteers, relief operations and requests</div></div>
    <div class="srch"><i data-i="search"></i><input placeholder="Search volunteers..."></div>
-   <div class="prof"><div class="av" style="background:var(--g)">AD</div><div><b>Admin</b><small>Super Admin</small></div></div></div>
+   <div class="prof"><div class="av" id="aav" style="background:var(--g)">AD</div><div><b id="an">Admin</b><small>Administrator</small></div></div></div>
   <div class="grid stats">
    <div class="card stat"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="users"></i></div><div><b>248</b><span>Total Volunteers</span> <em>+12</em></div></div>
    <div class="card stat"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><b>196</b><span>Active</span> <em>+8</em></div></div>
@@ -107,6 +143,7 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
     <div class="item"><div class="av" style="background:var(--o)">UR</div><div class="t">Usman Raza<small>Rescue</small></div><b>104h</b></div></div>
   </div>
   <div class="row">
+   <div class="card"><div class="hd"><h3>Help Requests</h3><small id="hc"></small></div><div id="hreq"></div></div>
    <div class="card"><div class="hd"><h3>Pending Volunteer Requests</h3></div><div id="reqs"></div></div>
    <div class="card"><div class="hd"><h3>Upcoming Events</h3></div>
     <div class="item"><div class="tile" style="background:#F58A3D22;color:var(--o)"><i data-i="calendar"></i></div><div class="t">Flood Relief Food Drive<small>15 Oct · 40/50 volunteers</small><div class="bar"><i style="width:80%;background:var(--o)"></i></div></div></div>
@@ -117,8 +154,8 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
 
  <div id="vol" class="hide">
   <div class="top"><div class="t"><h1>Volunteer Dashboard</h1><div class="sub">Your tasks, shifts and achievements</div></div>
-   <div class="prof"><div class="av" style="background:var(--p)">AK</div><div><b>Ayesha Khan</b><small>Food Relief Team</small></div></div></div>
-  <div class="hero"><div><h2>Welcome, Ayesha</h2><p>You've volunteered 18 hours this month. Great work!</p></div><button class="btn gold" id="ci" onclick="checkin()"><i data-i="pin"></i><span>Check In</span></button></div>
+   <div class="prof"><div class="av" id="vav" style="background:var(--p)">AK</div><div><b id="vn2">Ayesha Khan</b><small id="vd">Food Relief Team</small></div></div></div>
+  <div class="hero"><div><h2>Welcome, <span id="vn">Ayesha</span></h2><p>You've volunteered 18 hours this month. Great work!</p></div><button class="btn gold" id="ci" onclick="checkin()"><i data-i="pin"></i><span>Check In</span></button></div>
   <div class="grid stats" style="margin-top:14px">
    <div class="card stat"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><b id="hrs">142</b><span>Total Hours</span></div></div>
    <div class="card stat"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="calendar"></i></div><div><b>9</b><span>Events Joined</span></div></div>
@@ -149,6 +186,27 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
     <div class="hd" style="margin-top:18px"><h3>Announcements</h3></div>
     <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="mega"></i></div><div class="t">Uniform is required for the Flood Relief Food Drive<small>Admin · 2 hrs ago</small></div></div>
     <div class="item"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div class="t">Certificate ceremony on 30 Oct<small>Admin · Yesterday</small></div></div></div>
+  </div>
+ </div>
+<div id="help" class="hide">
+  <div class="top"><div class="t"><h1>Help Center</h1><div class="sub">Track your request and find relief near you</div></div>
+   <div class="prof"><div class="av" id="hav" style="background:var(--o)">NA</div><div><b id="hn">Name</b><small id="hl">Area</small></div></div></div>
+  <div class="hero"><div><h2>Your request has been received</h2><p id="hs"></p></div><a class="btn gold lnk" href="tel:1122"><i data-i="mega"></i>Call Rescue 1122</a></div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Request Status</h3><small id="hid"></small></div><div id="hstat"></div></div>
+   <div class="card"><div class="hd"><h3>Emergency Numbers</h3></div>
+    <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="mega"></i></div><div class="t">Rescue 1122<small>Emergency rescue service</small></div><a class="btn gold lnk" href="tel:1122">Call</a></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="award"></i></div><div class="t">Police 15<small>Police emergency</small></div><a class="btn gold lnk" href="tel:15">Call</a></div>
+    <div class="item"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="inbox"></i></div><div class="t">Edhi 115<small>Ambulance service</small></div><a class="btn gold lnk" href="tel:115">Call</a></div></div>
+   <div class="card"><div class="hd"><h3>Safety Tips</h3></div>
+    <div class="item"><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Move to higher ground<small>Do not wait if water is rising</small></div></div>
+    <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="drop"></i></div><div class="t">Avoid flood water<small>Do not walk or drive through it</small></div></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="bag"></i></div><div class="t">Drink safe water only<small>Boil or purify before drinking</small></div></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Nearest Shelters</h3><small>Occupancy</small></div><div id="sh3"></div></div>
+   <div class="card"><div class="hd"><h3>Food Available</h3><small>Distribution stock</small></div><div id="fd3"></div></div>
+   <div class="card"><div class="hd"><h3>Flood Alerts</h3><small>Updated today</small></div><div id="fl3"></div></div>
   </div>
  </div>
 </main></div>
@@ -182,9 +240,29 @@ function renderReqs(){$('reqs').innerHTML=reqs.length?reqs.map(function(r,i){ret
 function act(i,a){toast(a?reqs[i][0]+' approved':'Request rejected');reqs.splice(i,1);renderReqs()}
 function renderTasks(){$('tasks').innerHTML=tasks.map(function(t,i){return '<div class="item"><input type="checkbox" class="chk" '+(t[1]?'checked':'')+' onchange="tasks['+i+'][1]=this.checked;renderTasks()"><div class="t '+(t[1]?'done':'')+'">'+t[0]+'</div></div>'}).join('')}
 function checkin(){on=!on;if(!on)hrs+=2;$('hrs').textContent=hrs;$('ci').lastChild.textContent=on?'Check Out':'Check In';toast(on?'Checked in':'2 hours added')}
-function nav(){var a=role=='admin'?[['home','Overview'],['users','Volunteers'],['bag','Food Stock'],['home','Shelters'],['drop','Flood Areas'],['calendar','Events'],['inbox','Requests'],['chart','Reports']]:[['home','My Home'],['list','My Tasks'],['calendar','Shifts'],['drop','Flood Alerts'],['award','Badges'],['mega','Notices']];
- $('nav').innerHTML=a.map(function(x,i){return '<div class="nv '+(i?'':'on')+'" onclick="document.querySelectorAll(\'.nv\').forEach(function(n){n.classList.remove(\'on\')});this.classList.add(\'on\')">'+I(x[0])+x[1]+'</div>'}).join('');$('who').textContent=role=='admin'?'Admin mode':'Volunteer mode'}
-function toggle(){role=role=='admin'?'vol':'admin';$('admin').className=role=='admin'?'':'hide';$('vol').className=role=='vol'?'':'hide';nav();scrollTo(0,0)}
+function nav(){var a=role=='help'?[['home','Home'],['inbox','My Request'],['home','Shelters'],['bag','Food Points'],['drop','Flood Alerts']]:role=='admin'?[['home','Overview'],['users','Volunteers'],['bag','Food Stock'],['home','Shelters'],['drop','Flood Areas'],['calendar','Events'],['inbox','Requests'],['chart','Reports']]:[['home','My Home'],['list','My Tasks'],['calendar','Shifts'],['drop','Flood Alerts'],['award','Badges'],['mega','Notices']];
+ $('nav').innerHTML=a.map(function(x,i){return '<div class="nv '+(i?'':'on')+'" onclick="document.querySelectorAll(\'.nv\').forEach(function(n){n.classList.remove(\'on\')});this.classList.add(\'on\')">'+I(x[0])+x[1]+'</div>'}).join('');$('who').textContent=role=='admin'?'Admin mode':role=='help'?'Help seeker':'Volunteer mode'}
+function ini(n){return n.trim().split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('')}
+var HR=[{n:'Rukhsana Bibi',area:'Rajanpur, Punjab',type:'Food',p:6,st:0},{n:'Imran Shah',area:'Muzaffargarh, Punjab',type:'Rescue',p:4,st:1},{n:'Gul Bano',area:'Layyah, Punjab',type:'Shelter',p:9,st:0}],cur=-1;
+var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop'};
+function renderHR(){$('hreq').innerHTML=HR.map(function(r,i){var c=TC[r.type];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I(TI[r.type])+'</div><div class="t">'+r.n+(r.mine?' (new)':'')+'<small>'+r.type+' · '+r.p+' people · '+r.area+'</small></div>'+(r.st<3?'<button class="btn gold" onclick="adv('+i+')">'+['Assign','Dispatch','Complete'][r.st]+'</button>':tg('Done','#3CC08E'))+'</div>'}).join('');$('hc').textContent=HR.filter(function(r){return r.st<3}).length+' open'}
+function adv(i){HR[i].st++;renderHR();if(i==cur)renderHelp();toast('Status: '+STEPS[HR[i].st])}
+function renderHelp(){var r=HR[cur];$('hid').textContent='Request #'+(1000+cur);
+ $('hs').textContent=['Our team will contact you shortly. Stay safe and move to higher ground if water is rising.','A volunteer has been assigned to your request.','Help is on the way to your location.','Your request is completed. Stay safe!'][r.st];
+ $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+r.p+' people · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
+var tab='help';
+function setTab(r){tab=r;['help','vol','admin'].forEach(function(k){$('t'+k[0]).className=k==r?'on':'';$('f'+k[0]).className='f'+(k==r?'':' hide')});$('sb').textContent=r=='help'?'Send Help Request':'Continue to Dashboard';$('err').textContent=''}
+function submitForm(){var m='',n,v=tab=='vol',p=v?'v-':'a-';
+ if(tab=='help'){n=$('h-name').value.trim();if(!n)m='Please enter your name.';else if(!$('h-phone').value.trim())m='Please enter your phone number.';else if(!(+$('h-n').value>0))m='Please enter how many people need help.';else if(!$('h-area').value.trim())m='Please enter your area or locality.'}
+ else{n=$(p+'name').value.trim();var e=$(p+'email').value.trim(),pw=$(p+'pass').value;
+  if(!n)m='Please enter your name.';else if(e.indexOf('@')<1)m='Please enter a valid email.';else if(v&&!$('v-phone').value.trim())m='Please enter your phone number.';else if(!v&&$('a-code').value!=='ADMIN123')m='Invalid admin access code.';else if(pw.length<6)m='Password must be at least 6 characters.'}
+ if(m){$('err').textContent=m;return}
+ if(tab=='help'){HR.push({n:n,area:$('h-area').value.trim()+', '+$('h-prov').value,type:$('h-type').value,p:+$('h-n').value,st:0,mine:1});cur=HR.length-1;$('hn').textContent=n;$('hav').textContent=ini(n);$('hl').textContent=HR[cur].area;renderHelp()}
+ else if(v){$('vn').textContent=n.split(' ')[0];$('vn2').textContent=n;$('vav').textContent=ini(n);$('vd').textContent=$('v-dept').value+' · '+$('v-prov').value}
+ else{$('an').textContent=n;$('aav').textContent=ini(n)}
+ role=tab;renderHR();['admin','vol','help'].forEach(function(k){$(k).className=k==tab?'':'hide'});$('auth').className='auth hide';$('appwrap').className='app';
+ nav();scrollTo(0,0);toast(tab=='help'?'Help request sent':'Logged in as '+(v?'Volunteer':'Admin'))}
+function logout(){['v-pass','a-pass','a-code'].forEach(function(i){$(i).value=''});$('appwrap').className='app hide';$('auth').className='auth';scrollTo(0,0)}
 var SC={Critical:'#EF5B5B',High:'#F58A3D',Moderate:'#F5B83D'};
 var FL=[['Rajanpur','Punjab','Critical',4200],['Muzaffargarh','Punjab','Critical',3800],['Layyah','Punjab','High',2600],['Jhang','Punjab','High',2100],['Sukkur','Sindh','Moderate',1500],['Charsadda','KP','Moderate',900]];
 var FD=[['Rice',6.2,10,'t',C[3]],['Flour',5.1,8,'t',C[4]],['Cooking oil',1.2,2,'t',C[3]],['Drinking water',12000,20000,'bottles',C[1]],['Ready meals',8400,15000,'meals',C[2]],['Medical kits',340,600,'kits',C[5]]];
@@ -193,7 +271,7 @@ function tg(t,c){return '<span class="tag" style="background:'+c+'22;color:'+c+'
 function floodList(id){$(id).innerHTML=FL.map(function(f){var c=SC[f[2]];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I('drop')+'</div><div class="t">'+f[0]+'<small>'+f[1]+' · '+f[3].toLocaleString()+' families</small></div>'+tg(f[2],c)+'</div>'}).join('')}
 function foodList(id){$(id).innerHTML=FD.map(function(f){var p=Math.round(f[1]/f[2]*100),low=p<50;return '<div class="item"><div class="tile" style="background:'+f[4]+'22;color:'+f[4]+'">'+I('bag')+'</div><div class="t">'+f[0]+'<small>'+f[1].toLocaleString()+' / '+f[2].toLocaleString()+' '+f[3]+'</small><div class="bar"><i style="width:'+p+'%;background:'+f[4]+'"></i></div></div>'+(low?tg('Low','#EF5B5B'):tg(p+'%','#3CC08E'))+'</div>'}).join('')}
 function shelterList(id){$(id).innerHTML=SH.map(function(h){var p=Math.round(h[2]/h[3]*100),c=p>=95?'#EF5B5B':p>=75?'#F58A3D':'#3CC08E',st=p>=95?'Full':p>=75?'Near full':'Available';return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I('home')+'</div><div class="t">'+h[0]+'<small>'+h[1]+' · '+h[2]+' / '+h[3]+' people</small><div class="bar"><i style="width:'+p+'%;background:'+c+'"></i></div></div>'+tg(st,c)+'</div>'}).join('')}
-icons();renderReqs();renderTasks();nav();line();floodList('fl1');floodList('fl2');foodList('fd1');foodList('fd2');shelterList('sh1');shelterList('sh2');
+icons();renderReqs();renderTasks();nav();line();floodList('fl1');floodList('fl2');foodList('fd1');foodList('fd2');shelterList('sh1');shelterList('sh2');floodList('fl3');foodList('fd3');shelterList('sh3');renderHR();
 donut('dep',[['Food Relief',87,C[0]],['Shelter',62,C[1]],['Medical',55,C[2]],['Rescue',44,C[3]]],248);
 donut('gen',[['Male',142,C[1]],['Female',106,'#F472A8']],'248');
 donut('goal',[['Done',18,C[2],'h'],['Left',7,'#d8cfae','h']],'72%');
