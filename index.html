@@ -601,6 +601,14 @@ body::after{
 <div id="toast" role="status"></div>
 
 <script>
+window.RL={collect:function(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
+if(role==='admin'){o.email=tx[0];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
+else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
+sessionStorage.setItem('rl_user',JSON.stringify(o));
+if(role==='volunteer'||role==='help'){var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}}catch(e){}},
+dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}};
+</script>
+<script>
 (function(){
 
 /* ══ BACKGROUND SLIDESHOW ══ */
@@ -652,12 +660,15 @@ document.querySelectorAll('[data-go]').forEach(function(a){
 document.querySelectorAll('.desktop-wrap form').forEach(function(f){
   f.addEventListener('submit',function(e){
     e.preventDefault();
+    RL.collect(f,f.dataset.role);
     // help form — open full app
     if(f.dataset.role === 'help'){
       showToast('Request sent! Opening the app…');
       setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
       return;
     }
+    var d=RL.dest(f.dataset.role);
+    if(d){showToast(f.dataset.role==='admin'?'Signing in… opening admin dashboard':'Welcome! Opening your volunteer dashboard…');setTimeout(function(){window.location.href=d;},900);return;}
     showToast(f.dataset.msg);
     f.reset();
   });
@@ -754,6 +765,8 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var sheet = f.closest('.m-sheet');
+    var mrole = sheet ? sheet.id.replace('sheet-','') : '';
+    RL.collect(f,mrole);
     // help sheet — open full app
     if(sheet && sheet.id === 'sheet-help'){
       showToast('Request sent! Opening the app…');
@@ -761,6 +774,8 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
       setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
       return;
     }
+    var md=RL.dest(mrole);
+    if(md){showToast(mrole==='admin'?'Signing in… opening admin dashboard':'Welcome! Opening your volunteer dashboard…');closeSheet();setTimeout(function(){window.location.href=md;},900);return;}
     showToast(f.dataset.mmsg);
     f.reset();
     closeSheet();

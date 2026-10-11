@@ -69,34 +69,7 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
 @media(max-width:480px){.tabs svg{display:none}.tabs button{font-size:12.5px}}
 .lnk{color:inherit;text-decoration:none}
 </style></head><body>
-<div class="auth" id="auth"><div class="ab card">
- <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
- <div class="sub">Choose how you want to continue, fill the form and your dashboard will open</div>
- <div class="tabs"><button id="th" class="on" onclick="setTab('help')"><i data-i="mega"></i>I Need Help</button><button id="tv" onclick="setTab('vol')"><i data-i="users"></i>Volunteer</button><button id="ta" onclick="setTab('admin')"><i data-i="award"></i>Admin</button></div>
- <div class="f" id="fh">
-  <label>Full name<input id="h-name" placeholder="Your name"></label>
-  <div class="f2"><label>Phone<input id="h-phone" placeholder="03xx xxxxxxx"></label><label>People affected<input id="h-n" type="number" min="1" placeholder="e.g. 5"></label></div>
-  <div class="f2"><label>Province<select id="h-prov"><option>Punjab</option><option>Sindh</option><option>KP</option><option>Balochistan</option><option>Gilgit-Baltistan</option><option>AJK</option><option>Islamabad</option></select></label>
-  <label>Help needed<select id="h-type"><option value="Food">Food &amp; water</option><option value="Shelter">Shelter</option><option value="Medical">Medical help</option><option value="Rescue">Rescue / evacuation</option></select></label></div>
-  <label>Area / locality<input id="h-area" placeholder="e.g. Basti Jam, Rajanpur"></label>
- </div>
- <div class="f hide" id="fv">
-  <label>Full name<input id="v-name" placeholder="e.g. Ayesha Khan"></label>
-  <div class="f2"><label>Email<input id="v-email" type="email" placeholder="you@email.com"></label><label>Phone<input id="v-phone" placeholder="03xx xxxxxxx"></label></div>
-  <div class="f2"><label>Province<select id="v-prov"><option>Punjab</option><option>Sindh</option><option>KP</option><option>Balochistan</option><option>Gilgit-Baltistan</option><option>AJK</option><option>Islamabad</option></select></label>
-  <label>Work area<select id="v-dept"><option>Food Relief</option><option>Shelter</option><option>Medical</option><option>Rescue</option></select></label></div>
-  <label>Password<input id="v-pass" type="password" placeholder="At least 6 characters"></label>
- </div>
- <div class="f hide" id="fa">
-  <label>Full name<input id="a-name" placeholder="Admin name"></label>
-  <label>Email<input id="a-email" type="email" placeholder="admin@email.com"></label>
-  <label>Admin access code<input id="a-code" type="password" placeholder="Demo code: ADMIN123"></label>
-  <label>Password<input id="a-pass" type="password" placeholder="At least 6 characters"></label>
- </div>
- <div class="err" id="err"></div>
- <button class="btn gold" id="sb" onclick="submitForm()">Send Help Request</button>
-</div></div>
-<div class="app hide" id="appwrap">
+<div class="app" id="appwrap">
 <aside>
  <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
  <div id="nav"></div>
@@ -244,25 +217,25 @@ function nav(){var a=role=='help'?[['home','Home'],['inbox','My Request'],['home
  $('nav').innerHTML=a.map(function(x,i){return '<div class="nv '+(i?'':'on')+'" onclick="document.querySelectorAll(\'.nv\').forEach(function(n){n.classList.remove(\'on\')});this.classList.add(\'on\')">'+I(x[0])+x[1]+'</div>'}).join('');$('who').textContent=role=='admin'?'Admin mode':role=='help'?'Help seeker':'Volunteer mode'}
 function ini(n){return n.trim().split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('')}
 var HR=[{n:'Rukhsana Bibi',area:'Rajanpur, Punjab',type:'Food',p:6,st:0},{n:'Imran Shah',area:'Muzaffargarh, Punjab',type:'Rescue',p:4,st:1},{n:'Gul Bano',area:'Layyah, Punjab',type:'Shelter',p:9,st:0}],cur=-1;
-var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop'};
+var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5],Other:C[0]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop',Other:'inbox'};
 function renderHR(){$('hreq').innerHTML=HR.map(function(r,i){var c=TC[r.type];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I(TI[r.type])+'</div><div class="t">'+r.n+(r.mine?' (new)':'')+'<small>'+r.type+' · '+r.p+' people · '+r.area+'</small></div>'+(r.st<3?'<button class="btn gold" onclick="adv('+i+')">'+['Assign','Dispatch','Complete'][r.st]+'</button>':tg('Done','#3CC08E'))+'</div>'}).join('');$('hc').textContent=HR.filter(function(r){return r.st<3}).length+' open'}
 function adv(i){HR[i].st++;renderHR();if(i==cur)renderHelp();toast('Status: '+STEPS[HR[i].st])}
 function renderHelp(){var r=HR[cur];$('hid').textContent='Request #'+(1000+cur);
  $('hs').textContent=['Our team will contact you shortly. Stay safe and move to higher ground if water is rising.','A volunteer has been assigned to your request.','Help is on the way to your location.','Your request is completed. Stay safe!'][r.st];
  $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+r.p+' people · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
-var tab='help';
-function setTab(r){tab=r;['help','vol','admin'].forEach(function(k){$('t'+k[0]).className=k==r?'on':'';$('f'+k[0]).className='f'+(k==r?'':' hide')});$('sb').textContent=r=='help'?'Send Help Request':'Continue to Dashboard';$('err').textContent=''}
-function submitForm(){var m='',n,v=tab=='vol',p=v?'v-':'a-';
- if(tab=='help'){n=$('h-name').value.trim();if(!n)m='Please enter your name.';else if(!$('h-phone').value.trim())m='Please enter your phone number.';else if(!(+$('h-n').value>0))m='Please enter how many people need help.';else if(!$('h-area').value.trim())m='Please enter your area or locality.'}
- else{n=$(p+'name').value.trim();var e=$(p+'email').value.trim(),pw=$(p+'pass').value;
-  if(!n)m='Please enter your name.';else if(e.indexOf('@')<1)m='Please enter a valid email.';else if(v&&!$('v-phone').value.trim())m='Please enter your phone number.';else if(!v&&$('a-code').value!=='ADMIN123')m='Invalid admin access code.';else if(pw.length<6)m='Password must be at least 6 characters.'}
- if(m){$('err').textContent=m;return}
- if(tab=='help'){HR.push({n:n,area:$('h-area').value.trim()+', '+$('h-prov').value,type:$('h-type').value,p:+$('h-n').value,st:0,mine:1});cur=HR.length-1;$('hn').textContent=n;$('hav').textContent=ini(n);$('hl').textContent=HR[cur].area;renderHelp()}
- else if(v){$('vn').textContent=n.split(' ')[0];$('vn2').textContent=n;$('vav').textContent=ini(n);$('vd').textContent=$('v-dept').value+' · '+$('v-prov').value}
- else{$('an').textContent=n;$('aav').textContent=ini(n)}
- role=tab;renderHR();['admin','vol','help'].forEach(function(k){$(k).className=k==tab?'':'hide'});$('auth').className='auth hide';$('appwrap').className='app';
- nav();scrollTo(0,0);toast(tab=='help'?'Help request sent':'Logged in as '+(v?'Volunteer':'Admin'))}
-function logout(){['v-pass','a-pass','a-code'].forEach(function(i){$(i).value=''});$('appwrap').className='app hide';$('auth').className='auth';scrollTo(0,0)}
+var ROLE='admin',WANT=ROLE=='vol'?'volunteer':'admin',U=null;
+try{U=JSON.parse(sessionStorage.getItem('rl_user'))}catch(e){}
+if(!U||U.role!==WANT)location.replace('../index.html#'+WANT);
+function logout(){try{sessionStorage.removeItem('rl_user')}catch(e){}location.href='../index.html'}
+function boot(){role=ROLE;var n=U.name||'User';
+ if(ROLE=='vol'){$('vn').textContent=n.split(' ')[0];$('vn2').textContent=n;$('vav').textContent=ini(n);$('vd').textContent=(U.skill||'Volunteer')+' · '+(U.area||'')}
+ else{$('an').textContent=n;$('aav').textContent=ini(n);
+  var TM={'Flood rescue':'Rescue','Medical help':'Medical','Shelter':'Shelter','Food or water':'Food'},h=[],v=[];
+  try{h=JSON.parse(localStorage.getItem('rl_help')||'[]');v=JSON.parse(localStorage.getItem('rl_vols')||'[]')}catch(e){}
+  h.forEach(function(r){HR.unshift({n:r.name,area:r.area+(r.urgent?' · URGENT':''),type:TM[r.type]||'Other',p:1,st:0,mine:1})});
+  v.forEach(function(r,i){reqs.unshift([r.name,r.skill||'Volunteer',C[i%6]])});
+  renderReqs();renderHR()}
+ ['admin','vol','help'].forEach(function(k){$(k).className=k==role?'':'hide'});nav();scrollTo(0,0)}
 var SC={Critical:'#EF5B5B',High:'#F58A3D',Moderate:'#F5B83D'};
 var FL=[['Rajanpur','Punjab','Critical',4200],['Muzaffargarh','Punjab','Critical',3800],['Layyah','Punjab','High',2600],['Jhang','Punjab','High',2100],['Sukkur','Sindh','Moderate',1500],['Charsadda','KP','Moderate',900]];
 var FD=[['Rice',6.2,10,'t',C[3]],['Flour',5.1,8,'t',C[4]],['Cooking oil',1.2,2,'t',C[3]],['Drinking water',12000,20000,'bottles',C[1]],['Ready meals',8400,15000,'meals',C[2]],['Medical kits',340,600,'kits',C[5]]];
@@ -278,4 +251,5 @@ donut('goal',[['Done',18,C[2],'h'],['Left',7,'#d8cfae','h']],'72%');
 donut('split',[['Food',9,C[0],'h'],['Shelter',6,C[1],'h'],['Other',3,C[3],'h']],'18h');
 bars('bars1',[40,55,48,70,82,65,90,76,60,85,95,70],[30,42,38,50,60,48,66,55,44,62,70,52],M);
 bars('bars2',[8,12,10,14,9,16,12,18,11,15,10,7],null,M);
+if(U&&U.role===WANT)boot();
 </script></body></html>

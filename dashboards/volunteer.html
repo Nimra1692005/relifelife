@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SewaHub Dashboard</title>
+<style>
+:root{--bg:#F5EEDB;--card:#FFFCF4;--g:#1B3A2A;--g2:#2F5A42;--gold:#C9A227;--ink:#1B3A2A;--mute:#8a866f;--line:#EADFC2;--sh:0 6px 20px rgba(27,58,42,.08);--p:#7C6CF0;--b:#4C8DF6;--gr:#3CC08E;--y:#F5B83D;--o:#F58A3D;--r:#EF5B5B;--pk:#F472A8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1F18;--card:#173126;--ink:#F5EEDB;--mute:#b3ad90;--line:#2a4a3b;--sh:0 6px 20px rgba(0,0,0,.3)}}
+:root[data-theme="dark"]{--bg:#0F1F18;--card:#173126;--ink:#F5EEDB;--mute:#b3ad90;--line:#2a4a3b;--sh:0 6px 20px rgba(0,0,0,.3)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Segoe UI',system-ui,Arial,sans-serif;font-size:14px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.app{display:flex;min-height:100vh}
+aside{width:224px;background:var(--g);color:#F5EEDB;padding:20px 14px;display:flex;flex-direction:column;gap:4px;border-radius:0 28px 28px 0;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;padding:4px 8px 18px}
+.logo b{width:36px;height:36px;border-radius:12px;background:var(--gold);color:var(--g);display:grid;place-items:center}
+.nv{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:14px;opacity:.8;cursor:pointer;transition:.2s}
+.nv:hover{background:rgba(255,255,255,.08);opacity:1}
+.nv.on{background:var(--gold);color:var(--g);opacity:1;font-weight:700}
+.sw{margin-top:auto;background:rgba(255,255,255,.08);border-radius:18px;padding:14px;font-size:12px}
+.sw p{margin:0 0 8px;opacity:.8}
+.btn{border:0;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--g);color:#F5EEDB;display:inline-flex;align-items:center;gap:6px;transition:.2s}
+.btn:hover{transform:translateY(-1px)}
+.btn.gold{background:var(--gold);color:var(--g)}.btn.no{background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px}
+.sw .btn{width:100%;justify-content:center}
+main{flex:1;padding:22px;min-width:0}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.top .t{flex:1;min-width:200px}h1{margin:0;font-size:24px}.sub{color:var(--mute);font-size:13px;margin-top:2px}
+.srch{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 14px;color:var(--mute);min-width:200px}
+.srch input{border:0;background:none;outline:0;color:var(--ink);width:100%}
+.prof{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 14px 6px 6px}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:12px;flex:none}
+.prof small{display:block;color:var(--mute);font-size:11px}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--sh)}
+.stat{display:flex;gap:14px;align-items:center}
+.tile{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex:none}
+.stat b{font-size:24px;display:block;line-height:1.1}.stat span{font-size:12px;color:var(--mute)}
+.stat em{font-style:normal;font-size:11px;font-weight:700;color:var(--gr)}
+.row{display:grid;gap:14px;margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.row.w{grid-template-columns:2fr 1fr 1fr}
+@media(max-width:1100px){.row.w{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}}
+.hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background:var(--bg);padding:4px 10px;border-radius:10px}
+.big{font-size:26px;font-weight:800}
+.lg{display:grid;gap:7px;font-size:12px;flex:1;min-width:130px}.lg div{display:flex;align-items:center;gap:7px}.lg b{margin-left:auto}
+.dot{width:9px;height:9px;border-radius:50%;flex:none}
+.dn{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.item:last-child{border:0}.item .t{flex:1;min-width:0}.item small{display:block;color:var(--mute);font-size:12px}
+.tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.bar{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;border-radius:8px}
+.fun{display:grid;gap:5px;justify-items:center}
+.fun div{color:#fff;font-size:12px;font-weight:700;padding:9px 0;text-align:center;clip-path:polygon(0 0,100% 0,94% 100%,6% 100%)}
+.hero{background:linear-gradient(120deg,var(--g),var(--g2));color:#F5EEDB;border-radius:26px;padding:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--sh);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-40px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(201,162,39,.25)}
+.hero h2{margin:0 0 6px;font-size:22px}.hero p{margin:0;opacity:.8}.hero .btn{position:relative;z-index:1;padding:12px 20px;font-size:13px}
+.chk{width:20px;height:20px;accent-color:var(--p);flex:none}.done{text-decoration:line-through;opacity:.45}
+.bdg{display:flex;gap:10px;flex-wrap:wrap}.bdg div{text-align:center;font-size:11px;color:var(--mute);width:68px}.bdg .tile{margin:0 auto 6px;width:54px;height:54px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--gold);padding:11px 20px;border-radius:20px;font-size:13px;display:none;z-index:9;box-shadow:var(--sh)}
+.hide{display:none!important}.mob{display:none}
+@media(max-width:760px){aside{display:none}.app{display:block}main{padding:14px}.mob{display:flex;margin-bottom:12px}h1{font-size:20px}}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px}.ab{width:100%;max-width:470px}
+.ab .logo{color:var(--ink);padding:0 0 4px}.tabs{display:flex;background:var(--bg);border-radius:16px;padding:5px;gap:5px;margin:16px 0}
+.tabs button{flex:1;border:0;padding:11px;border-radius:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--mute);display:flex;justify-content:center;align-items:center;gap:8px;font-size:14px}
+.tabs button.on{background:var(--g);color:#F5EEDB}.f{display:grid;gap:12px}.f label{font-size:12px;color:var(--mute);display:grid;gap:5px;font-weight:600}
+.f input,.f select{padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;outline:0;width:100%}
+.f input:focus,.f select:focus{border-color:var(--gold)}.f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:var(--r);font-size:12px;min-height:16px}.ab .btn{width:100%;justify-content:center;padding:13px;font-size:14px}
+@media(max-width:480px){.tabs svg{display:none}.tabs button{font-size:12.5px}}
+.lnk{color:inherit;text-decoration:none}
+</style></head><body>
+<div class="app" id="appwrap">
+<aside>
+ <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
+ <div id="nav"></div>
+ <div class="sw"><p id="who"></p><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
+</aside>
+<main>
+ <div class="mob"><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
+
+ <div id="admin">
+  <div class="top"><div class="t"><h1>Admin Dashboard</h1><div class="sub">Manage volunteers, relief operations and requests</div></div>
+   <div class="srch"><i data-i="search"></i><input placeholder="Search volunteers..."></div>
+   <div class="prof"><div class="av" id="aav" style="background:var(--g)">AD</div><div><b id="an">Admin</b><small>Administrator</small></div></div></div>
+  <div class="grid stats">
+   <div class="card stat"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="users"></i></div><div><b>248</b><span>Total Volunteers</span> <em>+12</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><b>196</b><span>Active</span> <em>+8</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="calendar"></i></div><div><b>14</b><span>Events</span> <em>+3</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><b>3,420</b><span>Hours Served</span> <em>+210</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="inbox"></i></div><div><b id="pc">4</b><span>Pending</span></div></div>
+  </div>
+  <div class="grid stats" style="margin-top:14px">
+   <div class="card stat"><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="bag"></i></div><div><b>12.5 t</b><span>Food Available</span> <em>3 low items</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="home"></i></div><div><b>5</b><span>Shelters Open</span> <em>1,065 people</em></div></div>
+   <div class="card stat"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="drop"></i></div><div><b>6</b><span>Flood-Affected Areas</span></div></div>
+   <div class="card stat"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="users"></i></div><div><b>15,100</b><span>Families Affected</span></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Flood-Affected Areas</h3><small>Updated today</small></div><div id="fl1"></div></div>
+   <div class="card"><div class="hd"><h3>Food Stock</h3><small>Available / Capacity</small></div><div id="fd1"></div></div>
+   <div class="card"><div class="hd"><h3>Shelters</h3><small>Occupancy</small></div><div id="sh1"></div></div>
+  </div>
+  <div class="row w">
+   <div class="card"><div class="hd"><h3>Volunteer Growth</h3><small>This Year</small></div><div class="big">248 <span class="sub" style="font-weight:400">volunteers</span></div><div id="line"></div></div>
+   <div class="card"><div class="hd"><h3>Department Distribution</h3></div><div class="dn" id="dep"></div></div>
+   <div class="card"><div class="hd"><h3>Gender Distribution</h3></div><div class="dn" id="gen"></div></div>
+  </div>
+  <div class="row w">
+   <div class="card"><div class="hd"><h3>Hours Overview</h3><small>Monthly</small></div><div id="bars1"></div></div>
+   <div class="card"><div class="hd"><h3>Recruitment Funnel</h3><small>This Year</small></div>
+    <div class="fun"><div style="width:100%;background:var(--p)">Applied 320</div><div style="width:84%;background:var(--b)">Screened 256</div><div style="width:68%;background:var(--gr)">Interview 160</div><div style="width:52%;background:var(--y);color:#333">Selected 128</div><div style="width:38%;background:var(--r)">Joined 112</div></div></div>
+   <div class="card"><div class="hd"><h3>Top Volunteers</h3></div>
+    <div class="item"><div class="av" style="background:var(--p)">AK</div><div class="t">Ayesha Khan<small>Food Relief</small></div><b>142h</b></div>
+    <div class="item"><div class="av" style="background:var(--b)">BA</div><div class="t">Bilal Ahmed<small>Shelter</small></div><b>128h</b></div>
+    <div class="item"><div class="av" style="background:var(--gr)">SM</div><div class="t">Sana Malik<small>Medical</small></div><b>115h</b></div>
+    <div class="item"><div class="av" style="background:var(--o)">UR</div><div class="t">Usman Raza<small>Rescue</small></div><b>104h</b></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Help Requests</h3><small id="hc"></small></div><div id="hreq"></div></div>
+   <div class="card"><div class="hd"><h3>Pending Volunteer Requests</h3></div><div id="reqs"></div></div>
+   <div class="card"><div class="hd"><h3>Upcoming Events</h3></div>
+    <div class="item"><div class="tile" style="background:#F58A3D22;color:var(--o)"><i data-i="calendar"></i></div><div class="t">Flood Relief Food Drive<small>15 Oct · 40/50 volunteers</small><div class="bar"><i style="width:80%;background:var(--o)"></i></div></div></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="calendar"></i></div><div class="t">Shelter Setup, Layyah<small>18 Oct · 22/30 volunteers</small><div class="bar"><i style="width:73%;background:var(--b)"></i></div></div></div>
+    <div class="item"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="calendar"></i></div><div class="t">Clean Water Distribution<small>25 Oct · 12/40 volunteers</small><div class="bar"><i style="width:30%;background:var(--gr)"></i></div></div></div></div>
+  </div>
+ </div>
+
+ <div id="vol" class="hide">
+  <div class="top"><div class="t"><h1>Volunteer Dashboard</h1><div class="sub">Your tasks, shifts and achievements</div></div>
+   <div class="prof"><div class="av" id="vav" style="background:var(--p)">AK</div><div><b id="vn2">Ayesha Khan</b><small id="vd">Food Relief Team</small></div></div></div>
+  <div class="hero"><div><h2>Welcome, <span id="vn">Ayesha</span></h2><p>You've volunteered 18 hours this month. Great work!</p></div><button class="btn gold" id="ci" onclick="checkin()"><i data-i="pin"></i><span>Check In</span></button></div>
+  <div class="grid stats" style="margin-top:14px">
+   <div class="card stat"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><b id="hrs">142</b><span>Total Hours</span></div></div>
+   <div class="card stat"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="calendar"></i></div><div><b>9</b><span>Events Joined</span></div></div>
+   <div class="card stat"><div class="tile" style="background:#F58A3D22;color:var(--o)"><i data-i="flame"></i></div><div><b>6</b><span>Week Streak</span></div></div>
+   <div class="card stat"><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="star"></i></div><div><b>4.9</b><span>Rating</span></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Flood Alerts</h3><small>Updated today</small></div><div id="fl2"></div></div>
+   <div class="card"><div class="hd"><h3>Food Available</h3><small>Distribution stock</small></div><div id="fd2"></div></div>
+   <div class="card"><div class="hd"><h3>Shelters Needing Help</h3><small>Occupancy</small></div><div id="sh2"></div></div>
+  </div>
+  <div class="row w">
+   <div class="card"><div class="hd"><h3>My Hours</h3><small>Monthly</small></div><div id="bars2"></div></div>
+   <div class="card"><div class="hd"><h3>Monthly Goal</h3></div><div class="dn" id="goal"></div></div>
+   <div class="card"><div class="hd"><h3>My Time Split</h3></div><div class="dn" id="split"></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>My Tasks</h3></div><div id="tasks"></div></div>
+   <div class="card"><div class="hd"><h3>My Upcoming Shifts</h3></div>
+    <div class="item"><div class="tile" style="background:#F58A3D22;color:var(--o)"><i data-i="calendar"></i></div><div class="t">Flood Relief Food Drive<small>15 Oct · 10am–2pm · Main Hall</small></div></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="calendar"></i></div><div class="t">Shelter Setup, Layyah<small>18 Oct · 9am–1pm · Layyah Camp</small></div></div>
+    <div class="item"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="calendar"></i></div><div class="t">Clean Water Distribution<small>25 Oct · 8am–12pm · Jhang</small></div></div></div>
+   <div class="card"><div class="hd"><h3>My Badges</h3></div><div class="bdg">
+    <div><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="leaf"></i></div>Starter</div>
+    <div><div class="tile" style="background:#F58A3D22;color:var(--o)"><i data-i="flame"></i></div>Streak</div>
+    <div><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="users"></i></div>Helper</div>
+    <div><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="award"></i></div>Leader</div></div>
+    <div class="hd" style="margin-top:18px"><h3>Announcements</h3></div>
+    <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="mega"></i></div><div class="t">Uniform is required for the Flood Relief Food Drive<small>Admin · 2 hrs ago</small></div></div>
+    <div class="item"><div class="tile" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div class="t">Certificate ceremony on 30 Oct<small>Admin · Yesterday</small></div></div></div>
+  </div>
+ </div>
+<div id="help" class="hide">
+  <div class="top"><div class="t"><h1>Help Center</h1><div class="sub">Track your request and find relief near you</div></div>
+   <div class="prof"><div class="av" id="hav" style="background:var(--o)">NA</div><div><b id="hn">Name</b><small id="hl">Area</small></div></div></div>
+  <div class="hero"><div><h2>Your request has been received</h2><p id="hs"></p></div><a class="btn gold lnk" href="tel:1122"><i data-i="mega"></i>Call Rescue 1122</a></div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Request Status</h3><small id="hid"></small></div><div id="hstat"></div></div>
+   <div class="card"><div class="hd"><h3>Emergency Numbers</h3></div>
+    <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="mega"></i></div><div class="t">Rescue 1122<small>Emergency rescue service</small></div><a class="btn gold lnk" href="tel:1122">Call</a></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="award"></i></div><div class="t">Police 15<small>Police emergency</small></div><a class="btn gold lnk" href="tel:15">Call</a></div>
+    <div class="item"><div class="tile" style="background:#3CC08E22;color:var(--gr)"><i data-i="inbox"></i></div><div class="t">Edhi 115<small>Ambulance service</small></div><a class="btn gold lnk" href="tel:115">Call</a></div></div>
+   <div class="card"><div class="hd"><h3>Safety Tips</h3></div>
+    <div class="item"><div class="tile" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Move to higher ground<small>Do not wait if water is rising</small></div></div>
+    <div class="item"><div class="tile" style="background:#EF5B5B22;color:var(--r)"><i data-i="drop"></i></div><div class="t">Avoid flood water<small>Do not walk or drive through it</small></div></div>
+    <div class="item"><div class="tile" style="background:#4C8DF622;color:var(--b)"><i data-i="bag"></i></div><div class="t">Drink safe water only<small>Boil or purify before drinking</small></div></div></div>
+  </div>
+  <div class="row">
+   <div class="card"><div class="hd"><h3>Nearest Shelters</h3><small>Occupancy</small></div><div id="sh3"></div></div>
+   <div class="card"><div class="hd"><h3>Food Available</h3><small>Distribution stock</small></div><div id="fd3"></div></div>
+   <div class="card"><div class="hd"><h3>Flood Alerts</h3><small>Updated today</small></div><div id="fl3"></div></div>
+  </div>
+ </div>
+</main></div>
+<div class="toast" id="toast"></div>
+<script>
+var P={leaf:'M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z M4 20c3-6 6-9 10-11',users:'M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2 M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M21 21v-2a4 4 0 0 0-3-3.9 M16 3.1a4 4 0 0 1 0 7.8',check:'M20 6 9 17l-5-5',calendar:'M3 5h18v16H3z M16 3v4 M8 3v4 M3 10h18',clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 7v5l3 2',inbox:'M22 12h-6l-2 3h-4l-2-3H2 M5.5 5h13L22 12v7H2v-7z',home:'M3 11l9-8 9 8 M5 10v10h14V10',list:'M9 6h12 M9 12h12 M9 18h12 M4 6h.01 M4 12h.01 M4 18h.01',chart:'M4 20V10 M10 20V4 M16 20v-8 M22 20H2',set:'M4 21v-7 M4 10V3 M12 21v-9 M12 8V3 M20 21v-5 M20 12V3 M1 14h6 M9 8h6 M17 16h6',award:'M12 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M8.2 14 7 22l5-3 5 3-1.2-8',star:'M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z',flame:'M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 1 2 2 2 3 1 0-2-1-4 0-7z',pin:'M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z',mega:'M3 11v2a1 1 0 0 0 1 1h3l8 4V6L7 10H4a1 1 0 0 0-1 1z M19 8a5 5 0 0 1 0 8',search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M21 21l-4.3-4.3',swap:'M7 4 3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7',x:'M18 6 6 18 M6 6l12 12',drop:'M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z',bag:'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0'};
+function I(n){return '<svg class="i" viewBox="0 0 24 24"><path d="'+P[n]+'"/></svg>'}
+function icons(){document.querySelectorAll('i[data-i]').forEach(function(e){e.outerHTML=I(e.dataset.i)})}
+var C=['#7C6CF0','#4C8DF6','#3CC08E','#F5B83D','#F58A3D','#EF5B5B'];
+function $(i){return document.getElementById(i)}
+function donut(id,d,center,sz){var t=d.reduce(function(a,x){return a+x[1]},0),off=0,s='<svg viewBox="0 0 42 42" width="'+(sz||130)+'" height="'+(sz||130)+'"><g fill="none" stroke-width="6" transform="rotate(-90 21 21)"><circle cx="21" cy="21" r="15.9" stroke="#8884" stroke-opacity=".2"/>';
+ d.forEach(function(x){var v=x[1]/t*100;s+='<circle cx="21" cy="21" r="15.9" stroke="'+x[2]+'" stroke-dasharray="'+(v-1)+' '+(101-v)+'" stroke-dashoffset="'+(-off)+'"/>';off+=v});
+ s+='</g><text x="21" y="23.5" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor">'+center+'</text></svg><div class="lg">'+d.map(function(x){return '<div><span class="dot" style="background:'+x[2]+'"></span>'+x[0]+'<b>'+x[1]+(x[3]||'')+'</b></div>'}).join('')+'</div>';
+ $(id).innerHTML=s}
+function bars(id,a,b,labels){var w=300,h=140,s='<svg viewBox="0 0 '+w+' '+(h+18)+'" width="100%">';
+ for(var g=0;g<4;g++)s+='<line x1="0" x2="'+w+'" y1="'+(g*40+5)+'" y2="'+(g*40+5)+'" stroke="#8883" stroke-dasharray="3 4"/>';
+ var bw=w/a.length;a.forEach(function(v,i){var x=i*bw+3;s+='<rect x="'+x+'" y="'+(h-v*1.1)+'" width="'+(bw*.38)+'" height="'+(v*1.1)+'" rx="3" fill="#7C6CF0"/>';if(b)s+='<rect x="'+(x+bw*.4)+'" y="'+(h-b[i]*1.1)+'" width="'+(bw*.38)+'" height="'+(b[i]*1.1)+'" rx="3" fill="#4C8DF6" opacity=".55"/>';s+='<text x="'+(x+bw*.3)+'" y="'+(h+13)+'" font-size="8" fill="#999" text-anchor="middle">'+labels[i]+'</text>'});
+ $(id).innerHTML=s+'</svg>'}
+function line(){var d=[150,168,180,196,205,214,222,230,236,241,245,248],w=300,h=120,mn=140,mx=255,pts=d.map(function(v,i){return [10+i*(w-20)/11,h-(v-mn)/(mx-mn)*(h-10)]}),p=pts.map(function(q){return q.join(',')}).join(' '),s='<svg viewBox="0 0 '+w+' '+(h+18)+'" width="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C6CF0" stop-opacity=".35"/><stop offset="1" stop-color="#7C6CF0" stop-opacity="0"/></linearGradient></defs>';
+ for(var g=0;g<4;g++)s+='<line x1="0" x2="'+w+'" y1="'+(g*38+5)+'" y2="'+(g*38+5)+'" stroke="#8883" stroke-dasharray="3 4"/>';
+ s+='<polygon points="10,'+h+' '+p+' '+(w-10)+','+h+'" fill="url(#lg)"/><polyline points="'+p+'" fill="none" stroke="#7C6CF0" stroke-width="2.5" stroke-linejoin="round"/>';
+ pts.forEach(function(q,i){if(i%3==2||i==11)s+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="3.5" fill="#fff" stroke="#7C6CF0" stroke-width="2"/>'});
+ 'JFMAMJJASOND'.split('').forEach(function(m,i){s+='<text x="'+pts[i][0]+'" y="'+(h+14)+'" font-size="8" fill="#999" text-anchor="middle">'+m+'</text>'});
+ $('line').innerHTML=s+'</svg>'}
+var M='JFMAMJJASOND'.split('');
+var reqs=[['Hamza Ali','Food Relief',C[0]],['Maryam Noor','Shelter',C[1]],['Usman Raza','Medical',C[2]],['Zara Sheikh','Rescue',C[4]]];
+var tasks=[['Pack food packets',0],['Fill attendance sheet',0],['Guide new volunteers',1],['Upload event photos',0]];
+var hrs=142,on=false,role='admin';
+function toast(m){var t=$('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none'},1800)}
+function renderReqs(){$('reqs').innerHTML=reqs.length?reqs.map(function(r,i){return '<div class="item"><div class="av" style="background:'+r[2]+'">'+r[0].split(' ').map(function(w){return w[0]}).join('')+'</div><div class="t">'+r[0]+'<small>'+r[1]+'</small></div><button class="btn gold" onclick="act('+i+',1)">Approve</button><button class="btn no" onclick="act('+i+',0)">'+I('x')+'</button></div>'}).join(''):'<p class="sub">No pending requests</p>';$('pc').textContent=reqs.length}
+function act(i,a){toast(a?reqs[i][0]+' approved':'Request rejected');reqs.splice(i,1);renderReqs()}
+function renderTasks(){$('tasks').innerHTML=tasks.map(function(t,i){return '<div class="item"><input type="checkbox" class="chk" '+(t[1]?'checked':'')+' onchange="tasks['+i+'][1]=this.checked;renderTasks()"><div class="t '+(t[1]?'done':'')+'">'+t[0]+'</div></div>'}).join('')}
+function checkin(){on=!on;if(!on)hrs+=2;$('hrs').textContent=hrs;$('ci').lastChild.textContent=on?'Check Out':'Check In';toast(on?'Checked in':'2 hours added')}
+function nav(){var a=role=='help'?[['home','Home'],['inbox','My Request'],['home','Shelters'],['bag','Food Points'],['drop','Flood Alerts']]:role=='admin'?[['home','Overview'],['users','Volunteers'],['bag','Food Stock'],['home','Shelters'],['drop','Flood Areas'],['calendar','Events'],['inbox','Requests'],['chart','Reports']]:[['home','My Home'],['list','My Tasks'],['calendar','Shifts'],['drop','Flood Alerts'],['award','Badges'],['mega','Notices']];
+ $('nav').innerHTML=a.map(function(x,i){return '<div class="nv '+(i?'':'on')+'" onclick="document.querySelectorAll(\'.nv\').forEach(function(n){n.classList.remove(\'on\')});this.classList.add(\'on\')">'+I(x[0])+x[1]+'</div>'}).join('');$('who').textContent=role=='admin'?'Admin mode':role=='help'?'Help seeker':'Volunteer mode'}
+function ini(n){return n.trim().split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('')}
+var HR=[{n:'Rukhsana Bibi',area:'Rajanpur, Punjab',type:'Food',p:6,st:0},{n:'Imran Shah',area:'Muzaffargarh, Punjab',type:'Rescue',p:4,st:1},{n:'Gul Bano',area:'Layyah, Punjab',type:'Shelter',p:9,st:0}],cur=-1;
+var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5],Other:C[0]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop',Other:'inbox'};
+function renderHR(){$('hreq').innerHTML=HR.map(function(r,i){var c=TC[r.type];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I(TI[r.type])+'</div><div class="t">'+r.n+(r.mine?' (new)':'')+'<small>'+r.type+' · '+r.p+' people · '+r.area+'</small></div>'+(r.st<3?'<button class="btn gold" onclick="adv('+i+')">'+['Assign','Dispatch','Complete'][r.st]+'</button>':tg('Done','#3CC08E'))+'</div>'}).join('');$('hc').textContent=HR.filter(function(r){return r.st<3}).length+' open'}
+function adv(i){HR[i].st++;renderHR();if(i==cur)renderHelp();toast('Status: '+STEPS[HR[i].st])}
+function renderHelp(){var r=HR[cur];$('hid').textContent='Request #'+(1000+cur);
+ $('hs').textContent=['Our team will contact you shortly. Stay safe and move to higher ground if water is rising.','A volunteer has been assigned to your request.','Help is on the way to your location.','Your request is completed. Stay safe!'][r.st];
+ $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+r.p+' people · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
+var ROLE='vol',WANT=ROLE=='vol'?'volunteer':'admin',U=null;
+try{U=JSON.parse(sessionStorage.getItem('rl_user'))}catch(e){}
+if(!U||U.role!==WANT)location.replace('../index.html#'+WANT);
+function logout(){try{sessionStorage.removeItem('rl_user')}catch(e){}location.href='../index.html'}
+function boot(){role=ROLE;var n=U.name||'User';
+ if(ROLE=='vol'){$('vn').textContent=n.split(' ')[0];$('vn2').textContent=n;$('vav').textContent=ini(n);$('vd').textContent=(U.skill||'Volunteer')+' · '+(U.area||'')}
+ else{$('an').textContent=n;$('aav').textContent=ini(n);
+  var TM={'Flood rescue':'Rescue','Medical help':'Medical','Shelter':'Shelter','Food or water':'Food'},h=[],v=[];
+  try{h=JSON.parse(localStorage.getItem('rl_help')||'[]');v=JSON.parse(localStorage.getItem('rl_vols')||'[]')}catch(e){}
+  h.forEach(function(r){HR.unshift({n:r.name,area:r.area+(r.urgent?' · URGENT':''),type:TM[r.type]||'Other',p:1,st:0,mine:1})});
+  v.forEach(function(r,i){reqs.unshift([r.name,r.skill||'Volunteer',C[i%6]])});
+  renderReqs();renderHR()}
+ ['admin','vol','help'].forEach(function(k){$(k).className=k==role?'':'hide'});nav();scrollTo(0,0)}
+var SC={Critical:'#EF5B5B',High:'#F58A3D',Moderate:'#F5B83D'};
+var FL=[['Rajanpur','Punjab','Critical',4200],['Muzaffargarh','Punjab','Critical',3800],['Layyah','Punjab','High',2600],['Jhang','Punjab','High',2100],['Sukkur','Sindh','Moderate',1500],['Charsadda','KP','Moderate',900]];
+var FD=[['Rice',6.2,10,'t',C[3]],['Flour',5.1,8,'t',C[4]],['Cooking oil',1.2,2,'t',C[3]],['Drinking water',12000,20000,'bottles',C[1]],['Ready meals',8400,15000,'meals',C[2]],['Medical kits',340,600,'kits',C[5]]];
+var SH=[['Govt School','Rajanpur',320,400],['Community Hall','Muzaffargarh',410,420],['Relief Camp','Layyah',180,350],['Mosque Complex','Jhang',95,200],['Sports Ground','Sukkur',60,300]];
+function tg(t,c){return '<span class="tag" style="background:'+c+'22;color:'+c+'">'+t+'</span>'}
+function floodList(id){$(id).innerHTML=FL.map(function(f){var c=SC[f[2]];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I('drop')+'</div><div class="t">'+f[0]+'<small>'+f[1]+' · '+f[3].toLocaleString()+' families</small></div>'+tg(f[2],c)+'</div>'}).join('')}
+function foodList(id){$(id).innerHTML=FD.map(function(f){var p=Math.round(f[1]/f[2]*100),low=p<50;return '<div class="item"><div class="tile" style="background:'+f[4]+'22;color:'+f[4]+'">'+I('bag')+'</div><div class="t">'+f[0]+'<small>'+f[1].toLocaleString()+' / '+f[2].toLocaleString()+' '+f[3]+'</small><div class="bar"><i style="width:'+p+'%;background:'+f[4]+'"></i></div></div>'+(low?tg('Low','#EF5B5B'):tg(p+'%','#3CC08E'))+'</div>'}).join('')}
+function shelterList(id){$(id).innerHTML=SH.map(function(h){var p=Math.round(h[2]/h[3]*100),c=p>=95?'#EF5B5B':p>=75?'#F58A3D':'#3CC08E',st=p>=95?'Full':p>=75?'Near full':'Available';return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I('home')+'</div><div class="t">'+h[0]+'<small>'+h[1]+' · '+h[2]+' / '+h[3]+' people</small><div class="bar"><i style="width:'+p+'%;background:'+c+'"></i></div></div>'+tg(st,c)+'</div>'}).join('')}
+icons();renderReqs();renderTasks();nav();line();floodList('fl1');floodList('fl2');foodList('fd1');foodList('fd2');shelterList('sh1');shelterList('sh2');floodList('fl3');foodList('fd3');shelterList('sh3');renderHR();
+donut('dep',[['Food Relief',87,C[0]],['Shelter',62,C[1]],['Medical',55,C[2]],['Rescue',44,C[3]]],248);
+donut('gen',[['Male',142,C[1]],['Female',106,'#F472A8']],'248');
+donut('goal',[['Done',18,C[2],'h'],['Left',7,'#d8cfae','h']],'72%');
+donut('split',[['Food',9,C[0],'h'],['Shelter',6,C[1],'h'],['Other',3,C[3],'h']],'18h');
+bars('bars1',[40,55,48,70,82,65,90,76,60,85,95,70],[30,42,38,50,60,48,66,55,44,62,70,52],M);
+bars('bars2',[8,12,10,14,9,16,12,18,11,15,10,7],null,M);
+if(U&&U.role===WANT)boot();
+</script></body></html>
