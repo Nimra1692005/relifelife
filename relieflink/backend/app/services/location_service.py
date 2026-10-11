@@ -342,6 +342,7 @@ class LocationService:
         """List all shelters with remaining capacity."""
         from app.database import db
         rows = await db.table_select("shelters", limit=100)
+        rows = [r for r in rows if r.get("type") != "hospital"]
         for r in rows:
             r["available_spots"] = max((r.get("capacity") or 0) - (r.get("current_occupancy") or 0), 0)
         return {"success": True, "data": rows, "count": len(rows)}
@@ -368,5 +369,39 @@ class LocationService:
         }
         await db.table_insert("shelters", row)
         return {"success": True, "data": row, "message": "Shelter created successfully"}
+    async def list_hospitals(self) -> Dict[str, Any]:
+        """List hospitals (stored in the shelters table with type='hospital')."""
+        from app.database import db
+        rows = await db.table_select("shelters", limit=200)
+        out = []
+        for r in rows:
+            if r.get("type") != "hospital":
+                continue
+            beds = max((r.get("capacity") or 0) - (r.get("current_occupancy") or 0), 0)
+            out.append({**r, "beds_available": beds, "emergency_capable": True})
+        return {"success": True, "data": out, "count": len(out)}
+
+    async def create_hospital(self, data: dict) -> Dict[str, Any]:
+        """Create a hospital entry."""
+        from app.database import db
+        import uuid
+        from datetime import datetime, timezone
+        row = {
+            "id": f"hsp-{uuid.uuid4().hex[:6]}",
+            "name": data["name"],
+            "type": "hospital",
+            "latitude": data["latitude"],
+            "longitude": data["longitude"],
+            "address": data.get("address"),
+            "capacity": data.get("beds_available", 0),
+            "current_occupancy": 0,
+            "facilities": [],
+            "status": "active",
+            "contact_phone": data.get("phone"),
+            "verified": False,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.table_insert("shelters", row)
+        return {"success": True, "data": row, "message": "Hospital created successfully"}
 
 location_service = LocationService()
