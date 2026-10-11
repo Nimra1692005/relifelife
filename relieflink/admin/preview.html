@@ -1225,6 +1225,10 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 .nbx-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:14px;font-size:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
 .nbx-btn.call{background:linear-gradient(145deg,#E8C86A,#C9A227);color:#1B3A2A}.nbx-btn.dir{background:#1B3A2A;color:#F5EEDB}.nbx-btn.off{background:#EADFC2;color:#9a9578;cursor:default}
 .nbx-feat .nbx-btns{grid-column:1/-1}.nbx-foot{font-size:12px;color:#7a7660;text-align:center;padding:4px}
+
+/* Weather + Nearby now use the gold/green panel (weather-nearby.html) */
+.wn-frame{display:block;width:100%;border:0;min-height:720px;background:transparent}
+#page-weather>:not(.page-header):not(.wn-frame),#page-nearby>:not(.page-header):not(.wn-frame){display:none!important}
 </style>
 </head>
 <body>
@@ -1506,6 +1510,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <!-- ═══ PAGE: WEATHER ═══ -->
 <div class="app-page" id="page-weather">
 <div class="page-header"><img src="weather.png" class="page-header-img" alt="Weather"><h2>Weather Intelligence</h2><p>Live weather data from OpenWeatherMap for all major cities in Pakistan</p></div>
+<iframe class="wn-frame" src="weather-nearby.html?focus=weather" loading="lazy" title="Weather"></iframe>
 
 <!-- ═══ WEATHER SECTION ═══ -->
 <section class="weather-section" id="weatherSection">
@@ -1520,6 +1525,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <!-- ═══ PAGE: NEARBY ═══ -->
 <div class="app-page" id="page-nearby">
 <div class="page-header"><img src="hospital.png" class="page-header-img" alt="Hospital"><h2>Nearby Hospitals</h2><p>Closest hospitals first &mdash; call them or get directions</p></div>
+<iframe class="wn-frame" src="weather-nearby.html?focus=nearby" loading="lazy" title="Nearby hospitals" allow="geolocation"></iframe>
 
 <!-- ═══ NEARBY SECTION ═══ -->
 <section class="nearby-section" id="nearbySection">
@@ -3775,7 +3781,7 @@ async function fetchNearby(lat,lon,label){nbMsg('Loading hospitals near <b>'+nbE
 function detectMyLocation(){if(!navigator.geolocation){nbMsg('Location is not supported on this device. Search a city above.');return}
  nbMsg('Detecting your location&hellip;',true);
  navigator.geolocation.getCurrentPosition(function(p){var la=p.coords.latitude,lo=p.coords.longitude,i=document.getElementById('locSearchInput');if(i)i.value=la.toFixed(4)+', '+lo.toFixed(4);fetchNearby(la,lo,'Your location')},function(){nbMsg('Location access is blocked or unavailable. Allow location in your browser settings, or search a city above.',false,true)},{enableHighAccuracy:true,timeout:12000,maximumAge:60000})}
-var _nbShow=showPage;showPage=function(p){_nbShow.apply(this,arguments);if(p==='nearby'&&!window._nbAuto){window._nbAuto=1;setTimeout(detectMyLocation,250)}};
+window.addEventListener('message',function(e){if(e.data&&e.data.rlH){[].forEach.call(document.querySelectorAll('.wn-frame'),function(f){if(f.contentWindow===e.source)f.style.height=Math.max(720,e.data.rlH)+'px'})}});
 </script>
 </body>
 </html>
