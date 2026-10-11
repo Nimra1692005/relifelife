@@ -1192,6 +1192,39 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 @media(max-width:1250px){.rl-gR{grid-template-columns:1fr 1fr}.rl-gR>:nth-child(2){grid-column:1/-1;order:3}}
 @media(max-width:900px){.rl-gR{grid-template-columns:1fr}.rl-gR>:nth-child(2){order:0;grid-column:auto}#page-dashboard .rl[data-theme="light"]{padding:14px;border-radius:22px}}
 .rl-main{min-width:0}.rl-g3>*,.rl-g2>*,.rl-kpis>*{min-width:0}.rl-cv,.rl-donut{width:100%;min-width:0;overflow:hidden}.rl-cv canvas,.rl-donut canvas{max-width:100%}
+
+/* ═══ NEARBY — green / cream / gold app style ═══ */
+#page-nearby .page-header{background:linear-gradient(160deg,#1B3A2A,#2F5A42);border:1px solid rgba(201,162,39,.5);border-top:0;border-radius:0 0 34px 34px;padding:22px 20px 24px;margin-bottom:14px;box-shadow:0 12px 26px rgba(27,58,42,.22)}
+#page-nearby .page-header h2{color:#F5EEDB!important;margin:0 0 4px}#page-nearby .page-header p{color:#cfd8c9!important;margin:0}#page-nearby .page-header-img{display:none!important}
+#page-nearby .nearby-section{border-top:0;padding:6px 0 30px}#page-nearby .section-label{display:none}
+#page-nearby .search-input{border-radius:22px;border:1px solid rgba(201,162,39,.6);background:#FFFCF4;color:#1B3A2A}
+#page-nearby .search-btn{background:#1B3A2A;color:#F5EEDB;border-radius:22px}
+#page-nearby .gps-btn{background:linear-gradient(145deg,#E8C86A,#C9A227);color:#1B3A2A;border:0;border-radius:22px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+#page-nearby .city-chip{border-radius:20px;background:#FFFCF4;border:1px solid rgba(201,162,39,.4);color:#1B3A2A;padding:6px 14px}
+#page-nearby .city-chip.active{background:#1B3A2A;color:#F5EEDB;border-color:#1B3A2A}
+.nbx-i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nbx-wrap{display:grid;gap:14px;color:#1B3A2A}
+.nbx-msg{text-align:center;padding:40px 16px;color:#6b6a55;display:grid;gap:14px;justify-items:center}
+.nbx-spin{width:34px;height:34px;border-radius:50%;border:3px solid #EADFC2;border-top-color:#C9A227;display:none}.nbx-spin.on{display:block;animation:nbxs 1s linear infinite}@keyframes nbxs{to{transform:rotate(360deg)}}
+.nbx-hero{background:linear-gradient(160deg,#1B3A2A,#2F5A42);color:#F5EEDB;border-radius:28px;padding:18px;border:1px solid rgba(201,162,39,.55);box-shadow:0 12px 26px rgba(27,58,42,.22)}
+.nbx-loc{font-size:12px;opacity:.8;display:flex;align-items:center;gap:6px}.nbx-w{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px}.nbx-w b{font-size:30px}.nbx-w span{font-size:12px;opacity:.8}
+.nbx-feat{border:1px solid rgba(201,162,39,.55);border-radius:22px;padding:14px;background:rgba(255,255,255,.07);display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center}
+.nbx-feat .nbx-ic{background:#0f2619;color:#C9A227;width:52px;height:52px}.nbx-feat .nbx-n{color:#F5EEDB;font-size:16px}.nbx-feat .nbx-s{color:#cfd8c9}.nbx-feat .nbx-d{color:#E8C86A}
+.nbx-kick{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#E8C86A;font-weight:700;margin:0 0 8px}
+.nbx-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.nbx-tile{background:linear-gradient(145deg,#FFFDF5,#F1E7CC);border-radius:24px;padding:12px 4px;text-align:center;border:1px solid rgba(201,162,39,.28);box-shadow:7px 7px 16px rgba(170,145,80,.2),-5px -5px 12px rgba(255,255,255,.9);cursor:pointer;font-family:inherit;color:#1B3A2A}
+.nbx-tile .nbx-ic{margin:0 auto 6px}.nbx-tile b{display:block;font-size:12px}.nbx-tile small{font-size:10px;color:#7a7660}
+.nbx-tile.on{background:linear-gradient(160deg,#2F5A42,#1B3A2A);color:#F5EEDB;border-color:#C9A227}.nbx-tile.on small{color:#cfd8c9}.nbx-tile.on .nbx-ic{background:#0f2619;color:#C9A227}
+.nbx-ic{width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#fff,#F3E9CE);box-shadow:inset 2px 2px 5px rgba(170,145,80,.18),inset -2px -2px 5px #fff;display:grid;place-items:center;color:#1B3A2A;flex:none}
+.nbx-ic svg{width:24px;height:24px;fill:rgba(201,162,39,.3);stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nbx-sort{font-size:12px;color:#7a7660;padding:0 4px}
+.nbx-card{background:linear-gradient(145deg,#FFFDF6,#F7EFD9);border:1px solid rgba(201,162,39,.28);border-radius:22px;padding:14px;box-shadow:6px 6px 14px rgba(170,145,80,.16),-4px -4px 10px rgba(255,255,255,.85);display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;margin-bottom:12px}
+.nbx-n{font-weight:700;font-size:14px;line-height:1.25}.nbx-s{font-size:11px;color:#7a7660;margin-top:2px}.nbx-d{font-weight:800;font-size:13px;color:#8a6d0b;white-space:nowrap}
+.nbx-t{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.nbx-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:#EADFC2;color:#5b5538}.nbx-tag.g{background:#3CC08E22;color:#1f8a62}.nbx-tag.r{background:#EF5B5B22;color:#c23a3a}
+.nbx-btns{grid-column:1/-1;display:flex;gap:8px}
+.nbx-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:14px;font-size:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
+.nbx-btn.call{background:linear-gradient(145deg,#E8C86A,#C9A227);color:#1B3A2A}.nbx-btn.dir{background:#1B3A2A;color:#F5EEDB}.nbx-btn.off{background:#EADFC2;color:#9a9578;cursor:default}
+.nbx-feat .nbx-btns{grid-column:1/-1}.nbx-foot{font-size:12px;color:#7a7660;text-align:center;padding:4px}
 </style>
 </head>
 <body>
@@ -1486,18 +1519,18 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 
 <!-- ═══ PAGE: NEARBY ═══ -->
 <div class="app-page" id="page-nearby">
-<div class="page-header"><img src="hospital.png" class="page-header-img" alt="Hospital"><h2>Nearby Hospitals & Shelters</h2><p>Find the closest emergency facilities using OpenStreetMap data</p></div>
+<div class="page-header"><img src="hospital.png" class="page-header-img" alt="Hospital"><h2>Nearby Hospitals</h2><p>Closest hospitals first &mdash; call them or get directions</p></div>
 
 <!-- ═══ NEARBY SECTION ═══ -->
 <section class="nearby-section" id="nearbySection">
 <div class="section-label">Find Nearby Hospitals, Shelters & Weather</div>
 <div class="search-wrap">
 <div style="flex:1;position:relative">
-<input type="text" class="search-input" id="locSearchInput" placeholder="🔍 Search city, area or address... (e.g. Lahore, F-11 Islamabad)" onkeydown="if(event.key==='Enter')searchLocation()" oninput="onSearchInput(this.value)" autocomplete="off">
+<input type="text" class="search-input" id="locSearchInput" placeholder="Search city, area or address (e.g. Lahore, Rajanpur)" onkeydown="if(event.key==='Enter')searchLocation()" oninput="onSearchInput(this.value)" autocomplete="off">
 <div id="locSuggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--g200);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:50;max-height:200px;overflow-y:auto;margin-top:4px"></div>
 </div>
 <button class="search-btn" id="locSearchBtn" onclick="searchLocation()">Search</button>
-<button class="gps-btn" onclick="detectMyLocation()">📍 GPS</button>
+<button class="gps-btn" onclick="detectMyLocation()"><svg class="nbx-i" viewBox="0 0 24 24"><path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>My location</button>
 </div>
 <div class="quick-cities">
 <button class="city-chip" onclick="quickCity('Islamabad','Islamabad, Pakistan',33.6844,73.0479,this)">Islamabad</button>
@@ -1510,7 +1543,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <button class="city-chip" onclick="quickCity('Rawalpindi','Rawalpindi, Pakistan',33.5651,73.0169,this)">Rawalpindi</button>
 </div>
 <div id="nearbyContent">
-<div class="nearby-status"><div class="nearby-status-icon">📍</div><div>Search a location or use GPS to find nearby hospitals, shelters & weather</div></div>
+<div class="nearby-status">Detecting your location&hellip; or search a city above.</div>
 </div>
 </section>
 
@@ -3707,5 +3740,42 @@ refresh();setInterval(refresh,600000);
 })();
 </script>
 
+<script>
+/* Nearby hospitals: auto GPS, distance sorting, Call + Directions */
+var NB={tab:'hospitals',data:{},lat:0,lon:0,label:'',w:null};
+var NBP={hosp:'M3 21V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14 M15 11h5a1 1 0 0 1 1 1v9 M2 21h20 M9 9v6 M6 12h6',home:'M3 11l9-8 9 8 M5 10v10h14V10',pill:'M10.5 20.5a4.95 4.95 0 0 1-7-7l10-10a4.95 4.95 0 0 1 7 7z M8.5 8.5l7 7',phone:'M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z',nav:'M3 11l19-9-9 19-2-8-8-2z',pin:'M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z'};
+function NI(n){return '<svg class="nbx-i" viewBox="0 0 24 24"><path d="'+NBP[n]+'"/></svg>'}
+function nbEsc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function nbTel(p){var x=String(p||'').split(/[;,\/]/)[0].replace(/[^\d+]/g,'');return x.length>=5?x:''}
+function nbDir(a,b){return 'https://www.google.com/maps/dir/?api=1&destination='+a+','+b+'&travelmode=driving'}
+function nbFmt(d){return d<1?Math.round(d*1000)+' m':d.toFixed(1)+' km'}
+function nbMap(osm){return (osm||[]).map(function(f){return {name:f.name,lat:f.lat,lon:f.lon,dist:parseFloat(f.dist),phone:nbTel(f.phone),sub:f.hours?'Hours: '+f.hours:'',is24h:f.is24h,emerg:f.emergency,beds:f.beds}})}
+function nbHospitals(lat,lon,osm){var list=nbMap(osm);
+ var fam=FAMOUS_HOSPITALS.map(function(h){return {name:h.name,lat:h.lat,lon:h.lng,dist:distKm(lat,lon,h.lat,h.lng),phone:nbTel(h.phone),sub:h.addr+', '+h.city+' · '+h.spec,verified:true}}).sort(function(a,b){return a.dist-b.dist});
+ var near=fam.filter(function(h){return h.dist<=100});if(near.length<3)near=fam.slice(0,3);
+ near.forEach(function(h){var hit=-1;list.forEach(function(o,i){if(hit<0&&(distKm(o.lat,o.lon,h.lat,h.lon)<0.3||o.name.toLowerCase()==h.name.toLowerCase()))hit=i});
+  if(hit>=0){var o=list[hit];o.phone=h.phone||o.phone;o.sub=h.sub;o.verified=true}else list.push(h)});
+ return list.sort(function(a,b){return a.dist-b.dist}).slice(0,20)}
+function nbCard(f,icon){return '<div class="nbx-card"><div class="nbx-ic">'+NI(icon)+'</div><div><div class="nbx-n">'+nbEsc(f.name)+'</div>'+(f.sub?'<div class="nbx-s">'+nbEsc(f.sub)+'</div>':'')+'<div class="nbx-t">'+(f.verified?'<span class="nbx-tag g">Verified</span>':'')+(f.is24h?'<span class="nbx-tag g">24/7</span>':'')+(f.emerg?'<span class="nbx-tag r">Emergency</span>':'')+(f.beds?'<span class="nbx-tag">'+nbEsc(f.beds)+' beds</span>':'')+'</div></div><div class="nbx-d">'+nbFmt(f.dist)+'</div><div class="nbx-btns">'+(f.phone?'<a class="nbx-btn call" href="tel:'+f.phone+'">'+NI('phone')+'Call</a>':'<span class="nbx-btn off">'+NI('phone')+'No number</span>')+'<a class="nbx-btn dir" target="_blank" rel="noopener" href="'+nbDir(f.lat,f.lon)+'">'+NI('nav')+'Directions</a></div></div>'}
+function nbList(){var t=NB.tab,a=NB.data[t]||[],ic={hospitals:'hosp',shelters:'home',pharmacies:'pill'}[t],nm={hospitals:'hospitals',shelters:'shelters',pharmacies:'pharmacies'}[t];
+ document.getElementById('nbxList').innerHTML=a.length?a.map(function(f){return nbCard(f,ic)}).join(''):'<div class="nbx-msg">No '+nm+' found within 10 km. Try another area or city above.</div>';
+ [].forEach.call(document.querySelectorAll('.nbx-tile'),function(e){e.classList.toggle('on',e.getAttribute('data-t')==t)})}
+function nbTab(t){NB.tab=t;nbList()}
+function nbMsg(t,load,retry){document.getElementById('nearbyContent').innerHTML='<div class="nbx-msg"><div class="nbx-spin'+(load?' on':'')+'"></div><div>'+t+'</div>'+(retry?'<button class="nbx-btn dir" style="flex:none" onclick="detectMyLocation()">'+NI('pin')+'Try again</button>':'')+'</div>'}
+function renderNearby(lat,lon,hosp,shelt,pharm,weather,label){
+ NB.lat=lat;NB.lon=lon;NB.label=label;NB.data={hospitals:nbHospitals(lat,lon,hosp),shelters:nbMap(shelt).sort(function(a,b){return a.dist-b.dist}),pharmacies:nbMap(pharm).sort(function(a,b){return a.dist-b.dist})};
+ var n=NB.data.hospitals[0],tl=NB.data;
+ var h='<div class="nbx-wrap"><div class="nbx-hero"><div class="nbx-loc">'+NI('pin')+nbEsc(label)+' · '+lat.toFixed(3)+', '+lon.toFixed(3)+'</div>'+(weather?'<div class="nbx-w"><b>'+weather.temp+'&deg;C</b><span>'+nbEsc(weather.cond)+' · Feels like '+weather.feels+'&deg;C</span></div>':'<div style="height:12px"></div>')+
+ (n?'<p class="nbx-kick">Nearest hospital</p><div class="nbx-feat"><div class="nbx-ic">'+NI('hosp')+'</div><div><div class="nbx-n">'+nbEsc(n.name)+'</div>'+(n.sub?'<div class="nbx-s">'+nbEsc(n.sub)+'</div>':'')+'</div><div class="nbx-d">'+nbFmt(n.dist)+'</div><div class="nbx-btns">'+(n.phone?'<a class="nbx-btn call" href="tel:'+n.phone+'">'+NI('phone')+'Call</a>':'<span class="nbx-btn off">'+NI('phone')+'No number</span>')+'<a class="nbx-btn dir" style="background:#0f2619;border:1px solid #C9A227;color:#E8C86A" target="_blank" rel="noopener" href="'+nbDir(n.lat,n.lon)+'">'+NI('nav')+'Directions</a></div></div>':'<p class="nbx-kick">No hospitals found nearby</p>')+'</div>'+
+ '<div class="nbx-tiles">'+[['hospitals','hosp','Hospitals'],['shelters','home','Shelters'],['pharmacies','pill','Pharmacies']].map(function(x){return '<button class="nbx-tile" data-t="'+x[0]+'" onclick="nbTab(\''+x[0]+'\')"><div class="nbx-ic">'+NI(x[1])+'</div><b>'+x[2]+'</b><small>'+tl[x[0]].length+' found</small></button>'}).join('')+'</div>'+
+ '<div class="nbx-sort">Sorted by distance from you · within 10 km</div><div id="nbxList"></div><div class="nbx-foot">Data: OpenStreetMap + verified hospital directory. Always call 1122 in an emergency.</div></div>';
+ document.getElementById('nearbyContent').innerHTML=h;nbList()}
+async function fetchNearby(lat,lon,label){nbMsg('Loading hospitals near <b>'+nbEsc(label)+'</b>&hellip;',true);
+ try{var r=await Promise.all([queryOSM(lat,lon,'hospitals'),queryOSM(lat,lon,'shelters'),queryOSM(lat,lon,'pharmacies'),getWeather(lat,lon)]);renderNearby(lat,lon,r[0],r[1],r[2],r[3],label)}catch(e){nbMsg('Could not load data. Check your internet connection and try again.',false,true)}}
+function detectMyLocation(){if(!navigator.geolocation){nbMsg('Location is not supported on this device. Search a city above.');return}
+ nbMsg('Detecting your location&hellip;',true);
+ navigator.geolocation.getCurrentPosition(function(p){var la=p.coords.latitude,lo=p.coords.longitude,i=document.getElementById('locSearchInput');if(i)i.value=la.toFixed(4)+', '+lo.toFixed(4);fetchNearby(la,lo,'Your location')},function(){nbMsg('Location access is blocked or unavailable. Allow location in your browser settings, or search a city above.',false,true)},{enableHighAccuracy:true,timeout:12000,maximumAge:60000})}
+var _nbShow=showPage;showPage=function(p){_nbShow.apply(this,arguments);if(p==='nearby'&&!window._nbAuto){window._nbAuto=1;setTimeout(detectMyLocation,250)}};
+</script>
 </body>
 </html>
