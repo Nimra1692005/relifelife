@@ -187,6 +187,7 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
  </div>
 </main></div>
 <div class="toast" id="toast"></div>
+<script src="../config.js"></script>
 <script>
 var P={leaf:'M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z M4 20c3-6 6-9 10-11',users:'M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2 M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M21 21v-2a4 4 0 0 0-3-3.9 M16 3.1a4 4 0 0 1 0 7.8',check:'M20 6 9 17l-5-5',calendar:'M3 5h18v16H3z M16 3v4 M8 3v4 M3 10h18',clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 7v5l3 2',inbox:'M22 12h-6l-2 3h-4l-2-3H2 M5.5 5h13L22 12v7H2v-7z',home:'M3 11l9-8 9 8 M5 10v10h14V10',list:'M9 6h12 M9 12h12 M9 18h12 M4 6h.01 M4 12h.01 M4 18h.01',chart:'M4 20V10 M10 20V4 M16 20v-8 M22 20H2',set:'M4 21v-7 M4 10V3 M12 21v-9 M12 8V3 M20 21v-5 M20 12V3 M1 14h6 M9 8h6 M17 16h6',award:'M12 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M8.2 14 7 22l5-3 5 3-1.2-8',star:'M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z',flame:'M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 1 2 2 2 3 1 0-2-1-4 0-7z',pin:'M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z',mega:'M3 11v2a1 1 0 0 0 1 1h3l8 4V6L7 10H4a1 1 0 0 0-1 1z M19 8a5 5 0 0 1 0 8',search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M21 21l-4.3-4.3',swap:'M7 4 3 8l4 4 M3 8h14 M17 20l4-4-4-4 M21 16H7',x:'M18 6 6 18 M6 6l12 12',drop:'M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z',bag:'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0'};
 function I(n){return '<svg class="i" viewBox="0 0 24 24"><path d="'+P[n]+'"/></svg>'}
@@ -234,11 +235,11 @@ function nav(){var h=(NAVS[role]||[]).map(function(x){return '<div class="nv '+(
 function ini(n){return n.trim().split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('')}
 var HR=[{n:'Rukhsana Bibi',area:'Rajanpur, Punjab',type:'Food',p:6,st:0},{n:'Imran Shah',area:'Muzaffargarh, Punjab',type:'Rescue',p:4,st:1},{n:'Gul Bano',area:'Layyah, Punjab',type:'Shelter',p:9,st:0}],cur=-1;
 var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5],Other:C[0]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop',Other:'inbox'};
-function renderHR(){$('hreq').innerHTML=HR.map(function(r,i){var c=TC[r.type];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I(TI[r.type])+'</div><div class="t">'+r.n+(r.mine?' (new)':'')+'<small>'+r.type+' · '+r.p+' people · '+r.area+'</small></div>'+(r.st<3?'<button class="btn gold" onclick="adv('+i+')">'+['Assign','Dispatch','Complete'][r.st]+'</button>':tg('Done','#3CC08E'))+'</div>'}).join('');$('hc').textContent=HR.filter(function(r){return r.st<3}).length+' open'}
-function adv(i){HR[i].st++;renderHR();if(i==cur)renderHelp();toast('Status: '+STEPS[HR[i].st])}
+function renderHR(){$('hreq').innerHTML=HR.map(function(r,i){var c=TC[r.type];return '<div class="item"><div class="tile" style="background:'+c+'22;color:'+c+'">'+I(TI[r.type])+'</div><div class="t">'+r.n+(r.mine?' (new)':'')+'<small>'+r.type+' · '+(r.p>1?r.p+' people':'1 person')+' · '+r.area+'</small></div>'+(r.st<3?'<button class="btn gold" onclick="adv('+i+')">'+['Assign','Dispatch','Complete'][r.st]+'</button>':tg('Done','#3CC08E'))+'</div>'}).join('');$('hc').textContent=HR.filter(function(r){return r.st<3}).length+' open'}
+function adv(i){HR[i].st++;sync(HR[i]);renderHR();if(i==cur)renderHelp();toast('Status: '+STEPS[HR[i].st])}
 function renderHelp(){var r=HR[cur];$('hid').textContent='Request #'+(1000+cur);
  $('hs').textContent=['Our team will contact you shortly. Stay safe and move to higher ground if water is rising.','A volunteer has been assigned to your request.','Help is on the way to your location.','Your request is completed. Stay safe!'][r.st];
- $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+r.p+' people · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
+ $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+(r.p>1?r.p+' people':'1 person')+' · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
 var ROLE='admin',WANT=ROLE=='vol'?'volunteer':'admin',U=null;
 try{U=JSON.parse(sessionStorage.getItem('rl_user')||localStorage.getItem('rl_user'))}catch(e){}
 if(!U||U.role!==WANT)U={role:WANT,name:ROLE=='vol'?'Volunteer':'Admin'};
@@ -249,7 +250,7 @@ function boot(){role=ROLE;var n=U.name||'User';
   var TM={'Flood rescue':'Rescue','Medical help':'Medical','Shelter':'Shelter','Food or water':'Food'},h=[],v=[];
   try{h=JSON.parse(localStorage.getItem('rl_help')||'[]');v=JSON.parse(localStorage.getItem('rl_vols')||'[]')}catch(e){}
   h.forEach(function(r){HR.unshift({n:r.name,area:r.area+(r.urgent?' · URGENT':''),type:TM[r.type]||'Other',p:1,st:0,mine:1})});
-  v.forEach(function(r,i){reqs.unshift([r.name,r.skill||'Volunteer',C[i%6]])});
+  v.forEach(function(r,i){reqs.unshift([r.name,r.skill||'Volunteer',C[i%6],1])});
   renderReqs();renderHR()}
  ['admin','vol','help'].forEach(function(k){$(k).className=k==role?'':'hide'});tagView();cv='overview';nav();view('overview');scrollTo(0,0)}
 var SC={Critical:'#EF5B5B',High:'#F58A3D',Moderate:'#F5B83D'};
@@ -267,5 +268,17 @@ donut('goal',[['Done',18,C[2],'h'],['Left',7,'#d8cfae','h']],'72%');
 donut('split',[['Food',9,C[0],'h'],['Shelter',6,C[1],'h'],['Other',3,C[3],'h']],'18h');
 bars('bars1',[40,55,48,70,82,65,90,76,60,85,95,70],[30,42,38,50,60,48,66,55,44,62,70,52],M);
 bars('bars2',[8,12,10,14,9,16,12,18,11,15,10,7],null,M);
-if(U&&U.role===WANT)boot();
+var API=(window.RELIEF_API||'').replace(/\/$/,'');
+function jget(p){return Promise.race([fetch(API+p).then(function(r){if(!r.ok)throw 0;return r.json()}),new Promise(function(_,r){setTimeout(function(){r(0)},45000)})])}
+function rows(j){var d=j&&j.data;return Array.isArray(d)?d:[]}
+function live(ok){var s=document.querySelector('#'+(role=='admin'?'admin':'vol')+' .top .sub');if(s)s.textContent+=ok?' · Live data':' · Demo data (server offline)'}
+function sync(r){if(!API||!r.id)return;fetch(API+'/sos/'+r.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:['pending','assigned','dispatched','resolved'][r.st]})}).catch(function(){})}
+function shelters(){return jget('/shelters').then(function(j){var a=rows(j);if(a.length){SH=a.map(function(x){return [x.name,x.address||x.type||'',x.current_occupancy||0,x.capacity||1]});shelterList(role=='admin'?'sh1':'sh2')}})}
+function load(){if(!API){live(false);return}var ps=[shelters()];
+ if(role=='admin'){
+  ps.push(jget('/sos?limit=100').then(function(j){var a=rows(j).map(function(x){var m=(x.message||'').split(' | '),nd=m[2]||'',t=x.emergency_type=='flood'?'Rescue':x.emergency_type=='medical'?'Medical':/shelter/i.test(nd)?'Shelter':/food/i.test(nd)?'Food':'Other';return {id:x.id,n:m[0]||'Citizen',area:x.address_text||'',type:t,p:1,st:{pending:0,acknowledged:1,assigned:1,dispatched:2,resolved:3,cancelled:3}[x.status]||0}});HR=a.concat(HR.filter(function(r){return r.mine}));renderHR()}));
+  ps.push(jget('/volunteers').then(function(j){var a=rows(j),b=document.querySelectorAll('#admin .grid.stats')[0].querySelectorAll('.stat b');b[0].textContent=a.length;b[1].textContent=a.filter(function(v){return v.is_active!==false}).length;
+   reqs=a.filter(function(v){return !v.verified}).map(function(v,i){return [v.full_name,(v.skills||[])[0]||'Volunteer',C[i%6]]}).concat(reqs.filter(function(r){return r[3]}));renderReqs()}))}
+ Promise.all(ps).then(function(){live(true)},function(){live(false)})}
+boot();load();
 </script></body></html>

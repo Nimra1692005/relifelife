@@ -600,13 +600,28 @@ body::after{
 
 <div id="toast" role="status"></div>
 
+<script src="config.js"></script>
 <script>
-window.RL={collect:function(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
-if(role==='admin'){o.email=tx[0];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
+window.RL=(function(){
+var API=(window.RELIEF_API||'').replace(/\/$/,''),PK=[30.3753,69.3451],P={},
+CITY={lahore:[31.5204,74.3587],karachi:[24.8607,67.0011],islamabad:[33.6844,73.0479],rawalpindi:[33.5651,73.0169],multan:[30.1575,71.5249],faisalabad:[31.4504,73.135],peshawar:[34.0151,71.5249],quetta:[30.1798,66.975],rajanpur:[29.1044,70.3302],muzaffargarh:[30.0703,71.1933],layyah:[30.9693,70.9428],jhang:[31.2681,72.3181],sukkur:[27.7052,68.8574],charsadda:[34.1453,71.7308],hyderabad:[25.396,68.3578],larkana:[27.5598,68.2264],nowshera:[34.0153,71.9747]};
+function geo(t){t=(t||'').toLowerCase();for(var k in CITY)if(t.indexOf(k)>-1)return CITY[k];return null}
+function post(path,body){var t=new Promise(function(_,r){setTimeout(function(){r(new Error('timeout'))},45000)});
+ return Promise.race([fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),t]).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,status:r.status,data:j}})})}
+function collect(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
+if(role==='admin'){o.email=tx[0];P.pw=tx[1];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
 else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
-sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o));
-if(role==='volunteer'||role==='help'){var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}}catch(e){}},
-dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}};
+P[role]=o;sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o))}catch(e){}}
+function queue(role,o){try{var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
+function send(role){var o=P[role];if(!o||!API)return Promise.resolve({offline:true});var c=geo(o.area),req;
+if(role==='help'){var ET={'Flood rescue':'flood','Medical help':'medical'};
+ req=post('/sos',{latitude:(c||PK)[0],longitude:(c||PK)[1],address_text:o.area,emergency_type:ET[o.type]||'other',urgency:o.urgent?'critical':'medium',message:[o.name,o.phone,o.type].join(' | ').slice(0,500)})}
+else if(role==='volunteer'){var b={full_name:o.name,phone:o.phone,skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};if(c){b.latitude=c[0];b.longitude=c[1]}req=post('/volunteers/register',b)}
+else req=post('/auth/login',{email:o.email,password:P.pw||''});
+return req.then(function(r){if(r.ok)return {ok:true,data:r.data};
+ if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
+ if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
+return {collect:collect,send:send,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}}})();
 </script>
 <script>
 (function(){
@@ -664,11 +679,11 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
     // help form — open full app
     if(f.dataset.role === 'help'){
       showToast('Request sent! Opening the app…');
-      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
+      RL.send('help').then(function(){ window.location.href = 'relieflink/admin/preview.html'; });
       return;
     }
     var d=RL.dest(f.dataset.role);
-    if(d){showToast(f.dataset.role==='admin'?'Signing in… opening admin dashboard':'Welcome! Opening your volunteer dashboard…');setTimeout(function(){window.location.href=d;},900);return;}
+    if(d){showToast('Connecting to server… (first request can take a few seconds)');RL.send(f.dataset.role).then(function(r){if(r.blocked){showToast(r.msg);return;}showToast(r.offline?'Server not reachable. Opening in demo mode…':'Done! Opening your dashboard…');setTimeout(function(){window.location.href=d;},700);});return;}
     showToast(f.dataset.msg);
     f.reset();
   });
@@ -771,11 +786,11 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     if(sheet && sheet.id === 'sheet-help'){
       showToast('Request sent! Opening the app…');
       closeSheet();
-      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 1200);
+      RL.send('help').then(function(){ window.location.href = 'relieflink/admin/preview.html'; });
       return;
     }
     var md=RL.dest(mrole);
-    if(md){showToast(mrole==='admin'?'Signing in… opening admin dashboard':'Welcome! Opening your volunteer dashboard…');closeSheet();setTimeout(function(){window.location.href=md;},900);return;}
+    if(md){showToast('Connecting to server… (first request can take a few seconds)');RL.send(mrole).then(function(r){if(r.blocked){showToast(r.msg);return;}closeSheet();showToast(r.offline?'Server not reachable. Opening in demo mode…':'Done! Opening your dashboard…');setTimeout(function(){window.location.href=md;},700);});return;}
     showToast(f.dataset.mmsg);
     f.reset();
     closeSheet();

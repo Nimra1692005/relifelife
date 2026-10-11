@@ -338,5 +338,35 @@ class LocationService:
         await db.table_insert("volunteers", row)
         return {"success": True, "data": row, "message": "Volunteer registered successfully"}
 
+    async def list_shelters(self) -> Dict[str, Any]:
+        """List all shelters with remaining capacity."""
+        from app.database import db
+        rows = await db.table_select("shelters", limit=100)
+        for r in rows:
+            r["available_spots"] = max((r.get("capacity") or 0) - (r.get("current_occupancy") or 0), 0)
+        return {"success": True, "data": rows, "count": len(rows)}
+
+    async def create_shelter(self, data: dict) -> Dict[str, Any]:
+        """Create a new shelter."""
+        from app.database import db
+        import uuid
+        from datetime import datetime, timezone
+        row = {
+            "id": f"shl-{uuid.uuid4().hex[:6]}",
+            "name": data["name"],
+            "type": data.get("type", "shelter"),
+            "latitude": data["latitude"],
+            "longitude": data["longitude"],
+            "address": data.get("address"),
+            "capacity": data.get("capacity", 100),
+            "current_occupancy": 0,
+            "facilities": data.get("facilities") or [],
+            "status": "active",
+            "contact_phone": data.get("phone"),
+            "verified": False,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        await db.table_insert("shelters", row)
+        return {"success": True, "data": row, "message": "Shelter created successfully"}
 
 location_service = LocationService()
