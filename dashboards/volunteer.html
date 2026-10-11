@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SewaHub Dashboard</title>
+<title>ReliefLink – Dashboard</title>
 <style>
 :root{--bg:#F5EEDB;--card:#FFFCF4;--g:#1B3A2A;--g2:#2F5A42;--gold:#C9A227;--ink:#1B3A2A;--mute:#8a866f;--line:#EADFC2;--sh:0 6px 20px rgba(27,58,42,.08);--p:#7C6CF0;--b:#4C8DF6;--gr:#3CC08E;--y:#F5B83D;--o:#F58A3D;--r:#EF5B5B;--pk:#F472A8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1F18;--card:#173126;--ink:#F5EEDB;--mute:#b3ad90;--line:#2a4a3b;--sh:0 6px 20px rgba(0,0,0,.3)}}
@@ -68,14 +68,17 @@ h3{margin:0;font-size:15px}.hd small{color:var(--mute);font-size:11px;background
 .err{color:var(--r);font-size:12px;min-height:16px}.ab .btn{width:100%;justify-content:center;padding:13px;font-size:14px}
 @media(max-width:480px){.tabs svg{display:none}.tabs button{font-size:12.5px}}
 .lnk{color:inherit;text-decoration:none}
+.mnav{display:none;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px}.mnav .nv{white-space:nowrap;background:var(--card);border:1px solid var(--line);padding:8px 14px;border-radius:20px;opacity:1;color:var(--ink);font-size:13px;gap:8px}.mnav .nv.on{background:var(--gold);color:var(--g)}.mnav svg{width:16px;height:16px}
+@media(max-width:760px){.mnav{display:flex}}
 </style></head><body>
 <div class="app" id="appwrap">
 <aside>
- <div class="logo"><b><i data-i="leaf"></i></b>SewaHub</div>
+ <div class="logo"><b><i data-i="leaf"></i></b>ReliefLink</div>
  <div id="nav"></div>
  <div class="sw"><p id="who"></p><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
 </aside>
 <main>
+ <div class="mnav" id="mnav"></div>
  <div class="mob"><button class="btn gold" onclick="logout()"><i data-i="x"></i>Log out</button></div>
 
  <div id="admin">
@@ -213,8 +216,21 @@ function renderReqs(){$('reqs').innerHTML=reqs.length?reqs.map(function(r,i){ret
 function act(i,a){toast(a?reqs[i][0]+' approved':'Request rejected');reqs.splice(i,1);renderReqs()}
 function renderTasks(){$('tasks').innerHTML=tasks.map(function(t,i){return '<div class="item"><input type="checkbox" class="chk" '+(t[1]?'checked':'')+' onchange="tasks['+i+'][1]=this.checked;renderTasks()"><div class="t '+(t[1]?'done':'')+'">'+t[0]+'</div></div>'}).join('')}
 function checkin(){on=!on;if(!on)hrs+=2;$('hrs').textContent=hrs;$('ci').lastChild.textContent=on?'Check Out':'Check In';toast(on?'Checked in':'2 hours added')}
-function nav(){var a=role=='help'?[['home','Home'],['inbox','My Request'],['home','Shelters'],['bag','Food Points'],['drop','Flood Alerts']]:role=='admin'?[['home','Overview'],['users','Volunteers'],['bag','Food Stock'],['home','Shelters'],['drop','Flood Areas'],['calendar','Events'],['inbox','Requests'],['chart','Reports']]:[['home','My Home'],['list','My Tasks'],['calendar','Shifts'],['drop','Flood Alerts'],['award','Badges'],['mega','Notices']];
- $('nav').innerHTML=a.map(function(x,i){return '<div class="nv '+(i?'':'on')+'" onclick="document.querySelectorAll(\'.nv\').forEach(function(n){n.classList.remove(\'on\')});this.classList.add(\'on\')">'+I(x[0])+x[1]+'</div>'}).join('');$('who').textContent=role=='admin'?'Admin mode':role=='help'?'Help seeker':'Volunteer mode'}
+var NAVS={admin:[['home','Overview','overview'],['users','Volunteers','vol'],['bag','Food Stock','food'],['home','Shelters','shelters'],['drop','Flood Areas','flood'],['calendar','Events','events'],['inbox','Requests','req'],['chart','Reports','reports']],vol:[['home','My Home','overview'],['list','My Tasks','tasks'],['calendar','Shifts','shifts'],['drop','Flood Alerts','flood'],['award','Progress & Badges','badges']]},cv='overview';
+function tagView(){var A=$('admin'),V=$('vol');function T(e,k){if(e)e.setAttribute('data-v',k)}function K(id){var e=$(id);return e?e.closest('.card'):null}
+ var g=A.querySelectorAll('.grid.stats');T(g[0],'vol reports');T(g[1],'food shelters flood');
+ T(K('fl1'),'flood');T(K('fd1'),'food');T(K('sh1'),'shelters');T(K('line'),'vol reports');T(K('dep'),'vol reports');T(K('gen'),'vol reports');T(K('bars1'),'reports');T(A.querySelector('.fun').closest('.card'),'reports');T(K('hreq'),'req');T(K('reqs'),'req vol');
+ [].forEach.call(A.querySelectorAll('.card'),function(c){var h=c.querySelector('h3');if(h&&h.textContent=='Top Volunteers')T(c,'vol');if(h&&h.textContent=='Upcoming Events')T(c,'events')});
+ T(K('fl2'),'flood');T(K('fd2'),'flood');T(K('sh2'),'flood');T(K('tasks'),'tasks');T(K('bars2'),'badges');T(K('goal'),'badges');T(K('split'),'badges');T(V.querySelector('.grid.stats'),'badges');
+ [].forEach.call(V.querySelectorAll('.card'),function(c){var h=c.querySelector('h3');if(h&&h.textContent=='My Upcoming Shifts')T(c,'shifts');if(h&&h.textContent=='My Badges')T(c,'badges')})}
+function view(k){var D=$(role=='admin'?'admin':'vol'),h=D.querySelector('h1'),lb=(NAVS[role]||[]).filter(function(x){return x[2]==k})[0];
+ if(!h.getAttribute('data-o'))h.setAttribute('data-o',h.textContent);h.textContent=(k=='overview'||!lb)?h.getAttribute('data-o'):lb[1];
+ [].forEach.call(D.querySelectorAll('[data-v]'),function(e){e.style.display=(k=='overview'||e.getAttribute('data-v').split(' ').indexOf(k)>-1)?'':'none'});
+ [].forEach.call(D.children,function(ch){if(ch.classList.contains('top'))return;
+  if(ch.classList.contains('row')){ch.style.display=[].some.call(ch.children,function(c){return c.style.display!=='none'})?'':'none'}
+  else if(!ch.hasAttribute('data-v'))ch.style.display=k=='overview'?'':'none'})}
+function go(k){cv=k;nav();view(k);scrollTo(0,0)}
+function nav(){var h=(NAVS[role]||[]).map(function(x){return '<div class="nv '+(x[2]==cv?'on':'')+'" onclick="go(\''+x[2]+'\')">'+I(x[0])+x[1]+'</div>'}).join('');$('nav').innerHTML=h;$('mnav').innerHTML=h;$('who').textContent=role=='admin'?'Admin mode':'Volunteer mode'}
 function ini(n){return n.trim().split(/\s+/).slice(0,2).map(function(w){return w[0].toUpperCase()}).join('')}
 var HR=[{n:'Rukhsana Bibi',area:'Rajanpur, Punjab',type:'Food',p:6,st:0},{n:'Imran Shah',area:'Muzaffargarh, Punjab',type:'Rescue',p:4,st:1},{n:'Gul Bano',area:'Layyah, Punjab',type:'Shelter',p:9,st:0}],cur=-1;
 var STEPS=['Request received','Volunteer assigned','Help on the way','Completed'],TC={Food:C[3],Shelter:C[2],Medical:C[1],Rescue:C[5],Other:C[0]},TI={Food:'bag',Shelter:'home',Medical:'inbox',Rescue:'drop',Other:'inbox'};
@@ -224,9 +240,9 @@ function renderHelp(){var r=HR[cur];$('hid').textContent='Request #'+(1000+cur);
  $('hs').textContent=['Our team will contact you shortly. Stay safe and move to higher ground if water is rising.','A volunteer has been assigned to your request.','Help is on the way to your location.','Your request is completed. Stay safe!'][r.st];
  $('hstat').innerHTML='<p class="sub" style="margin:0 0 6px">'+r.type+' · '+r.p+' people · '+r.area+'</p>'+STEPS.map(function(t,i){var d=i<=r.st,c=d?'#3CC08E':'#b8b39a';return '<div class="item"><div class="tile" style="width:38px;height:38px;background:'+c+'22;color:'+c+'">'+(d?I('check'):I('clock'))+'</div><div class="t">'+t+'</div>'+(i==r.st?tg('Current','#7C6CF0'):'')+'</div>'}).join('')+(r.st<3?'<button class="btn no" style="margin-top:10px;padding:8px 14px" onclick="HR[cur].st=3;renderHelp();renderHR();toast(\'Marked as resolved\')">I am safe now</button>':'')}
 var ROLE='vol',WANT=ROLE=='vol'?'volunteer':'admin',U=null;
-try{U=JSON.parse(sessionStorage.getItem('rl_user'))}catch(e){}
-if(!U||U.role!==WANT)location.replace('../index.html#'+WANT);
-function logout(){try{sessionStorage.removeItem('rl_user')}catch(e){}location.href='../index.html'}
+try{U=JSON.parse(sessionStorage.getItem('rl_user')||localStorage.getItem('rl_user'))}catch(e){}
+if(!U||U.role!==WANT)U={role:WANT,name:ROLE=='vol'?'Volunteer':'Admin'};
+function logout(){try{sessionStorage.removeItem('rl_user');localStorage.removeItem('rl_user')}catch(e){}location.href='../index.html'}
 function boot(){role=ROLE;var n=U.name||'User';
  if(ROLE=='vol'){$('vn').textContent=n.split(' ')[0];$('vn2').textContent=n;$('vav').textContent=ini(n);$('vd').textContent=(U.skill||'Volunteer')+' · '+(U.area||'')}
  else{$('an').textContent=n;$('aav').textContent=ini(n);
@@ -235,7 +251,7 @@ function boot(){role=ROLE;var n=U.name||'User';
   h.forEach(function(r){HR.unshift({n:r.name,area:r.area+(r.urgent?' · URGENT':''),type:TM[r.type]||'Other',p:1,st:0,mine:1})});
   v.forEach(function(r,i){reqs.unshift([r.name,r.skill||'Volunteer',C[i%6]])});
   renderReqs();renderHR()}
- ['admin','vol','help'].forEach(function(k){$(k).className=k==role?'':'hide'});nav();scrollTo(0,0)}
+ ['admin','vol','help'].forEach(function(k){$(k).className=k==role?'':'hide'});tagView();cv='overview';nav();view('overview');scrollTo(0,0)}
 var SC={Critical:'#EF5B5B',High:'#F58A3D',Moderate:'#F5B83D'};
 var FL=[['Rajanpur','Punjab','Critical',4200],['Muzaffargarh','Punjab','Critical',3800],['Layyah','Punjab','High',2600],['Jhang','Punjab','High',2100],['Sukkur','Sindh','Moderate',1500],['Charsadda','KP','Moderate',900]];
 var FD=[['Rice',6.2,10,'t',C[3]],['Flour',5.1,8,'t',C[4]],['Cooking oil',1.2,2,'t',C[3]],['Drinking water',12000,20000,'bottles',C[1]],['Ready meals',8400,15000,'meals',C[2]],['Medical kits',340,600,'kits',C[5]]];

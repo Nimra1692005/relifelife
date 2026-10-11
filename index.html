@@ -604,7 +604,7 @@ body::after{
 window.RL={collect:function(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
 if(role==='admin'){o.email=tx[0];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
 else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
-sessionStorage.setItem('rl_user',JSON.stringify(o));
+sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o));
 if(role==='volunteer'||role==='help'){var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}}catch(e){}},
 dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}};
 </script>
