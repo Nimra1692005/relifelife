@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ReliefLink – Help Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── Help-specific styles ── */
+.emergency-banner {
+  background: linear-gradient(135deg,#7B1111,#B91C1C); color: #fff;
+  border-radius: var(--rad); padding: 20px 24px; margin-bottom: 24px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  position: relative; overflow: hidden;
+}
+.emergency-banner::before { content: ''; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.07); }
+.emergency-banner h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.emergency-banner p  { font-size: 13px; opacity: .85; }
+.call-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.call-btn { display: flex; align-items: center; gap: 7px; padding: 9px 16px; border-radius: 12px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; transition: .2s; white-space: nowrap; }
+.call-btn:hover { filter: brightness(1.15); transform: scale(1.04); }
+.call-1122   { background: #fff; color: #B91C1C; }
+.call-other  { background: rgba(255,255,255,.15); color: #fff; border: 1.5px solid rgba(255,255,255,.3); }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.cat-card {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: var(--rad);
+  padding: 20px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  cursor: pointer; transition: all .25s; text-align: center;
+}
+.cat-card:hover, .cat-card.active { border-color: var(--gold); background: rgba(201,162,39,.08); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(27,58,42,.12); }
+.cat-icon { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; font-size: 24px; transition: .2s; }
+.cat-card:hover .cat-icon, .cat-card.active .cat-icon { transform: scale(1.1); }
+.cat-card h4 { font-size: 12px; font-weight: 700; line-height: 1.3; }
+.track-card {
+  background: linear-gradient(135deg,var(--g),var(--g2)); color: #F5EEDB;
+  border-radius: var(--rad); padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden;
+}
+.track-card::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(201,162,39,.15); }
+.track-card h4 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.track-status  { display: inline-flex; align-items: center; gap: 6px; background: var(--gold); color: var(--g); font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+/* Steps inside dark card need lighter colors */
+.track-card .step::after     { background: rgba(255,255,255,.2); }
+.track-card .step-dot        { background: rgba(255,255,255,.15); color: rgba(255,255,255,.5); border-color: rgba(255,255,255,.2); }
+.track-card .step.done .step-dot   { background: var(--gr);   color: #fff; border-color: var(--gr); }
+.track-card .step.active .step-dot { background: var(--gold); color: var(--g); border-color: var(--gold); }
+.track-card .step.done::after      { background: var(--gr); }
+.track-card .step label            { color: rgba(255,255,255,.6); }
+.track-card .step.done label,
+.track-card .step.active label     { color: #fff; font-weight: 700; }
+.map-box {
+  background: linear-gradient(135deg,var(--g),var(--g2)); border-radius: var(--rad);
+  min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #F5EEDB; position: relative; overflow: hidden;
+}
+.map-box::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30h60M30 0v60' stroke='%23ffffff08' stroke-width='1'/%3E%3C/svg%3E"); }
+.map-box .inner { position: relative; text-align: center; }
+.flood-card {
+  background: linear-gradient(135deg,#0F2D4A,#164670); color: #F5EEDB;
+  border-radius: var(--rad); padding: 24px; position: relative; overflow: hidden;
+}
+.risk-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-bottom: 12px; }
+.risk-high { background: rgba(239,91,91,.25); color: #f87171; border: 1px solid rgba(239,91,91,.3); }
+.gauge-wrap  { display: flex; align-items: center; gap: 20px; margin: 16px 0; flex-wrap: wrap; }
+.gauge       { width: 100px; height: 100px; position: relative; flex: none; }
+.gauge svg   { transform: rotate(-135deg); }
+.gauge-val   { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.gauge-val b { font-size: 22px; font-weight: 800; }
+.gauge-val span { font-size: 10px; opacity: .7; }
+.flood-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.flood-fact  { background: rgba(255,255,255,.07); border-radius: 10px; padding: 10px 12px; }
+.flood-fact b { display: block; font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+.flood-fact small { font-size: 11px; opacity: .65; }
+.nearby-card {
+  background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+  padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; transition: .2s; cursor: pointer;
+}
+.nearby-card:hover { border-color: var(--gold); transform: translateX(3px); }
+.nearby-card h5 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.nearby-card p  { font-size: 12px; color: var(--mute); }
+.dist { font-size: 12px; font-weight: 700; color: var(--gold); margin-left: auto; flex: none; }
+.contact-card { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.contact-card h5 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.contact-card p  { font-size: 12px; color: var(--mute); }
+.call-pill { margin-left: auto; padding: 8px 16px; border-radius: 10px; background: var(--g); color: var(--gold); font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: .2s; flex: none; }
+.call-pill:hover { background: var(--g2); }
+.submit-btn {
+  width: 100%; padding: 14px; border-radius: 14px; background: var(--g); color: var(--gold);
+  font-weight: 800; font-size: 15px; border: none; cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.submit-btn:hover { background: var(--g2); transform: translateY(-1px); }
+@media(max-width:500px){ .cat-grid{ grid-template-columns: repeat(2,1fr); } .call-buttons{ gap:6px; } .call-btn{ padding:8px 12px; font-size:12px; } }
+</style>
+</head><body>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
+  <div class="nav-group">
+    <button class="nav-item active" data-page="home"><i data-i="home"></i>Home</button>
+    <button class="nav-item" data-page="request"><i data-i="plus"></i>Request Help</button>
+    <button class="nav-item" data-page="myrequests"><i data-i="list"></i>My Requests<span class="badge" id="reqBadge">0</span></button>
+    <div class="nav-sep"></div>
+    <button class="nav-item" data-page="emergency"><i data-i="phone"></i>Emergency Contacts</button>
+    <button class="nav-item" data-page="nearby"><i data-i="pin"></i>Nearby Help</button>
+    <button class="nav-item" data-page="flood"><i data-i="drop"></i>Flood Predictor</button>
+    <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">2</span></button>
+    <button class="nav-item" data-page="profile"><i data-i="user"></i>Profile</button>
+  </div>
+  <div class="nav-bottom">
+    <div class="user-card"><div class="user-av" id="sideAv">US</div><div class="info"><div class="name" id="sideName">User</div><div class="role">Affected Person</div></div></div>
+    <button class="logout-btn" onclick="RL_Logout()"><i data-i="logout"></i>Log Out</button>
+  </div>
+</aside>
+<div class="mob-overlay" id="mobOverlay"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="menu-toggle" onclick="RL_ToggleMenu()"><i data-i="list"></i></button>
+    <div class="left"><h1 id="pageTitle">Request Help</h1><div class="sub" id="pageSub">Select a category to submit your help request</div></div>
+    <button class="notif-btn" onclick="navigate('notifications')"><i data-i="bell"></i><div class="dot"></div></button>
+  </div>
+
+  <!-- EMERGENCY BANNER (always visible) -->
+  <div class="emergency-banner fade-up">
+    <div><h3>🚨 Need immediate help?</h3><p>Contact emergency services right now — available 24/7</p></div>
+    <div class="call-buttons">
+      <button class="call-btn call-1122"  onclick="RL_Call('1122')"><i data-i="phone"></i>Call 1122</button>
+      <button class="call-btn call-other" onclick="RL_Call('Rescue')"><i data-i="rescue"></i>Rescue</button>
+      <button class="call-btn call-other" onclick="RL_Call('Medical')"><i data-i="hosp"></i>Medical</button>
+      <button class="call-btn call-other" onclick="RL_Call('Police')"><i data-i="shield"></i>Police</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="page-home">
+    <div class="card-header" style="margin-bottom:16px"><h3>What kind of help do you need?</h3></div>
+    <div class="cat-grid">
+      <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><h4>Emergency Rescue &amp; Evacuation</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><h4>Medical Assistance</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon" style="background:#3CC08E22">🍱</div><h4>Food &amp; Clean Water</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon" style="background:#7C6CF022">🏕️</div><h4>Shelter &amp; Accommodation</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon" style="background:#F58A3D22">👕</div><h4>Clothing &amp; Essential Supplies</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Transportation & Relocation')"><div class="cat-icon" style="background:#F5B83D22">🚌</div><h4>Transportation &amp; Relocation</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Sanitation & Hygiene')"><div class="cat-icon" style="background:#4C8DF622">🧼</div><h4>Sanitation &amp; Hygiene</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Special Assistance')"><div class="cat-icon" style="background:#F472A822">♿</div><h4>Special Assistance</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon" style="background:#8B5CF622">🏠</div><h4>Home &amp; Damage Recovery</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><h4>Missing Persons</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><h4>Emotional &amp; Psychological Support</h4></div>
+      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#164670">🌊</div><h4>AI Flood Predictor</h4></div>
+    </div>
+  </div>
+
+  <!-- REQUEST FORM -->
+  <div id="page-request" class="hide">
+    <div class="grid-2">
+      <div class="card fade-up">
+        <div class="card-header"><h3>Submit Help Request</h3></div>
+        <div class="form-group"><label>Category</label><select id="reqCat" class="field-input">
+          <option>Emergency Rescue &amp; Evacuation</option><option>Medical Assistance</option>
+          <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
+          <option>Clothing &amp; Supplies</option><option>Transportation &amp; Relocation</option>
+          <option>Sanitation &amp; Hygiene</option><option>Special Assistance</option>
+          <option>Home &amp; Damage Recovery</option><option>Missing Persons</option><option>Psychological Support</option>
+        </select></div>
+        <div class="form-group"><label>Full Name</label><input id="reqName" class="field-input" type="text" placeholder="Your full name"></div>
+        <div class="form-group"><label>Phone Number</label><input id="reqPhone" class="field-input" type="tel" placeholder="e.g. 0300-1234567"></div>
+        <div class="form-group"><label>Number of People</label><input id="reqPeople" class="field-input" type="number" placeholder="e.g. 4" min="1"></div>
+        <div class="form-group"><label>Location / Address</label><input id="reqLoc" class="field-input" type="text" placeholder="Village, Tehsil, District"></div>
+        <div class="form-group"><label>Describe Your Situation</label><textarea id="reqDesc" class="field-input" style="min-height:80px" placeholder="Tell us your situation and what you need…"></textarea></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+          <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
+          <label for="reqUrgent" style="font-weight:700;color:var(--r);cursor:pointer">🚨 Mark as URGENT</label>
+        </div>
+        <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Submit Request</button>
+      </div>
+      <div>
+        <div class="card fade-up" style="background:linear-gradient(135deg,var(--g),var(--g2));color:#F5EEDB;border:none;margin-bottom:16px">
+          <h4 style="font-size:15px;font-weight:800;margin-bottom:10px">📋 What happens next?</h4>
+          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">1</div><div class="t" style="color:#F5EEDB">Request received instantly<small style="color:rgba(255,255,255,.6)">Within seconds</small></div></div>
+          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">2</div><div class="t" style="color:#F5EEDB">Admin assigns a volunteer<small style="color:rgba(255,255,255,.6)">Usually within 30-60 min</small></div></div>
+          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">3</div><div class="t" style="color:#F5EEDB">Volunteer dispatched<small style="color:rgba(255,255,255,.6)">You'll get a call before arrival</small></div></div>
+          <div class="item" style="border:none"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">4</div><div class="t" style="color:#F5EEDB">Request marked complete<small style="color:rgba(255,255,255,.6)">You'll be notified</small></div></div>
+        </div>
+        <div class="card fade-up"><div class="card-header"><h3>My Active Request</h3></div><div id="activeReqCard"><p class="mute" style="font-size:13px;padding:10px 0">No active requests yet.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY REQUESTS -->
+  <div id="page-myrequests" class="hide">
+    <div class="card fade-up"><div class="card-header"><h3>My Help Requests</h3></div><div id="myReqList"></div></div>
+  </div>
+
+  <!-- EMERGENCY CONTACTS -->
+  <div id="page-emergency" class="hide">
+    <div class="card fade-up"><div class="card-header"><h3>Emergency Contacts</h3><span class="badge-sm">Always available</span></div><div id="contactList"></div></div>
+  </div>
+
+  <!-- NEARBY HELP -->
+  <div id="page-nearby" class="hide">
+    <div class="grid-2">
+      <div>
+        <div class="card fade-up" style="margin-bottom:16px"><div class="card-header"><h3>Nearby Shelters</h3><span class="badge-sm">Within 10km</span></div><div id="nearbyShelters"></div></div>
+        <div class="card fade-up"><div class="card-header"><h3>Nearby Hospitals</h3><span class="badge-sm">Open now</span></div><div id="nearbyHosp"></div></div>
+      </div>
+      <div class="map-box fade-up" style="height:360px">
+        <div class="pulse-dot" style="top:35%;left:45%"></div>
+        <div class="pulse-dot" style="top:55%;left:60%;animation-delay:.8s"></div>
+        <div class="pulse-dot" style="top:45%;left:30%;animation-delay:1.5s"></div>
+        <div class="inner"><div style="font-size:36px;margin-bottom:8px">🗺️</div><h4 style="font-size:16px;font-weight:800">Nearby Help Map</h4><p style="font-size:13px;opacity:.6;margin-top:4px">3 active relief centers</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOOD PREDICTOR -->
+  <div id="page-flood" class="hide">
+    <div class="grid-2">
+      <div>
+        <div class="flood-card fade-up" style="margin-bottom:16px">
+          <div class="risk-badge risk-high"><i data-i="drop"></i>HIGH FLOOD RISK</div>
+          <h3 style="font-size:20px;font-weight:800;margin-bottom:6px">AI Flood Prediction</h3>
+          <p style="opacity:.7;font-size:13px;margin-bottom:16px">Real-time weather, river levels &amp; satellite data</p>
+          <div class="gauge-wrap">
+            <div class="gauge">
+              <svg width="100" height="100" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3" stroke-dasharray="75 25"/><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="#EF5B5B" stroke-width="3" stroke-dasharray="57 43"/></svg>
+              <div class="gauge-val"><b>76%</b><span>Risk</span></div>
+            </div>
+            <div style="flex:1">
+              <div style="font-size:13px;opacity:.8;margin-bottom:8px">Area: <b style="color:var(--gold)">Rajanpur, Punjab</b></div>
+              <div style="font-size:13px;opacity:.8">River: <b style="color:#f87171">Above Danger Mark</b></div>
+              <div style="font-size:13px;opacity:.8;margin-top:4px">Rainfall: <b>Heavy (next 48h)</b></div>
+              <div style="font-size:13px;opacity:.8;margin-top:4px">Confidence: <b style="color:var(--gold)">91%</b></div>
+            </div>
+          </div>
+          <div class="flood-facts">
+            <div class="flood-fact"><b>48h</b><small>Warning Window</small></div>
+            <div class="flood-fact"><b>2.4m</b><small>Projected Rise</small></div>
+            <div class="flood-fact"><b>3 zones</b><small>Affected Areas</small></div>
+            <div class="flood-fact"><b>Move Now</b><small>Recommendation</small></div>
+          </div>
+        </div>
+        <div class="card fade-up">
+          <div class="card-header"><h3>Safety Recommendations</h3></div>
+          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="home"></i></div><div class="t"><b>Evacuate immediately</b><small>Move to higher ground — do not wait</small></div></div>
+          <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"><i data-i="drop"></i></div><div class="t"><b>Store clean water</b><small>Minimum 3 days supply per person</small></div></div>
+          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="bag"></i></div><div class="t"><b>Pack emergency kit</b><small>Documents, medicines, phone charger</small></div></div>
+          <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="phone"></i></div><div class="t"><b>Stay connected</b><small>Monitor alerts and keep phone charged</small></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="map-box fade-up" style="height:260px;margin-bottom:16px">
+          <div class="pulse-dot" style="top:40%;left:50%"></div>
+          <div class="pulse-dot" style="top:60%;left:35%;animation-delay:.6s"></div>
+          <div class="inner"><div style="font-size:36px;margin-bottom:6px">🌊</div><h4>Flood Risk Map</h4><p style="font-size:12px;opacity:.6">3 high-risk zones detected</p></div>
+        </div>
+        <div class="card fade-up">
+          <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Last 5 years</span></div>
+          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">🌊</div><div class="t">2022 Mega Floods<small>Rajanpur — 4,200 families</small></div><span class="tag tag-red">Major</span></div>
+          <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)">🌧️</div><div class="t">2021 Seasonal Flood<small>1,200 families displaced</small></div><span class="tag tag-orange">Moderate</span></div>
+          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)">💧</div><div class="t">2020 Flash Flood<small>600 families affected</small></div><span class="tag tag-yellow">Minor</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="page-notifications" class="hide">
+    <div class="card fade-up">
+      <div class="card-header"><h3>Notifications</h3><button class="badge-sm" onclick="clearNotifs()" style="border:none;cursor:pointer">Mark all read</button></div>
+      <div id="notifList"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="page-profile" class="hide">
+    <div class="card fade-up" style="max-width:560px">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--g);border:3px solid var(--gold);display:grid;place-items:center;font-weight:800;font-size:24px;color:var(--gold)" id="profAv">US</div>
+        <div><h3 id="profName" style="font-size:20px;font-weight:800">User</h3><p class="mute" style="font-size:13px">Registered Person · Flood Affected</p></div>
+      </div>
+      <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">User</small></div></div>
+      <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
+      <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Area<small id="profArea">Not set</small></div></div>
+      <div class="item" style="border:none"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="list"></i></div><div class="t">Requests Submitted<small id="profReqs">0</small></div></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="toast" id="toast"></div>
+
+<script src="../config.js"></script>
+<script src="shared.js"></script>
+<script>
+/* ── DATA ── */
+var myReqs = [];
+var CATS = {'Emergency Rescue & Evacuation':'🚤','Medical Assistance':'🏥','Food & Clean Water':'🍱','Shelter & Accommodation':'🏕️','Clothing & Supplies':'👕','Transportation & Relocation':'🚌','Sanitation & Hygiene':'🧼','Special Assistance':'♿','Home & Damage Recovery':'🏠','Missing Persons':'🔍','Psychological Support':'💚'};
+var ST = {0:'Received',1:'Assigned',2:'On the way',3:'Completed'};
+var SC = {0:'tag-blue',1:'tag-yellow',2:'tag-orange',3:'tag-green'};
+
+var SHELTERS = [['Govt School Shelter','Rajanpur','320/400 people','1.2 km'],['Community Hall','Muzaffargarh','410/420 people','3.8 km'],['Relief Camp','Layyah','180/350 people','6.5 km']];
+var HOSPS   = [['DHQ Hospital','Rajanpur','46 beds free','2.1 km'],['Civil Hospital','Sukkur','70 beds free','8.3 km']];
+var CONTACTS = [
+  {name:'1122 Rescue',role:'Emergency Services',phone:'1122',c:'#EF5B5B'},
+  {name:'Edhi Foundation',role:'Rescue & Medical',phone:'115',c:'#3CC08E'},
+  {name:'Red Crescent',role:'Humanitarian Aid',phone:'111-745-745',c:'#EF5B5B'},
+  {name:'NDMA Helpline',role:'Disaster Management',phone:'1700',c:'#4C8DF6'},
+  {name:'Pakistan Police',role:'Law & Order',phone:'15',c:'#7C6CF0'},
+  {name:'Ambulance',role:'Medical Emergency',phone:'1122',c:'#F58A3D'}
+];
+var NOTIFS = [
+  {icon:'drop',col:'var(--r)',title:'Flood alert: Your area is at risk',desc:'High risk in Rajanpur. Evacuate to higher ground.',read:false},
+  {icon:'check',col:'var(--gr)',title:'Your request has been assigned',desc:'A volunteer has been assigned to your food request.',read:false},
+  {icon:'bell',col:'var(--y)',title:'Relief camp opened near you',desc:'Govt School, Rajanpur is now an official relief camp.',read:true}
+];
+
+/* ── RENDERERS ── */
+function selectCat(el, cat) {
+  document.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  navigate('request');
+  var sel = RL_$('reqCat'); if (sel) sel.value = cat;
+}
+
+function submitReq() {
+  var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'', loc = (RL_$('reqLoc')||{}).value||'';
+  if (!nm.trim() || !ph.trim() || !loc.trim()) { RL_Toast('Please fill Name, Phone and Location'); return; }
+  var r = {
+    id: 'RL-' + Date.now(),
+    cat: (RL_$('reqCat')||{}).value || '',
+    name: nm, phone: ph, loc: loc,
+    desc: (RL_$('reqDesc')||{}).value||'',
+    people: (RL_$('reqPeople')||{}).value||1,
+    urgent: !!(RL_$('reqUrgent')||{}).checked,
+    status: 0, date: new Date().toLocaleDateString()
+  };
+  myReqs.unshift(r);
+  try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
+  ['reqName','reqPhone','reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
+  var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
+  updateBadges(); renderActive(); renderMyReqs();
+  RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted!');
+  setTimeout(function(){ navigate('myrequests'); }, 1200);
+}
+
+function renderActive() {
+  var el = RL_$('activeReqCard'); if (!el) return;
+  if (!myReqs.length) { el.innerHTML = '<p class="mute" style="font-size:13px;padding:10px 0">No active requests yet.</p>'; return; }
+  var r = myReqs[0];
+  el.innerHTML = '<div class="track-card">'
+    + '<div class="track-status">' + ST[r.status] + '</div>'
+    + '<h4>' + r.cat + '</h4><p style="opacity:.7;font-size:12px">' + r.loc + '</p>'
+    + '<div class="steps">'
+    + mkStep(r.status >= 0, r.status === 0, 'Received','check')
+    + mkStep(r.status >= 1, r.status === 1, 'Assigned','check')
+    + mkStep(r.status >= 2, r.status === 2, 'On way','check')
+    + mkStep(r.status >= 3, false, 'Done','check')
+    + '</div></div>';
+  RL_Icons();
+}
+function mkStep(done, active, label, icon) {
+  return '<div class="step' + (done?' done':'') + (active?' active':'') + '">'
+    + '<div class="step-dot">' + (done ? RL_Icon(icon) : '') + '</div><label>' + label + '</label></div>';
+}
+
+function renderMyReqs() {
+  var el = RL_$('myReqList'); if (!el) return;
+  el.innerHTML = myReqs.length
+    ? myReqs.map(function(r) {
+        return '<div class="item"><div class="item-icon" style="font-size:22px">' + (CATS[r.cat]||'📋') + '</div>'
+          + '<div class="t"><b>' + r.cat + '</b><small>' + r.loc + ' · ' + r.people + ' people · ' + r.date + '</small></div>'
+          + '<span class="tag ' + SC[r.status] + '">' + ST[r.status] + '</span></div>';
+      }).join('')
+    : '<p class="mute" style="font-size:13px;padding:10px 0">No requests yet</p>';
+  updateBadges();
+}
+
+function updateBadges() {
+  var rb = RL_$('reqBadge'); if (rb) rb.textContent = myReqs.length;
+  var pr = RL_$('profReqs'); if (pr) pr.textContent = myReqs.length;
+}
+
+function renderNearby() {
+  var s = RL_$('nearbyShelters'), h = RL_$('nearbyHosp');
+  if (s) s.innerHTML = SHELTERS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🏕️</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
+  if (h) h.innerHTML = HOSPS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏥</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
+}
+
+function renderContacts() {
+  var el = RL_$('contactList'); if (!el) return;
+  el.innerHTML = CONTACTS.map(function(c) {
+    return '<div class="contact-card"><div class="item-icon" style="background:'+c.c+'22;color:'+c.c+'">📞</div><div><h5>'+c.name+'</h5><p>'+c.role+'</p></div><button class="call-pill" onclick="RL_Call(\''+c.phone+'\')">'+c.phone+'</button></div>';
+  }).join('');
+}
+
+function renderNotifs(allRead) {
+  var el = RL_$('notifList'); if (!el) return;
+  el.innerHTML = NOTIFS.map(function(n) {
+    if (allRead) n.read = true;
+    return '<div class="item" style="' + (n.read?'opacity:.6':'') + '">'
+      + '<div class="item-icon" style="background:'+n.col+'22;color:'+n.col+'">' + RL_Icon(n.icon) + '</div>'
+      + '<div class="t">'+n.title+'<small>'+n.desc+'</small></div>'
+      + (n.read ? '' : '<div style="width:8px;height:8px;border-radius:50%;background:var(--r);flex:none"></div>')
+      + '</div>';
+  }).join('');
+}
+function clearNotifs() { var b=RL_$('notifBadge');if(b)b.textContent='0'; renderNotifs(true); RL_Toast('All marked as read'); }
+
+/* ── NAVIGATION ── */
+var PAGES = {
+  home:          'Request Help|Select a category to submit your help request',
+  request:       'Submit Request|Fill in the form to request assistance',
+  myrequests:    'My Requests|Track the status of your help requests',
+  emergency:     'Emergency Contacts|Call emergency services directly',
+  nearby:        'Nearby Help|Shelters and hospitals near you',
+  flood:         'Flood Predictor|AI-powered flood risk assessment',
+  notifications: 'Notifications|Alerts and updates for you',
+  profile:       'My Profile|Your personal information'
+};
+function navigate(page) {
+  RL_Navigate(page, PAGES, function(p) {
+    if (p === 'nearby')        renderNearby();
+    if (p === 'emergency')     renderContacts();
+    if (p === 'notifications') renderNotifs(false);
+    if (p === 'myrequests')    renderMyReqs();
+    if (p === 'request')       renderActive();
+  });
+}
+RL_WireNav(PAGES, function(p){ navigate(p); });
+
+/* ── BOOT ── */
+var u = RL_BootUser({ defaultName: 'User', defaultRole: 'help' });
+if (u && u.name)  { var rn=RL_$('reqName');  if(rn) rn.value = u.name; }
+if (u && u.phone) { var rp=RL_$('reqPhone'); if(rp) rp.value = u.phone; }
+if (u && u.area)  { var rl=RL_$('reqLoc');   if(rl) rl.value = u.area; }
+try { var saved = JSON.parse(localStorage.getItem('rl_help')||'[]'); if (Array.isArray(saved)) myReqs = saved; } catch(e) {}
+updateBadges();
+renderNotifs(false);
+RL_Icons();
+</script>
+</body></html>

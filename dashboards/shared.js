@@ -1,0 +1,232 @@
+/**
+ * ReliefLink – Shared Dashboard JS
+ * shared.js · loaded by all 3 dashboards
+ */
+(function(){
+
+/* ── ICON PATHS ── */
+var P = {
+  home:    'M3 11l9-8 9 8 M5 10v10h14V10',
+  list:    'M9 6h12 M9 12h12 M9 18h12 M4 6h.01 M4 12h.01 M4 18h.01',
+  plus:    'M12 5v14 M5 12h14',
+  check:   'M20 6 9 17l-5-5',
+  chart:   'M4 20V10 M10 20V4 M16 20v-8 M22 20H2',
+  set:     'M4 21v-7 M4 10V3 M12 21v-9 M12 8V3 M20 21v-5 M20 12V3 M1 14h6 M9 8h6 M17 16h6',
+  users:   'M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2 M10 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M21 21v-2a4 4 0 0 0-3-3.9 M16 3.1a4 4 0 0 1 0 7.8',
+  user:    'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8',
+  bell:    'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9 M13.7 21a2 2 0 0 1-3.4 0',
+  inbox:   'M22 12h-6l-2 3h-4l-2-3H2 M5.5 5h13L22 12v7H2v-7z',
+  bag:     'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z M3 6h18 M16 10a4 4 0 0 1-8 0',
+  hosp:    'M3 21V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14 M15 11h5a1 1 0 0 1 1 1v9 M2 21h20 M9 9v6 M6 12h6',
+  rescue:  'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z M5.6 5.6l3.9 3.9 M14.5 14.5l3.9 3.9 M18.4 5.6l-3.9 3.9 M9.5 14.5l-3.9 3.9',
+  drop:    'M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z',
+  pin:     'M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12z M12 6.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z',
+  clock:   'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 7v5l3 2',
+  star:    'M12 2l3 7h7l-5.5 4.5 2 7.5L12 17l-6.5 4 2-7.5L2 9h7z',
+  award:   'M12 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M8.2 14 7 22l5-3 5 3-1.2-8',
+  flame:   'M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 1 2 2 2 3 1 0-2-1-4 0-7z',
+  search:  'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M21 21l-4.3-4.3',
+  phone:   'M22 16.9a20.4 20.4 0 0 1-6.2 5.2 1 1 0 0 1-1-.1C7.1 17.5 5.8 9.1 5.1 6.2a1 1 0 0 1 .4-1A20.4 20.4 0 0 1 12 2a1 1 0 0 1 .8.4L17 7a1 1 0 0 1 0 1.3l-2.4 2.4a16 16 0 0 0 3.8 7.4l2.4-2.4a1 1 0 0 1 1.3 0l4.5 4.2a1 1 0 0 1 .1 1z',
+  calendar:'M3 5h18v16H3z M16 3v4 M8 3v4 M3 10h18',
+  shield:  'M12 2l7 4v6c0 5.2-4 9.6-7 11-3-1.4-7-5.8-7-11V6z',
+  heart:   'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1.1-1a5.5 5.5 0 0 0 0-7.9z',
+  car:     'M3 11h18M5 11V17h14V11 M7 17v2 M17 17v2 M4 11l4-6h8l4 6',
+  tools:   'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3-3a6 6 0 0 1-7 7l-1.4 1.4a1 1 0 0 1-1.4 0L7 10.4a1 1 0 0 1 0-1.4L8.4 7.6a6 6 0 0 1 7-7z',
+  mega:    'M3 11v2a1 1 0 0 0 1 1h3l8 4V6L7 10H4a1 1 0 0 0-1 1z M19 8a5 5 0 0 1 0 8',
+  x:       'M18 6 6 18 M6 6l12 12',
+  logout:  'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
+  leaf:    'M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z M4 20c3-6 6-9 10-11'
+};
+
+/** Build an SVG icon by name */
+window.RL_Icon = function(n) {
+  return P[n]
+    ? '<svg class="i" viewBox="0 0 24 24"><path d="' + P[n] + '"/></svg>'
+    : '';
+};
+
+/** Replace all <i data-i="name"> with the SVG */
+window.RL_Icons = function() {
+  document.querySelectorAll('i[data-i]').forEach(function(e) {
+    var s = window.RL_Icon(e.dataset.i);
+    if (s) e.outerHTML = s;
+  });
+};
+
+/* ── DOM HELPER ── */
+window.RL_$ = function(id) { return document.getElementById(id); };
+
+/* ── TOAST ── */
+window.RL_Toast = function(msg) {
+  var t = window.RL_$('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.classList.remove('show'); }, 2400);
+};
+
+/* ── INITIALS ── */
+window.RL_Ini = function(name) {
+  return (name || '').trim().split(/\s+/).slice(0, 2).map(function(w) {
+    return w[0] ? w[0].toUpperCase() : '';
+  }).join('');
+};
+
+/* ── TAG HELPER ── */
+window.RL_Tag = function(label, color) {
+  return '<span class="tag" style="background:' + color + '22;color:' + color + '">' + label + '</span>';
+};
+
+/* ── MAKE CALL ── */
+window.RL_Call = function(svc) { window.RL_Toast('Calling ' + svc + '…'); };
+
+/* ── MODAL ── */
+window.RL_OpenModal  = function(id) { var el = window.RL_$(id); if (el) el.classList.add('open'); };
+window.RL_CloseModal = function(id) { var el = window.RL_$(id); if (el) el.classList.remove('open'); };
+window.RL_CloseModalOutside = function(e, id) { if (e.target === e.currentTarget) window.RL_CloseModal(id); };
+
+/* ── MOBILE MENU ── */
+window.RL_ToggleMenu = function() {
+  var sb = window.RL_$('sidebar');
+  var ov = window.RL_$('mobOverlay');
+  if (sb) sb.classList.toggle('open');
+  if (ov) ov.classList.toggle('open');
+};
+
+/* ── LOGOUT ── */
+window.RL_Logout = function() {
+  try { sessionStorage.removeItem('rl_user'); localStorage.removeItem('rl_user'); } catch(e) {}
+  window.location.href = '../index.html';
+};
+
+/* ── USER BOOT ── */
+window.RL_GetUser = function() {
+  var u = null;
+  try { u = JSON.parse(sessionStorage.getItem('rl_user') || localStorage.getItem('rl_user')); } catch(e) {}
+  return u;
+};
+
+window.RL_BootUser = function(opts) {
+  // opts: { defaultName, defaultRole, roleLabel }
+  var u = window.RL_GetUser() || {};
+  var n = u.name || opts.defaultName || 'User';
+  var av = window.RL_Ini(n) || opts.defaultName.slice(0,2).toUpperCase();
+  // sidebar
+  var sa = window.RL_$('sideAv'), sn = window.RL_$('sideName');
+  if (sa) sa.textContent = av;
+  if (sn) sn.textContent = n;
+  // topbar
+  var ta = window.RL_$('topAv'), tn = window.RL_$('topName');
+  if (ta) ta.textContent = av;
+  if (tn) tn.textContent = n;
+  // profile page
+  var pa = window.RL_$('profAv'), pn = window.RL_$('profName'), pnf = window.RL_$('profNameFull');
+  if (pa) pa.textContent = av;
+  if (pn) pn.textContent = n;
+  if (pnf) pnf.textContent = n;
+  if (window.RL_$('profPhone') && u.phone) window.RL_$('profPhone').textContent = u.phone;
+  if (window.RL_$('profCity')  && u.city)  window.RL_$('profCity').textContent  = u.city;
+  if (window.RL_$('profArea')  && u.area)  window.RL_$('profArea').textContent  = u.area;
+  if (window.RL_$('profSkill') && u.skill) window.RL_$('profSkill').textContent = u.skill;
+  return u;
+};
+
+/* ── PAGE NAVIGATOR ── */
+window.RL_Navigate = function(page, pages, onAfter) {
+  Object.keys(pages).forEach(function(k) {
+    var el = window.RL_$('page-' + k);
+    if (el) el.classList.toggle('hide', k !== page);
+  });
+  document.querySelectorAll('.nav-item').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.page === page);
+  });
+  var parts = (pages[page] || '|').split('|');
+  var pt = window.RL_$('pageTitle'), ps = window.RL_$('pageSub');
+  if (pt) pt.textContent = parts[0];
+  if (ps) ps.textContent = parts[1] || '';
+  if (typeof onAfter === 'function') onAfter(page);
+  window.scrollTo(0, 0);
+};
+
+/* ── WIRE NAV ITEMS ── */
+window.RL_WireNav = function(pages, onAfter) {
+  document.querySelectorAll('.nav-item').forEach(function(b) {
+    b.addEventListener('click', function() {
+      window.RL_Navigate(b.dataset.page, pages, onAfter);
+      if (window.innerWidth <= 900) window.RL_ToggleMenu();
+    });
+  });
+  // mobile overlay close
+  var ov = window.RL_$('mobOverlay');
+  if (ov) ov.addEventListener('click', window.RL_ToggleMenu);
+};
+
+/* ── SHARED DONUT CHART ── */
+window.RL_Donut = function(id, data, total, size) {
+  var sz = size || 130, off = 0, total2 = data.reduce(function(a, x) { return a + x[1]; }, 0);
+  var s = '<svg viewBox="0 0 42 42" width="' + sz + '" height="' + sz + '">'
+        + '<g fill="none" stroke-width="6" transform="rotate(-90 21 21)">'
+        + '<circle cx="21" cy="21" r="15.9" stroke="#8884" stroke-opacity=".2"/>';
+  data.forEach(function(x) {
+    var v = x[1] / total2 * 100;
+    s += '<circle cx="21" cy="21" r="15.9" stroke="' + x[2] + '"'
+       + ' stroke-dasharray="' + (v - 1) + ' ' + (101 - v) + '"'
+       + ' stroke-dashoffset="' + (-off) + '"/>';
+    off += v;
+  });
+  s += '</g><text x="21" y="23.5" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor">' + total + '</text></svg>'
+     + '<div class="legend">'
+     + data.map(function(x) {
+         return '<div><span class="dot" style="background:' + x[2] + '"></span>' + x[0] + '<b>' + x[1] + '</b></div>';
+       }).join('')
+     + '</div>';
+  var el = window.RL_$(id);
+  if (el) el.innerHTML = s;
+};
+
+/* ── SHARED BAR CHART ── */
+window.RL_Bars = function(id, values, labels, color) {
+  var C = color || '#7C6CF0', w = 300, h = 140;
+  var max = Math.max.apply(null, values);
+  var s = '<svg viewBox="0 0 ' + w + ' ' + (h + 18) + '" width="100%">';
+  for (var g = 0; g < 4; g++)
+    s += '<line x1="0" x2="' + w + '" y1="' + (g * 40 + 5) + '" y2="' + (g * 40 + 5) + '" stroke="#8883" stroke-dasharray="3 4"/>';
+  var bw = w / values.length;
+  values.forEach(function(v, i) {
+    var x = i * bw + 3, h2 = (v / max) * (h - 10);
+    s += '<rect x="' + x + '" y="' + (h - h2) + '" width="' + (bw * .65) + '" height="' + h2 + '" rx="4" fill="' + C + '" opacity=".85"/>';
+    if (labels && labels[i])
+      s += '<text x="' + (x + bw * .3) + '" y="' + (h + 14) + '" font-size="8" fill="#999" text-anchor="middle">' + labels[i] + '</text>';
+  });
+  var el = window.RL_$(id);
+  if (el) el.innerHTML = s + '</svg>';
+};
+
+/* ── SHARED LINE CHART ── */
+window.RL_Line = function(id, data, color) {
+  var C = color || '#7C6CF0', w = 300, h = 120;
+  var mn = Math.min.apply(null, data) * .95, mx = Math.max.apply(null, data) * 1.02;
+  var pts = data.map(function(v, i) {
+    return [10 + i * (w - 20) / (data.length - 1), h - (v - mn) / (mx - mn) * (h - 10)];
+  });
+  var p = pts.map(function(q) { return q.join(','); }).join(' ');
+  var labels = 'JFMAMJJASOND'.split('').slice(0, data.length);
+  var s = '<svg viewBox="0 0 ' + w + ' ' + (h + 18) + '" width="100%">'
+        + '<defs><linearGradient id="lg_' + id + '" x1="0" y1="0" x2="0" y2="1">'
+        + '<stop offset="0" stop-color="' + C + '" stop-opacity=".35"/>'
+        + '<stop offset="1" stop-color="' + C + '" stop-opacity="0"/></linearGradient></defs>';
+  for (var g = 0; g < 4; g++)
+    s += '<line x1="0" x2="' + w + '" y1="' + (g * 38 + 5) + '" y2="' + (g * 38 + 5) + '" stroke="#8883" stroke-dasharray="3 4"/>';
+  s += '<polygon points="10,' + h + ' ' + p + ' ' + (w - 10) + ',' + h + '" fill="url(#lg_' + id + ')"/>'
+     + '<polyline points="' + p + '" fill="none" stroke="' + C + '" stroke-width="2.5" stroke-linejoin="round"/>';
+  pts.forEach(function(q, i) {
+    if (i % 3 === 2 || i === data.length - 1)
+      s += '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="3.5" fill="#fff" stroke="' + C + '" stroke-width="2"/>';
+    s += '<text x="' + q[0] + '" y="' + (h + 14) + '" font-size="8" fill="#999" text-anchor="middle">' + (labels[i] || '') + '</text>';
+  });
+  var el = window.RL_$(id);
+  if (el) el.innerHTML = s + '</svg>';
+};
+
+})();

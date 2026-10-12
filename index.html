@@ -621,7 +621,7 @@ else req=post('/auth/login',{email:o.email,password:P.pw||''});
 return req.then(function(r){if(r.ok)return {ok:true,data:r.data};
  if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
  if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
-return {collect:collect,send:send,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}}})();
+return {collect:collect,send:send,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
 </script>
 <script>
 (function(){
@@ -676,10 +676,10 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
   f.addEventListener('submit',function(e){
     e.preventDefault();
     RL.collect(f,f.dataset.role);
-    // help form — open full app
+    // help form — open help dashboard
     if(f.dataset.role === 'help'){
-      showToast('Request sent! Opening the app…');
-      RL.send('help').then(function(){ window.location.href = 'relieflink/admin/preview.html'; });
+      showToast('Request sent! Opening your dashboard…');
+      RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
       return;
     }
     var d=RL.dest(f.dataset.role);
@@ -694,8 +694,8 @@ var urgentCheck = document.getElementById('urgentCheck');
 if(urgentCheck){
   urgentCheck.addEventListener('change', function(){
     if(urgentCheck.checked){
-      showToast('Urgent! Opening the app now…');
-      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 900);
+      showToast('Urgent! Opening your dashboard now…');
+      setTimeout(function(){ window.location.href = 'dashboards/help.html'; }, 900);
     }
   });
 }
@@ -782,11 +782,11 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     var sheet = f.closest('.m-sheet');
     var mrole = sheet ? sheet.id.replace('sheet-','') : '';
     RL.collect(f,mrole);
-    // help sheet — open full app
+    // help sheet — open help dashboard
     if(sheet && sheet.id === 'sheet-help'){
-      showToast('Request sent! Opening the app…');
+      showToast('Request sent! Opening your dashboard…');
       closeSheet();
-      RL.send('help').then(function(){ window.location.href = 'relieflink/admin/preview.html'; });
+      RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
       return;
     }
     var md=RL.dest(mrole);
@@ -802,9 +802,9 @@ var mUrgentCheck = document.getElementById('mUrgentCheck');
 if(mUrgentCheck){
   mUrgentCheck.addEventListener('change', function(){
     if(mUrgentCheck.checked){
-      showToast('Urgent! Opening the app now…');
+      showToast('Urgent! Opening your dashboard now…');
       closeSheet();
-      setTimeout(function(){ window.location.href = 'relieflink/admin/preview.html'; }, 900);
+      setTimeout(function(){ window.location.href = 'dashboards/help.html'; }, 900);
     }
   });
 }

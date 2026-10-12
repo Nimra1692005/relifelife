@@ -3,7 +3,9 @@
  * Connects admin dashboard to the FastAPI backend
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// In production (Vercel), VITE_API_URL is not set → same-origin relative paths (/api/...)
+// For local dev, set VITE_API_URL=http://localhost:8000 in relieflink/admin/.env
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 // ─── Types ─────────────────────────────────────────────
 export interface SOSRequest {
