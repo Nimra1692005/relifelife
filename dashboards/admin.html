@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 /* ── Admin-specific styles ── */
 .map-card {
@@ -92,11 +93,10 @@
         </div>
       </div>
       <div>
-        <div class="map-card fade-up" style="margin-bottom:16px">
-          <div class="pulse-dot" style="top:30%;left:40%"></div>
-          <div class="pulse-dot" style="top:55%;left:60%;animation-delay:.7s"></div>
-          <div class="pulse-dot" style="top:40%;left:25%;animation-delay:1.4s"></div>
-          <div class="mi">🗺️</div><h4>Live Disaster Map</h4><p id="mapZones">6 active zones across Pakistan</p>
+        <div class="map-card fade-up" style="margin-bottom:16px;padding:0">
+          <div id="adminMap" style="position:absolute;inset:0;border-radius:var(--rad);z-index:0"></div>
+          <div style="position:absolute;top:12px;left:14px;z-index:500;background:rgba(20,40,25,.72);color:#F5EEDB;padding:6px 12px;border-radius:10px;font-size:13px;font-weight:700">🗺️ Live Disaster Map</div>
+          <p id="mapZones" style="position:absolute;bottom:10px;left:0;right:0;z-index:500;text-align:center;color:#F5EEDB;font-weight:600;opacity:1">6 active zones across Pakistan</p>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Quick Actions</h3></div>
@@ -203,6 +203,8 @@
 <div class="toast" id="toast"></div>
 
 <script src="../config.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="live.js"></script>
 <script src="shared.js"></script>
 <script>
 /* ── DATA ── */
@@ -370,7 +372,10 @@ function loadOverview() {
         return '<tr><td>#' + r.id + '</td><td>' + (r.category||'—') + '</td><td>' + (r.location||'—') + '</td><td><span class="tag ' + (REQ_TAG[st]||'tag-blue') + '">' + st + '</span></td></tr>';
       }).join('');
     }
-    if (Array.isArray(o.map_markers) && RL_$('mapZones')) RL_$('mapZones').textContent = o.map_markers.length + ' active zones across Pakistan';
+    if (Array.isArray(o.map_markers)) {
+      if (RL_$('mapZones')) RL_$('mapZones').textContent = o.map_markers.length + ' active zones across Pakistan';
+      plotReqMarkers(o.map_markers);
+    }
   });
 }
 function loadHelpRequests() {
@@ -400,6 +405,20 @@ function loadLive() {
   }).catch(function(){});
 }
 
+var ADMIN_MAP=null;
+function initAdminMap(){
+  if(!window.L||!window.RL_LIVE||ADMIN_MAP) return;
+  ADMIN_MAP = RL_LIVE.map('adminMap', 30.3, 69.3, 5);
+  if(!ADMIN_MAP) return;
+  var zones=['rajanpur','muzaffargarh','layyah','charsadda','nowshera','sukkur'];
+  zones.forEach(function(c){ var g=RL_LIVE.geo(c); if(g) RL_LIVE.marker(ADMIN_MAP,g.lat,g.lng,'🌊 '+g.name+', Pakistan','#EF5B5B'); });
+  setTimeout(function(){ try{ ADMIN_MAP.invalidateSize(); }catch(e){} }, 250);
+}
+function plotReqMarkers(list){
+  if(!ADMIN_MAP||!Array.isArray(list)) return;
+  list.forEach(function(r){ if(r.latitude!=null&&r.longitude!=null) RL_LIVE.marker(ADMIN_MAP,+r.latitude,+r.longitude,'🆘 '+(r.full_name||r.name||'Request')+' — '+(r.location||r.city||''),'#F5B83D'); });
+}
+
 /* ── BOOT ── */
 RL_BootUser({ defaultName:'Admin', defaultRole:'admin' });
 floodList('floodList'); foodList('foodList'); shelterList('shelterList');
@@ -409,6 +428,7 @@ RL_Donut('genderDonut', [['Male',142,C[1]],['Female',106,'#F472A8']], 248);
 RL_Line('lineChart', [150,168,180,196,205,214,222,230,236,241,245,248]);
 RL_Bars('barsChart',  [40,55,48,70,82,65,90,76,60,85,95,70], 'JFMAMJJASOND'.split(''));
 RL_Icons();
+initAdminMap();
 loadLive();
 </script>
 </body></html>

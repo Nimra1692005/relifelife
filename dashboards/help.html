@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 /* ── Help-specific styles ── */
 .emergency-banner {
@@ -207,11 +208,8 @@
         <div class="card fade-up" style="margin-bottom:16px"><div class="card-header"><h3>Nearby Shelters</h3><span class="badge-sm">Within 10km</span></div><div id="nearbyShelters"></div></div>
         <div class="card fade-up"><div class="card-header"><h3>Nearby Hospitals</h3><span class="badge-sm">Open now</span></div><div id="nearbyHosp"></div></div>
       </div>
-      <div class="map-box fade-up" style="height:360px">
-        <div class="pulse-dot" style="top:35%;left:45%"></div>
-        <div class="pulse-dot" style="top:55%;left:60%;animation-delay:.8s"></div>
-        <div class="pulse-dot" style="top:45%;left:30%;animation-delay:1.5s"></div>
-        <div class="inner"><div style="font-size:36px;margin-bottom:8px">🗺️</div><h4 style="font-size:16px;font-weight:800">Nearby Help Map</h4><p style="font-size:13px;opacity:.6;margin-top:4px">3 active relief centers</p></div>
+      <div class="map-box fade-up" style="height:360px;position:relative;overflow:hidden">
+        <div id="helpMap" style="position:absolute;inset:0"></div>
       </div>
     </div>
   </div>
@@ -221,26 +219,26 @@
     <div class="grid-2">
       <div>
         <div class="flood-card fade-up" style="margin-bottom:16px">
-          <div class="risk-badge risk-high"><i data-i="drop"></i>HIGH FLOOD RISK</div>
+          <div class="risk-badge risk-high" id="flBadge"><i data-i="drop"></i>LOADING…</div>
           <h3 style="font-size:20px;font-weight:800;margin-bottom:6px">AI Flood Prediction</h3>
           <p style="opacity:.7;font-size:13px;margin-bottom:16px">Real-time weather, river levels &amp; satellite data</p>
           <div class="gauge-wrap">
             <div class="gauge">
-              <svg width="100" height="100" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3" stroke-dasharray="75 25"/><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="#EF5B5B" stroke-width="3" stroke-dasharray="57 43"/></svg>
-              <div class="gauge-val"><b>76%</b><span>Risk</span></div>
+              <svg width="100" height="100" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3" stroke-dasharray="75 25"/><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" id="flArc" stroke="#EF5B5B" stroke-width="3" stroke-dasharray="57 43"/></svg>
+              <div class="gauge-val"><b id="flPct">–</b><span>Risk</span></div>
             </div>
             <div style="flex:1">
-              <div style="font-size:13px;opacity:.8;margin-bottom:8px">Area: <b style="color:var(--gold)">Rajanpur, Punjab</b></div>
-              <div style="font-size:13px;opacity:.8">River: <b style="color:#f87171">Above Danger Mark</b></div>
-              <div style="font-size:13px;opacity:.8;margin-top:4px">Rainfall: <b>Heavy (next 48h)</b></div>
-              <div style="font-size:13px;opacity:.8;margin-top:4px">Confidence: <b style="color:var(--gold)">91%</b></div>
+              <div style="font-size:13px;opacity:.8;margin-bottom:8px">Area: <b style="color:var(--gold)" id="flArea">Detecting…</b></div>
+              <div style="font-size:13px;opacity:.8">River: <b style="color:#f87171" id="flRiver">–</b></div>
+              <div style="font-size:13px;opacity:.8;margin-top:4px">Rainfall: <b id="flRain">–</b></div>
+              <div style="font-size:13px;opacity:.8;margin-top:4px">Confidence: <b style="color:var(--gold)" id="flConf">–</b></div>
             </div>
           </div>
           <div class="flood-facts">
             <div class="flood-fact"><b>48h</b><small>Warning Window</small></div>
-            <div class="flood-fact"><b>2.4m</b><small>Projected Rise</small></div>
-            <div class="flood-fact"><b>3 zones</b><small>Affected Areas</small></div>
-            <div class="flood-fact"><b>Move Now</b><small>Recommendation</small></div>
+            <div class="flood-fact"><b id="flRise">–</b><small>Projected Rise</small></div>
+            <div class="flood-fact"><b id="flTrend">–</b><small>River Trend</small></div>
+            <div class="flood-fact"><b id="flRec">–</b><small>Recommendation</small></div>
           </div>
         </div>
         <div class="card fade-up">
@@ -295,6 +293,8 @@
 <div class="toast" id="toast"></div>
 
 <script src="../config.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="live.js"></script>
 <script src="shared.js"></script>
 <script>
 /* ── DATA ── */
@@ -467,7 +467,7 @@ var PAGES = {
 };
 function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
-    if (p === 'nearby')        renderNearby();
+    if (p === 'nearby')      { renderNearby(); initHelpMap(); }
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') renderNotifs(false);
     if (p === 'myrequests')    renderMyReqs();
@@ -487,5 +487,33 @@ renderNotifs(false);
 RL_Icons();
 loadMyReqs();
 loadNearbyLive();
+
+/* ── LIVE weather / flood / map (free, no API key) ── */
+function _setTxt(id,v){ var e=RL_$(id); if(e) e.textContent=v; }
+function applyRisk(r,name){
+  _setTxt('flPct', r.pct+'%'); _setTxt('flArea', name);
+  _setTxt('flRiver', r.status+' — '+r.riverMax+' m³/s');
+  _setTxt('flRain', (r.precip48>25?'Very heavy':r.precip48>10?'Heavy':r.precip48>2?'Moderate':'Light')+' · '+r.precip48+'mm/48h');
+  _setTxt('flConf', r.confidence+'%'); _setTxt('flRise', '+'+r.rise+' m³/s'); _setTxt('flTrend', r.trend);
+  var b=RL_$('flBadge');
+  if(b){ b.innerHTML='<svg class="i" viewBox="0 0 24 24"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"/></svg>'+(r.pct>=60?'HIGH FLOOD RISK':(r.pct>=30?'MODERATE FLOOD RISK':'LOW FLOOD RISK')); b.style.background=r.pct>=60?'rgba(239,91,91,.25)':(r.pct>=30?'rgba(245,183,61,.25)':'rgba(60,192,142,.25)'); b.style.color=r.pct>=60?'#f87171':(r.pct>=30?'#F5B83D':'#3CC08E'); }
+  _setTxt('flRec', r.pct>=60?'Move Now':(r.pct>=30?'Stay Alert':'Safe'));
+  var arc=RL_$('flArc'); if(arc){ var v=Math.max(2,Math.min(98,r.pct)); arc.setAttribute('stroke-dasharray', v+' '+(100-v)); }
+}
+function liveArea(){ var uu=RL_GetUser()||{}; return (window.RL_LIVE && RL_LIVE.geo(uu.area||uu.city)) || {lat:29.1044,lng:70.3302,name:'Rajanpur'}; }
+function loadFloodLive(){
+  if(!window.RL_LIVE) return; var g=liveArea();
+  Promise.all([ RL_LIVE.weather(g.lat,g.lng).catch(function(){return null;}), RL_LIVE.flood(g.lat,g.lng).catch(function(){return null;}) ])
+    .then(function(a){ applyRisk(RL_LIVE.risk(a[0],a[1]), g.name+', Pakistan'); });
+}
+var HELP_MAP=null;
+function initHelpMap(){
+  if(!window.L || HELP_MAP) return; var g=liveArea();
+  HELP_MAP = RL_LIVE.map('helpMap', g.lat, g.lng, 9); if(!HELP_MAP) return;
+  RL_LIVE.marker(HELP_MAP, g.lat, g.lng, '<b>'+g.name+'</b><br>Your area', '#B91C1C');
+  RL_Get('/shelters').then(function(a){ if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null) RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏕️ '+(x.name||'Shelter'),'#2E7D32'); }); });
+  RL_Get('/hospitals').then(function(a){ if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null) RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏥 '+(x.name||'Hospital'),'#4C8DF6'); }); });
+}
+loadFloodLive();
 </script>
 </body></html>

@@ -373,7 +373,12 @@ body::after{
           <option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option>
         </select>
       </div>
-      <div class="field" style="--i:4"><input aria-label="Area" placeholder="Area / city" required></div>
+      <div class="field" style="--i:4">
+        <div style="display:flex;gap:8px">
+          <input id="helpArea" aria-label="Area" placeholder="Area / city" required style="flex:1">
+          <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📍 My location</button>
+        </div>
+      </div>
       <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> This is urgent</label></div>
       <button class="btn" style="--i:6">Request help</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
@@ -603,7 +608,7 @@ body::after{
 <script src="config.js"></script>
 <script>
 window.RL=(function(){
-var API=(window.RELIEF_API||'').replace(/\/$/,''),PK=[30.3753,69.3451],P={},
+var API=(window.RELIEF_API||'').replace(/\/$/,''),PK=[30.3753,69.3451],P={},GPS=null,
 CITY={lahore:[31.5204,74.3587],karachi:[24.8607,67.0011],islamabad:[33.6844,73.0479],rawalpindi:[33.5651,73.0169],multan:[30.1575,71.5249],faisalabad:[31.4504,73.135],peshawar:[34.0151,71.5249],quetta:[30.1798,66.975],rajanpur:[29.1044,70.3302],muzaffargarh:[30.0703,71.1933],layyah:[30.9693,70.9428],jhang:[31.2681,72.3181],sukkur:[27.7052,68.8574],charsadda:[34.1453,71.7308],hyderabad:[25.396,68.3578],larkana:[27.5598,68.2264],nowshera:[34.0153,71.9747]};
 function geo(t){t=(t||'').toLowerCase();for(var k in CITY)if(t.indexOf(k)>-1)return CITY[k];return null}
 function post(path,body){var t=new Promise(function(_,r){setTimeout(function(){r(new Error('timeout'))},45000)});
@@ -615,14 +620,27 @@ P[role]=o;sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setIt
 function queue(role,o){try{var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
 function send(role){var o=P[role];if(!o||!API)return Promise.resolve({offline:true});var c=geo(o.area),req;
 if(role==='help'){var HC={'Flood rescue':'rescue','Medical help':'medical','Shelter':'shelter','Food or water':'food','Other':'special'};
- req=post('/help-requests',{category:HC[o.type]||'special',full_name:o.name,phone:o.phone,city:o.area,description:o.type+(o.urgent?' (urgent)':''),urgent:!!o.urgent,latitude:(c||PK)[0],longitude:(c||PK)[1]})}
+ req=post('/help-requests',{category:HC[o.type]||'special',full_name:o.name,phone:o.phone,city:o.area,description:o.type+(o.urgent?' (urgent)':''),urgent:!!o.urgent,latitude:(GPS?GPS.lat:(c||PK)[0]),longitude:(GPS?GPS.lng:(c||PK)[1])})}
 else if(role==='volunteer'){var b={role:'volunteer',full_name:o.name,phone:o.phone,city:o.area,skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};req=post('/auth/register-role',b)}
 else req=post('/auth/admin-signin',{email:o.email,password:P.pw||''});
 return req.then(function(r){if(r.ok){if(role==='volunteer'&&r.data&&r.data.data&&r.data.data.user){try{localStorage.setItem('rl_vol_id',r.data.data.user.id)}catch(e){}}return {ok:true,data:r.data};}
  if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
  if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
+function _msg(t){var el=document.getElementById('toast');if(el){el.textContent=t;el.classList.add('show');clearTimeout(el._mt);el._mt=setTimeout(function(){el.classList.remove('show');},2800);}}
+function useGeo(fid){
+  var btn=document.getElementById('geoBtn'); if(btn) btn.textContent='Locating…';
+  var done=function(ok){ if(btn){ btn.textContent=ok?'✓ Set':'📍 My location'; if(ok) setTimeout(function(){btn.textContent='📍 My location';},2000); else btn.textContent='📍 My location'; } };
+  if(!navigator.geolocation){ _msg('Your browser does not support location'); done(false); return; }
+  navigator.geolocation.getCurrentPosition(function(p){
+    var la=p.coords.latitude, lo=p.coords.longitude; GPS={lat:la,lng:lo};
+    fetch('https://nominatim.openstreetmap.org/reverse?lat='+la+'&lon='+lo+'&format=jsonv2&zoom=12')
+      .then(function(r){return r.json();})
+      .then(function(j){ var a=j.address||{}; var name=a.city||a.town||a.village||a.district||a.state||a.suburb||j.name; var f=document.getElementById(fid); if(f&&name) f.value=name; done(true); })
+      .catch(function(){ done(true); });
+  }, function(){ _msg('Could not get your location — please type your area'); done(false); }, {timeout:10000, maximumAge:60000});
+}
 function forgot(){var t=document.getElementById('toast');if(t){t.textContent='Password reset is handled by your ReliefLink administrator.';t.classList.add('show');clearTimeout(t._ft);t._ft=setTimeout(function(){t.classList.remove('show');},3400);}return false;}
-return {collect:collect,send:send,forgot:forgot,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
+return {collect:collect,send:send,forgot:forgot,useGeo:useGeo,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
 </script>
 <script>
 (function(){
