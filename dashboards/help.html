@@ -107,6 +107,7 @@
     <button class="nav-item" data-page="emergency"><i data-i="phone"></i>Emergency Contacts</button>
     <button class="nav-item" data-page="nearby"><i data-i="pin"></i>Nearby Help</button>
     <button class="nav-item" data-page="flood"><i data-i="drop"></i>Flood Predictor</button>
+    <button class="nav-item" data-page="route"><i data-i="pin"></i>Safe Route Planner</button>
     <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">2</span></button>
     <button class="nav-item" data-page="profile"><i data-i="user"></i>Profile</button>
   </div>
@@ -152,6 +153,10 @@
       <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><h4>Missing Persons</h4></div>
       <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><h4>Emotional &amp; Psychological Support</h4></div>
       <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#164670">🌊</div><h4>AI Flood Predictor</h4></div>
+      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D32">🧭</div><h4>Safe Route Planner</h4></div>
+      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#4C8DF622">🛰️</div><h4>AI Dynamic Routing</h4></div>
+      <div class="cat-card fade-up" onclick="navigate('nearby')"><div class="cat-icon" style="background:#F58A3D22">📡</div><h4>Location Smart Alerts</h4></div>
+      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#7C6CF022">📦</div><h4>Aid Tracking</h4></div>
     </div>
   </div>
 
@@ -159,24 +164,33 @@
   <div id="page-request" class="hide">
     <div class="grid-2">
       <div class="card fade-up">
-        <div class="card-header"><h3>Submit Help Request</h3></div>
-        <div class="form-group"><label>Category</label><select id="reqCat" class="field-input">
+        <div class="card-header"><h3>Quick Help Request</h3><span class="badge-sm">Location only</span></div>
+        <div class="form-group"><label>What do you need?</label><select id="reqCat" class="field-input">
           <option>Emergency Rescue &amp; Evacuation</option><option>Medical Assistance</option>
           <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
           <option>Clothing &amp; Supplies</option><option>Transportation &amp; Relocation</option>
           <option>Sanitation &amp; Hygiene</option><option>Special Assistance</option>
           <option>Home &amp; Damage Recovery</option><option>Missing Persons</option><option>Psychological Support</option>
         </select></div>
-        <div class="form-group"><label>Full Name</label><input id="reqName" class="field-input" type="text" placeholder="Your full name"></div>
-        <div class="form-group"><label>Phone Number</label><input id="reqPhone" class="field-input" type="tel" placeholder="e.g. 0300-1234567"></div>
-        <div class="form-group"><label>Number of People</label><input id="reqPeople" class="field-input" type="number" placeholder="e.g. 4" min="1"></div>
-        <div class="form-group"><label>Location / Address</label><input id="reqLoc" class="field-input" type="text" placeholder="Village, Tehsil, District"></div>
-        <div class="form-group"><label>Describe Your Situation</label><textarea id="reqDesc" class="field-input" style="min-height:80px" placeholder="Tell us your situation and what you need…"></textarea></div>
-        <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+        <div class="form-group"><label>📍 Your Location <span style="color:var(--r)">*</span> <small style="opacity:.6;font-weight:400">— bas itna hi zaroori hai</small></label>
+          <div style="display:flex;gap:8px">
+            <input id="reqLoc" class="field-input" type="text" placeholder="Village / city, ya GPS button dabayein" style="flex:1">
+            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="useMyLoc()">📍 My location</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
           <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
           <label for="reqUrgent" style="font-weight:700;color:var(--r);cursor:pointer">🚨 Mark as URGENT</label>
         </div>
-        <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Submit Request</button>
+        <details style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--g)">Add details (optional)</summary>
+          <div style="margin-top:12px">
+            <div class="form-group"><label>Full Name</label><input id="reqName" class="field-input" type="text" placeholder="Your full name"></div>
+            <div class="form-group"><label>Phone Number</label><input id="reqPhone" class="field-input" type="tel" placeholder="e.g. 0300-1234567"></div>
+            <div class="form-group"><label>Number of People</label><input id="reqPeople" class="field-input" type="number" placeholder="e.g. 4" min="1"></div>
+            <div class="form-group"><label>Describe Your Situation</label><textarea id="reqDesc" class="field-input" style="min-height:80px" placeholder="Tell us what you need…"></textarea></div>
+          </div>
+        </details>
+        <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Request Help</button>
       </div>
       <div>
         <div class="card fade-up" style="background:linear-gradient(135deg,var(--g),var(--g2));color:#F5EEDB;border:none;margin-bottom:16px">
@@ -265,6 +279,26 @@
     </div>
   </div>
 
+  <!-- SAFE ROUTE PLANNER -->
+  <div id="page-route" class="hide">
+    <div class="grid-2">
+      <div>
+        <div class="card fade-up" style="margin-bottom:16px">
+          <div class="card-header"><h3>🧭 Safe Route Planner</h3></div>
+          <p style="font-size:13px;opacity:.7;margin-bottom:14px">Bas apna location dein — hum aapko sabse qareeb safe shelter tak behtareen route denge, raaste ke saath flood-risk check kar ke.</p>
+          <div class="form-group"><label>Destination (nearest shelter)</label><select id="rtDest" class="field-input"></select></div>
+          <button class="submit-btn" style="width:100%;margin-bottom:14px" onclick="planRoute()"><i data-i="pin"></i>Plan route from my location</button>
+          <div id="rtResult"><p class="mute" style="font-size:13px">Route aur safety yahan dikhegi.</p></div>
+        </div>
+        <div class="card fade-up"><div class="card-header"><h3>Live Weather</h3><span class="badge-sm">Open-Meteo</span></div><div id="wxLive"><p class="mute" style="font-size:13px">Loading weather…</p></div></div>
+      </div>
+      <div class="map-box fade-up" style="height:440px;position:relative;overflow:hidden">
+        <div id="routeMap" style="position:absolute;inset:0"></div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700">🧭 Route to safety</div>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTIFICATIONS -->
   <div id="page-notifications" class="hide">
     <div class="card fade-up">
@@ -327,32 +361,52 @@ function selectCat(el, cat) {
   var sel = RL_$('reqCat'); if (sel) sel.value = cat;
 }
 
+var GCO = null; // GPS coords captured via "My location"
+function useMyLoc() {
+  if (!window.RL_LIVE) { RL_Toast('Location service not ready'); return; }
+  var btn = RL_$('reqGeoBtn'); if (btn) btn.textContent = 'Locating…';
+  RL_LIVE.locate(function(pos) {
+    var f = RL_$('reqLoc');
+    if (!pos || !RL_LIVE.inPK(pos.lat, pos.lng)) {
+      if (btn) btn.textContent = '📍 My location';
+      RL_Toast('Pakistan se bahar — please shehar likhein'); return;
+    }
+    GCO = { lat: pos.lat, lng: pos.lng };
+    var near = RL_LIVE.nearest(pos.lat, pos.lng);
+    if (f) f.value = near.name + ', Pakistan';
+    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pos.lat + '&lon=' + pos.lng + '&format=jsonv2&zoom=12')
+      .then(function(r){ return r.json(); })
+      .then(function(j){ var a = j.address||{}; var nm = a.city||a.town||a.village||a.suburb||a.district||near.name; if (f) f.value = nm; flashSet(); })
+      .catch(function(){ flashSet(); });
+    function flashSet(){ if(btn){ btn.textContent='✓ Set'; setTimeout(function(){ btn.textContent='📍 My location'; },1800); } }
+  });
+}
 function submitReq() {
-  var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'', loc = (RL_$('reqLoc')||{}).value||'';
-  if (!nm.trim() || !ph.trim() || !loc.trim()) { RL_Toast('Please fill Name, Phone and Location'); return; }
+  var loc = (RL_$('reqLoc')||{}).value||'';
+  if (!loc.trim()) { RL_Toast('📍 Sirf apna location dein'); return; }  // location is the only required field
+  var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'';
   var catLabel = (RL_$('reqCat')||{}).value || '';
   var r = {
-    id: 'RL-' + Date.now(),
-    cat: catLabel,
-    name: nm, phone: ph, loc: loc,
-    desc: (RL_$('reqDesc')||{}).value||'',
-    people: (RL_$('reqPeople')||{}).value||1,
-    urgent: !!(RL_$('reqUrgent')||{}).checked,
-    status: 0, date: new Date().toLocaleDateString()
+    id: 'RL-' + Date.now(), cat: catLabel, name: nm, phone: ph, loc: loc,
+    desc: (RL_$('reqDesc')||{}).value||'', people: (RL_$('reqPeople')||{}).value||1,
+    urgent: !!(RL_$('reqUrgent')||{}).checked, status: 0, date: new Date().toLocaleDateString()
   };
   myReqs.unshift(r);
   try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
-  ['reqName','reqPhone','reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
-  var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
-  updateBadges(); renderActive(); renderMyReqs();
-  RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted!');
-  // Send to backend; refine the reference id on success (graceful offline fallback)
-  RL_Send('POST', '/help-requests', {
+  var body = {
     category: (window.RL_CAT_LABEL2KEY[catLabel] || 'special'),
-    full_name: nm, phone: ph, city: loc,
-    description: r.desc + (r.people ? ' (' + r.people + ' people)' : ''),
+    full_name: nm || 'Help seeker', phone: ph, city: loc,
+    description: catLabel + (r.desc ? ' — ' + r.desc : '') + (r.people ? ' (' + r.people + ' people)' : ''),
     urgent: r.urgent
-  }).then(function(res){
+  };
+  if (GCO) { body.latitude = GCO.lat; body.longitude = GCO.lng; }
+  else { var g = window.RL_LIVE ? RL_LIVE.geo(loc) : null; if (g) { body.latitude = g.lat; body.longitude = g.lng; } }
+  ['reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
+  var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
+  GCO = null;
+  updateBadges(); renderActive(); renderMyReqs();
+  RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted! A volunteer will contact you soon.');
+  RL_Send('POST', '/help-requests', body).then(function(res){
     if (res && res.ok && res.data && res.data.id) {
       r.id = res.data.id; r._live = true;
       try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
@@ -456,12 +510,13 @@ function clearNotifs() { var b=RL_$('notifBadge');if(b)b.textContent='0'; render
 
 /* ── NAVIGATION ── */
 var PAGES = {
-  home:          'Request Help|Select a category to submit your help request',
-  request:       'Submit Request|Fill in the form to request assistance',
+  home:          'Request Help|Select a category — you only need to give your location',
+  request:       'Quick Help Request|Just enter your location and tap Request',
   myrequests:    'My Requests|Track the status of your help requests',
   emergency:     'Emergency Contacts|Call emergency services directly',
-  nearby:        'Nearby Help|Shelters and hospitals near you',
-  flood:         'Flood Predictor|AI-powered flood risk assessment',
+  nearby:        'Nearby Help|Shelters and hospitals near you in Pakistan',
+  flood:         'Flood Predictor|AI-powered flood risk for your area',
+  route:         'Safe Route Planner|Plan the safest route to the nearest shelter',
   notifications: 'Notifications|Alerts and updates for you',
   profile:       'My Profile|Your personal information'
 };
@@ -469,6 +524,7 @@ function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
     if (p === 'nearby')      { renderNearby(); initHelpMap(); }
     if (p === 'flood')         initFloodMap();
+    if (p === 'route')         initRouteMap();
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') renderNotifs(false);
     if (p === 'myrequests')    renderMyReqs();
@@ -531,6 +587,57 @@ function initFloodMap(){
   ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) RL_LIVE.marker(FLOOD_MAP,p.lat,p.lng,'🌊 '+p.name+' — flood-prone','#EF5B5B'); });
   RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> (your area)','#F5B83D');
   setTimeout(function(){try{FLOOD_MAP.invalidateSize();}catch(e){}},250);
+}
+/* ── SAFE ROUTE PLANNER (OSRM routing + flood-risk check, free & PK-locked) ── */
+var ROUTE_MAP=null;
+function destList(){ var el=RL_$('rtDest'); if(!el||el.options.length) return; SHELTERS.forEach(function(x,i){ var o=document.createElement('option'); o.value=i; o.textContent=x[0]+' — '+x[1]; el.appendChild(o); }); }
+function initRouteMap(){
+  destList();
+  if(!window.L||!window.RL_LIVE||ROUTE_MAP) return;
+  var g=liveArea(); ROUTE_MAP=RL_LIVE.map('routeMap',g.lat,g.lng,8); loadWxLive();
+  if(ROUTE_MAP){
+    RL_LIVE.marker(ROUTE_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> — you','#B91C1C');
+    SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(ROUTE_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
+  }
+  setTimeout(function(){try{ROUTE_MAP&&ROUTE_MAP.invalidateSize();}catch(e){}},250);
+}
+function loadWxLive(){
+  var g=liveArea(); if(!window.RL_LIVE) return;
+  RL_LIVE.weather(g.lat,g.lng).then(function(w){
+    var el=RL_$('wxLive'); if(!el||!w||!w.current) return; var c=w.current, d=w.daily||{};
+    el.innerHTML='<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🌡️</div><div class="t"><b>'+Math.round(c.temperature_2m)+'°C</b><small>'+(c.relative_humidity_2m||0)+'% humidity · wind '+(c.wind_speed_10m||0)+' km/h</small></div></div>'
+      +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🌧️</div><div class="t"><b>'+(d.precipitation_sum?d.precipitation_sum[0]:0)+' mm</b><small>Today · '+(d.precipitation_probability_max?d.precipitation_probability_max[0]:0)+'% chance</small></div></div>';
+  }).catch(function(){});
+}
+function planRoute(){
+  if(!window.RL_LIVE||!window.L){ RL_Toast('Map not ready'); return; }
+  var res=RL_$('rtResult'); if(res) res.innerHTML='<p style="font-size:13px">🛰️ Locating you…</p>';
+  RL_LIVE.locate(function(pos){
+    var start=(pos&&RL_LIVE.inPK(pos.lat,pos.lng))?{lat:pos.lat,lng:pos.lng}:liveArea();
+    var idx=parseInt((RL_$('rtDest')||{}).value||'0',10); var d=SHELTERS[idx]||SHELTERS[0];
+    if(!d||d[4]==null){ RL_Toast('Shelter coordinates not available'); return; }
+    drawRoute(start,{lat:d[4],lng:d[5]},d);
+  });
+}
+function drawRoute(start,end,d){
+  var url='https://router.project-osrm.org/route/v1/driving/'+start.lng+','+start.lat+';'+end.lng+','+end.lat+'?overview=full&geometries=geojson';
+  fetch(url).then(function(r){return r.json();}).then(function(j){
+    if(!j||!j.routes||!j.routes.length){ RL_Toast('Route service abhi unavailable'); return; }
+    if(!ROUTE_MAP){ RL_Toast('Map not ready'); return; }
+    var rt=j.routes[0];
+    if(ROUTE_MAP._rtLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._rtLine); }
+    ROUTE_MAP._rtLine=window.L.geoJSON(rt.geometry,{style:{color:'#2E7D32',weight:5,opacity:.9}}).addTo(ROUTE_MAP);
+    ROUTE_MAP.fitBounds(ROUTE_MAP._rtLine.getBounds(),{padding:[30,30]});
+    RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'🏕️ <b>'+d[0]+'</b> — destination','#2E7D32');
+    var km=(rt.distance/1000).toFixed(1), min=Math.max(1,Math.round(rt.duration/60));
+    var mid={lat:(start.lat+end.lat)/2,lng:(start.lng+end.lng)/2};
+    RL_LIVE.flood(mid.lat,mid.lng).catch(function(){return null;}).then(function(fl){
+      var r=RL_LIVE.risk(null,fl); var safe=r.riverMax<50; var res=RL_$('rtResult');
+      if(res) res.innerHTML='<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">📏</div><div class="t"><b>'+km+' km · '+min+' min</b><small>to '+d[0]+', '+d[1]+'</small></div></div>'
+        +'<div class="item" style="border-color:'+(safe?'#3CC08E44':'#EF5B5B44')+'"><div class="item-icon" style="background:'+(safe?'#3CC08E22':'#EF5B5B22')+';color:'+(safe?'var(--gr)':'var(--r)')+'">'+(safe?'✅':'⚠️')+'</div><div class="t"><b>'+(safe?'Raasta safe lag raha hai':'Raaste mein flood risk ho sakta hai')+'</b><small>River '+r.status+' ('+r.riverMax+' m³/s) midpoint par</small></div></div>';
+      RL_Toast(safe?'✅ Safe route planned ('+km+' km)':'⚠️ Route planned — flood risk ahead');
+    });
+  }).catch(function(){ RL_Toast('Route service unavailable'); });
 }
 loadFloodLive();
 </script>
