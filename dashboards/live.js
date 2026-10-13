@@ -25,6 +25,20 @@ window.RL_LIVE = (function () {
     for (var k in PK) if (city.indexOf(k) > -1) return { lat: PK[k][0], lng: PK[k][1], name: cap(k) };
     return null;
   }
+  // Pakistan extent (Gwadar -> Khunjerab, eastern Sindh -> Gilgit-Baltistan).
+  var PK_BOUNDS = [[23.6, 58.4], [37.3, 78.4]];
+  function inPK(lat, lng) { return lat >= 23.6 && lat <= 37.3 && lng >= 58.4 && lng <= 78.4; }
+  function clampPK(lat, lng) {
+    return [Math.min(37.3, Math.max(23.6, lat)), Math.min(78.4, Math.max(58.4, lng))];
+  }
+  function nearest(lat, lng) {
+    var best = null, bd = Infinity;
+    for (var k in PK) {
+      var d = Math.pow(PK[k][0] - lat, 2) + Math.pow(PK[k][1] - lng, 2);
+      if (d < bd) { bd = d; best = { lat: PK[k][0], lng: PK[k][1], name: cap(k) }; }
+    }
+    return best || { lat: 29.1044, lng: 70.3302, name: 'Rajanpur' };
+  }
   function fetchJSON(u) {
     return fetch(u).then(function (r) { if (!r.ok) throw new Error('http' + r.status); return r.json(); });
   }
@@ -74,8 +88,11 @@ window.RL_LIVE = (function () {
   function map(id, lat, lng, zoom) {
     if (!window.L) return null;
     var el = document.getElementById(id); if (!el) return null;
-    if (el._leaflet_id) { try { window.L.DomEvent.stop && 0; } catch (e) {} }
-    var m = window.L.map(id).setView([lat, lng], zoom == null ? 8 : zoom);
+    var c = clampPK(lat, lng);
+    var m = window.L.map(id, {
+      maxBounds: PK_BOUNDS, maxBoundsVisualEffect: { strokeColor: '#2E7D32', strokeOpacity: 0.4, weight: 4 },
+      minZoom: 5, maxZoom: 18, zoomSnap: 0.5, worldCopyJump: false
+    }).setView(c, zoom == null ? 8 : zoom);
     window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(m);
     return m;
@@ -87,5 +104,5 @@ window.RL_LIVE = (function () {
     return mk;
   }
 
-  return { PK: PK, geo: geo, weather: weather, flood: flood, search: search, locate: locate, risk: risk, map: map, marker: marker, cap: cap };
+  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest };
 })();

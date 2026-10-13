@@ -210,6 +210,7 @@
       </div>
       <div class="map-box fade-up" style="height:360px;position:relative;overflow:hidden">
         <div id="helpMap" style="position:absolute;inset:0"></div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🇵🇰 Nearby in Pakistan</div>
       </div>
     </div>
   </div>
@@ -250,10 +251,9 @@
         </div>
       </div>
       <div>
-        <div class="map-box fade-up" style="height:260px;margin-bottom:16px">
-          <div class="pulse-dot" style="top:40%;left:50%"></div>
-          <div class="pulse-dot" style="top:60%;left:35%;animation-delay:.6s"></div>
-          <div class="inner"><div style="font-size:36px;margin-bottom:6px">🌊</div><h4>Flood Risk Map</h4><p style="font-size:12px;opacity:.6">3 high-risk zones detected</p></div>
+        <div class="map-box fade-up" style="height:300px;margin-bottom:16px;position:relative;overflow:hidden">
+          <div id="floodMap" style="position:absolute;inset:0"></div>
+          <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🌊 Pakistan Flood Risk Map</div>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Last 5 years</span></div>
@@ -303,8 +303,8 @@ var CATS = {'Emergency Rescue & Evacuation':'🚤','Medical Assistance':'🏥','
 var ST = {0:'Received',1:'Assigned',2:'On the way',3:'Completed'};
 var SC = {0:'tag-blue',1:'tag-yellow',2:'tag-orange',3:'tag-green'};
 
-var SHELTERS = [['Govt School Shelter','Rajanpur','320/400 people','1.2 km'],['Community Hall','Muzaffargarh','410/420 people','3.8 km'],['Relief Camp','Layyah','180/350 people','6.5 km']];
-var HOSPS   = [['DHQ Hospital','Rajanpur','46 beds free','2.1 km'],['Civil Hospital','Sukkur','70 beds free','8.3 km']];
+var SHELTERS = [['Govt School Shelter','Rajanpur','320/400 people','1.2 km',29.1044,70.3302],['Community Hall','Muzaffargarh','410/420 people','3.8 km',30.0703,71.1933],['Relief Camp','Layyah','180/350 people','6.5 km',30.9693,70.9428]];
+var HOSPS   = [['DHQ Hospital','Rajanpur','46 beds free','2.1 km',29.1044,70.3302],['Civil Hospital','Sukkur','70 beds free','8.3 km',27.7052,68.8574]];
 var CONTACTS = [
   {name:'1122 Rescue',role:'Emergency Services',phone:'1122',c:'#EF5B5B'},
   {name:'Edhi Foundation',role:'Rescue & Medical',phone:'115',c:'#3CC08E'},
@@ -468,6 +468,7 @@ var PAGES = {
 function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
     if (p === 'nearby')      { renderNearby(); initHelpMap(); }
+    if (p === 'flood')         initFloodMap();
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') renderNotifs(false);
     if (p === 'myrequests')    renderMyReqs();
@@ -509,10 +510,27 @@ function loadFloodLive(){
 var HELP_MAP=null;
 function initHelpMap(){
   if(!window.L || HELP_MAP) return; var g=liveArea();
-  HELP_MAP = RL_LIVE.map('helpMap', g.lat, g.lng, 9); if(!HELP_MAP) return;
-  RL_LIVE.marker(HELP_MAP, g.lat, g.lng, '<b>'+g.name+'</b><br>Your area', '#B91C1C');
-  RL_Get('/shelters').then(function(a){ if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null) RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏕️ '+(x.name||'Shelter'),'#2E7D32'); }); });
-  RL_Get('/hospitals').then(function(a){ if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null) RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏥 '+(x.name||'Hospital'),'#4C8DF6'); }); });
+  HELP_MAP = RL_LIVE.map('helpMap', g.lat, g.lng, 10); if(!HELP_MAP) return;
+  RL_LIVE.marker(HELP_MAP, g.lat, g.lng, '📍 <b>'+g.name+'</b> — your area', '#B91C1C');
+  var placed={s:0,h:0};
+  RL_Get('/shelters').then(function(a){
+    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏕️ '+(x.name||'Shelter'),'#2E7D32'); placed.s++; } });
+    if(!placed.s) SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
+  });
+  RL_Get('/hospitals').then(function(a){
+    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏥 '+(x.name||'Hospital'),'#4C8DF6'); placed.h++; } });
+    if(!placed.h) HOSPS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],'🏥 '+x[0]+' — '+x[1],'#4C8DF6'); });
+  });
+  setTimeout(function(){try{HELP_MAP.invalidateSize();}catch(e){}},250);
+}
+var FLOOD_MAP=null;
+function initFloodMap(){
+  if(!window.L||!window.RL_LIVE||FLOOD_MAP) return;
+  var g=liveArea();
+  FLOOD_MAP = RL_LIVE.map('floodMap', g.lat, g.lng, 5); if(!FLOOD_MAP) return;
+  ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) RL_LIVE.marker(FLOOD_MAP,p.lat,p.lng,'🌊 '+p.name+' — flood-prone','#EF5B5B'); });
+  RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> (your area)','#F5B83D');
+  setTimeout(function(){try{FLOOD_MAP.invalidateSize();}catch(e){}},250);
 }
 loadFloodLive();
 </script>

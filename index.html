@@ -632,7 +632,9 @@ function useGeo(fid){
   var done=function(ok){ if(btn){ btn.textContent=ok?'✓ Set':'📍 My location'; if(ok) setTimeout(function(){btn.textContent='📍 My location';},2000); else btn.textContent='📍 My location'; } };
   if(!navigator.geolocation){ _msg('Your browser does not support location'); done(false); return; }
   navigator.geolocation.getCurrentPosition(function(p){
-    var la=p.coords.latitude, lo=p.coords.longitude; GPS={lat:la,lng:lo};
+    var la=p.coords.latitude, lo=p.coords.longitude;
+    if(la<23.6||la>37.3||lo<58.4||lo>78.4){ _msg('Aap ki location Pakistan se bahar hai — please apna shehar likhein'); done(false); return; }
+    GPS={lat:la,lng:lo};
     fetch('https://nominatim.openstreetmap.org/reverse?lat='+la+'&lon='+lo+'&format=jsonv2&zoom=12')
       .then(function(r){return r.json();})
       .then(function(j){ var a=j.address||{}; var name=a.city||a.town||a.village||a.district||a.state||a.suburb||j.name; var f=document.getElementById(fid); if(f&&name) f.value=name; done(true); })
