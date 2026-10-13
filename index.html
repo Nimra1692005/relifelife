@@ -405,7 +405,7 @@ body::after{
       </div>
       <div class="row" style="--i:4">
         <label><input type="checkbox" checked> Keep me signed in</label>
-        <a tabindex="0" role="button">Forgot?</a>
+        <a tabindex="0" role="button" onclick="return RL.forgot()">Forgot?</a>
       </div>
       <button class="btn" style="--i:5">Sign in</button>
       <p class="alt" style="--i:6">Not admin? <a data-go="help" tabindex="0" role="button">Back to help</a></p>
@@ -621,7 +621,8 @@ else req=post('/auth/admin-signin',{email:o.email,password:P.pw||''});
 return req.then(function(r){if(r.ok){if(role==='volunteer'&&r.data&&r.data.data&&r.data.data.user){try{localStorage.setItem('rl_vol_id',r.data.data.user.id)}catch(e){}}return {ok:true,data:r.data};}
  if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
  if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
-return {collect:collect,send:send,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
+function forgot(){var t=document.getElementById('toast');if(t){t.textContent='Password reset is handled by your ReliefLink administrator.';t.classList.add('show');clearTimeout(t._ft);t._ft=setTimeout(function(){t.classList.remove('show');},3400);}return false;}
+return {collect:collect,send:send,forgot:forgot,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
 </script>
 <script>
 (function(){

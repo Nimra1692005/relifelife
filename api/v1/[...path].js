@@ -185,15 +185,21 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  if (!SB_URL || !SB_KEY) {
-    return fail(res, 'Backend not configured: set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel env vars', 500);
-  }
-
   const seg = [].concat(req.query.path || []);
   const q = Object.assign({}, req.query);
   delete q.path;
   const method = req.method;
   const b = readBody(req);
+
+  // Admin sign-in does NOT need the database — handle it before the config guard
+  // so the dashboard is reachable even before Supabase env vars are set.
+  if (seg[0] === 'auth' && seg[1] === 'admin-signin' && method === 'POST') {
+    return await adminSignin(res, b);
+  }
+
+  if (!SB_URL || !SB_KEY) {
+    return fail(res, 'Backend not configured: set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel env vars', 500);
+  }
 
   try {
     const r0 = seg[0];
