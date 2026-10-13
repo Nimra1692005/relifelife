@@ -229,4 +229,88 @@ window.RL_Line = function(id, data, color) {
   if (el) el.innerHTML = s + '</svg>';
 };
 
+/* ═══════════════════════════════════════════
+   LIVE API LAYER — connects dashboards to the
+   FastAPI backend. Every call degrades gracefully:
+   on any failure the dashboard keeps its demo data.
+═══════════════════════════════════════════ */
+window.RL_API = (window.RELIEF_API || '').replace(/\/$/, '');
+
+function _withTimeout(p, ms) {
+  return Promise.race([
+    p,
+    new Promise(function(_, rj) { setTimeout(function() { rj(new Error('timeout')); }, ms || 8000); })
+  ]);
+}
+
+/* GET → resolves to response .data (or null when unavailable) */
+window.RL_Get = function(path) {
+  if (!window.RL_API) return Promise.resolve(null);
+  return _withTimeout(
+    fetch(window.RL_API + path).then(function(r) {
+      if (!r.ok) throw new Error('http' + r.status);
+      return r.json();
+    })
+  ).then(function(j) { return (j && j.success) ? j.data : null; })
+   .catch(function() { return null; });
+};
+
+/* POST / PATCH → resolves to response .data (or null) */
+window.RL_Send = function(method, path, body) {
+  if (!window.RL_API) return Promise.resolve(null);
+  return _withTimeout(
+    fetch(window.RL_API + path, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body || {})
+    }).then(function(r) {
+      return r.json().catch(function() { return {}; }).then(function(j) {
+        return { ok: r.ok, status: r.status, data: (j && j.success) ? j.data : null, message: j && j.message };
+      });
+    })
+  ).catch(function() { return { ok: false, status: 0, data: null }; });
+};
+
+/* ── Category mapping (mockup label ↔ backend enum key) ── */
+window.RL_CAT_LABEL2KEY = {
+  'Emergency Rescue & Evacuation': 'rescue',
+  'Medical Assistance': 'medical',
+  'Food & Clean Water': 'food',
+  'Shelter & Accommodation': 'shelter',
+  'Clothing & Supplies': 'clothing',
+  'Clothing & Essential Supplies': 'clothing',
+  'Transportation & Relocation': 'transport',
+  'Sanitation & Hygiene': 'sanitation',
+  'Special Assistance': 'special',
+  'Home & Damage Recovery': 'recovery',
+  'Missing Persons': 'missing',
+  'Psychological Support': 'psychological',
+  'Emotional & Psychological Support': 'psychological',
+  'AI Flood Predictor': 'flood_predictor'
+};
+window.RL_CAT_KEY2LABEL = {
+  rescue: 'Emergency Rescue & Evacuation', medical: 'Medical Assistance',
+  food: 'Food & Clean Water', shelter: 'Shelter & Accommodation',
+  clothing: 'Clothing & Supplies', transport: 'Transportation & Relocation',
+  sanitation: 'Sanitation & Hygiene', special: 'Special Assistance',
+  recovery: 'Home & Damage Recovery', missing: 'Missing Persons',
+  psychological: 'Psychological Support', flood_predictor: 'AI Flood Predictor'
+};
+window.RL_CAT_EMOJI = {
+  rescue: '🚤', medical: '🏥', food: '🍱', shelter: '🏕️', clothing: '👕',
+  transport: '🚌', sanitation: '🧼', special: '♿', recovery: '🏠',
+  missing: '🔍', psychological: '💚', flood_predictor: '🌊'
+};
+/* Help request status → step index (0-3) matching the tracker UI */
+window.RL_HELP_STEP = { pending: 0, assigned: 1, in_progress: 2, resolved: 3 };
+window.RL_HELP_TAG  = { pending: 'tag-blue', assigned: 'tag-yellow', in_progress: 'tag-orange', resolved: 'tag-green' };
+
+/* ── Persistent local ids so dashboards can scope live calls ── */
+window.RL_MyId = function(key) {
+  var id = null;
+  try { id = localStorage.getItem(key); if (!id) { id = key + '-' + Math.random().toString(36).slice(2, 8); localStorage.setItem(key, id); } } catch (e) { id = key + '-demo'; }
+  return id;
+};
+
 })();
+

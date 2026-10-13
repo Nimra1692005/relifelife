@@ -97,8 +97,8 @@
   <!-- HOME -->
   <div id="page-home">
     <div class="stats-grid">
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><div class="val">12</div><div class="label">Tasks Completed</div><div class="sub">↑ 3 this week</div></div></div>
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><div class="val">1,240+</div><div class="label">Hours Served</div><div class="sub">Since registration</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><div class="val" id="vTasks">12</div><div class="label">Tasks Completed</div><div class="sub">↑ 3 this week</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><div class="val" id="vHours">1,240+</div><div class="label">Hours Served</div><div class="sub">Since registration</div></div></div>
       <div class="stat-card fade-up"><div class="stat-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="star"></i></div><div><div class="val">4.9</div><div class="label">Rating</div><div class="sub">38 reviews</div></div></div>
       <div class="stat-card fade-up"><div class="stat-icon" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div><div class="val">3</div><div class="label">Badges Earned</div><div class="sub">First Aid, Rescue, Food</div></div></div>
     </div>
@@ -248,12 +248,12 @@
     <h3>Update Progress</h3>
     <p>Log your current status for <b>Food Distribution — Rajanpur</b></p>
     <label>Status</label>
-    <select class="field-input" style="margin-bottom:16px"><option>In Progress</option><option>Needs Backup</option><option>Blocked</option><option>Completed</option></select>
+    <select class="field-input" id="upStatus" style="margin-bottom:16px"><option value="in_progress">In Progress</option><option value="claimed">Needs Backup</option><option value="claimed">Blocked</option><option value="completed">Completed</option></select>
     <label>Notes</label>
-    <textarea class="field-input" style="min-height:80px" placeholder="Describe progress, issues or completion…"></textarea>
+    <textarea class="field-input" id="upNote" style="min-height:80px" placeholder="Describe progress, issues or completion…"></textarea>
     <div class="modal-actions">
       <button class="btn-o" onclick="RL_CloseModal('updateModal')">Cancel</button>
-      <button class="btn-g" onclick="RL_CloseModal('updateModal');RL_Toast('Progress updated!')">Submit</button>
+      <button class="btn-g" onclick="submitUpdate()">Submit</button>
     </div>
   </div>
 </div>
@@ -277,15 +277,60 @@ var priFilter = 'all';
 var PT = {critical:'tag-red',high:'tag-orange',medium:'tag-yellow',low:'tag-green'};
 var PL = {critical:'Critical',high:'High Priority',medium:'Medium',low:'Low'};
 
+/* ── LIVE wiring ── */
+var VOL = (window.RL_MyId ? window.RL_MyId('rl_vol_id') : 'vol-demo');
+function _normTask(x) {
+  return {
+    id: String(x.id), title: x.title || 'Relief Task',
+    cat: (window.RL_CAT_KEY2LABEL && window.RL_CAT_KEY2LABEL[x.category]) || x.category || 'General',
+    loc: x.city || '', pri: x.priority || 'medium',
+    desc: (x.skills_needed && x.skills_needed.length) ? ('Skills needed: ' + x.skills_needed.join(', ') + '.') : 'Volunteer relief task coordinated from the command centre.',
+    people: x.people || 0, hours: x.hours || 0, team: x.team || 0
+  };
+}
+function loadTasks() {
+  RL_Get('/tasks').then(function(a) {
+    if (Array.isArray(a) && a.length) { allTasks = a.map(_normTask); filterTasks(); }
+  });
+}
+function loadMyAssignments() {
+  RL_Get('/tasks/my-assignments?volunteer_id=' + encodeURIComponent(VOL)).then(function(a) {
+    if (Array.isArray(a) && a.length) { myAssignments = a.map(_normTask); renderMyTasks(); }
+  });
+}
+function loadStats() {
+  RL_Get('/tasks/volunteer-stats?volunteer_id=' + encodeURIComponent(VOL)).then(function(s) {
+    if (!s) return;
+    var vt = RL_$('vTasks'), vh = RL_$('vHours');
+    if (vt && s.tasks_completed != null) vt.textContent = s.tasks_completed;
+    if (vh && s.hours_served != null) vh.textContent = (s.hours_served >= 1000 ? s.hours_served.toLocaleString() + '+' : s.hours_served);
+  });
+}
+function updateProgress(status, note) {
+  var t = myAssignments[0] || allTasks[0];
+  if (!t) { RL_Toast('No active task to update'); return; }
+  RL_Send('PATCH', '/tasks/' + encodeURIComponent(t.id) + '/progress', { status: status, progress_note: note || '' }).then(function(res) {
+    RL_Toast(res && res.ok ? 'Progress saved to server' : 'Progress updated');
+    if (res && res.ok) { loadTasks(); loadMyAssignments(); loadStats(); }
+  });
+}
+function submitUpdate() {
+  var st = (RL_$('upStatus') || {}).value || 'in_progress';
+  var note = (RL_$('upNote') || {}).value || '';
+  RL_CloseModal('updateModal');
+  updateProgress(st, note);
+}
+function loadVolunteerLive() { loadTasks(); loadMyAssignments(); loadStats(); }
+
 function taskCard(t, mine) {
   return '<div class="task-card ' + t.pri + ' fade-up">'
     + '<div class="task-top"><div class="task-title">' + t.title + '</div><span class="tag ' + PT[t.pri] + '">' + PL[t.pri] + '</span></div>'
-    + '<div class="task-meta"><span>' + RL_Icon('pin') + ' ' + t.loc + '</span><span>' + RL_Icon('users') + ' ' + t.people + '</span><span>' + RL_Icon('clock') + ' ~' + t.hours + 'h</span></div>'
+    + '<div class="task-meta"><span>' + RL_Icon('pin') + ' ' + (t.loc||'—') + '</span>' + (t.people ? '<span>' + RL_Icon('users') + ' ' + t.people + '</span>' : '') + (t.hours ? '<span>' + RL_Icon('clock') + ' ~' + t.hours + 'h</span>' : '') + '</div>'
     + '<p class="task-desc">' + t.desc + '</p>'
     + '<div class="task-footer"><span class="tag tag-blue">' + t.cat + '</span>'
     + (mine
-      ? '<button class="task-btn accepted" onclick="RL_Toast(\'Progress updated\')"><i data-i="chart"></i> Update</button>'
-      : '<button class="task-btn" onclick="acceptTask(' + t.id + ',this)"><i data-i="check"></i> Accept</button>')
+      ? '<button class="task-btn accepted" onclick="RL_OpenModal(\'updateModal\')"><i data-i="chart"></i> Update</button>'
+      : '<button class="task-btn" onclick="acceptTask(\'' + t.id + '\',this)"><i data-i="check"></i> Accept</button>')
     + '</div></div>';
 }
 function filterTasks() {
@@ -309,12 +354,15 @@ function setPri(p, btn) {
   filterTasks();
 }
 function acceptTask(id, btn) {
-  var t = allTasks.find(function(x){ return x.id === id; });
+  var t = allTasks.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!t) return;
-  btn.innerHTML = '✓ Accepted'; btn.classList.add('accepted'); btn.disabled = true;
+  if (btn) { btn.innerHTML = '✓ Accepted'; btn.classList.add('accepted'); btn.disabled = true; }
   myAssignments.push(t);
   renderMyTasks();
   RL_Toast('Task accepted! Check My Assignments.');
+  RL_Send('POST', '/tasks/' + encodeURIComponent(id) + '/claim', { volunteer_id: VOL }).then(function(res){
+    if (res && res.ok) loadTasks();
+  });
 }
 function renderMyTasks() {
   var el = RL_$('myTasks');
@@ -388,5 +436,6 @@ RL_WireNav(PAGES, function(p){ navigate(p); });
 RL_BootUser({ defaultName: 'Volunteer', defaultRole: 'volunteer' });
 renderNotifs(false);
 RL_Icons();
+loadVolunteerLive();
 </script>
 </body></html>

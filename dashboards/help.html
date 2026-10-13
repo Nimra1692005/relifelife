@@ -330,9 +330,10 @@ function selectCat(el, cat) {
 function submitReq() {
   var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'', loc = (RL_$('reqLoc')||{}).value||'';
   if (!nm.trim() || !ph.trim() || !loc.trim()) { RL_Toast('Please fill Name, Phone and Location'); return; }
+  var catLabel = (RL_$('reqCat')||{}).value || '';
   var r = {
     id: 'RL-' + Date.now(),
-    cat: (RL_$('reqCat')||{}).value || '',
+    cat: catLabel,
     name: nm, phone: ph, loc: loc,
     desc: (RL_$('reqDesc')||{}).value||'',
     people: (RL_$('reqPeople')||{}).value||1,
@@ -345,6 +346,19 @@ function submitReq() {
   var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
   updateBadges(); renderActive(); renderMyReqs();
   RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted!');
+  // Send to backend; refine the reference id on success (graceful offline fallback)
+  RL_Send('POST', '/help-requests', {
+    category: (window.RL_CAT_LABEL2KEY[catLabel] || 'special'),
+    full_name: nm, phone: ph, city: loc,
+    description: r.desc + (r.people ? ' (' + r.people + ' people)' : ''),
+    urgent: r.urgent
+  }).then(function(res){
+    if (res && res.ok && res.data && res.data.id) {
+      r.id = res.data.id; r._live = true;
+      try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
+      renderActive();
+    }
+  });
   setTimeout(function(){ navigate('myrequests'); }, 1200);
 }
 
@@ -373,7 +387,7 @@ function renderMyReqs() {
   el.innerHTML = myReqs.length
     ? myReqs.map(function(r) {
         return '<div class="item"><div class="item-icon" style="font-size:22px">' + (CATS[r.cat]||'📋') + '</div>'
-          + '<div class="t"><b>' + r.cat + '</b><small>' + r.loc + ' · ' + r.people + ' people · ' + r.date + '</small></div>'
+          + '<div class="t"><b>' + r.cat + '</b><small>' + r.loc + (r.people ? ' · ' + r.people + ' people' : '') + ' · ' + r.date + '</small></div>'
           + '<span class="tag ' + SC[r.status] + '">' + ST[r.status] + '</span></div>';
       }).join('')
     : '<p class="mute" style="font-size:13px;padding:10px 0">No requests yet</p>';
@@ -389,6 +403,35 @@ function renderNearby() {
   var s = RL_$('nearbyShelters'), h = RL_$('nearbyHosp');
   if (s) s.innerHTML = SHELTERS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🏕️</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
   if (h) h.innerHTML = HOSPS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏥</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
+}
+
+/* ── LIVE: pull real help requests + nearby resources from the backend ── */
+function loadMyReqs() {
+  RL_Get('/help-requests').then(function(rows){
+    if (!Array.isArray(rows) || !rows.length) return;
+    myReqs = rows.map(function(row){ return {
+      id: row.id, cat: (window.RL_CAT_KEY2LABEL[row.category] || row.category || 'Help Request'),
+      name: row.full_name, phone: row.phone, loc: row.city || '', desc: row.description || '',
+      people: '', urgent: row.urgency === 'critical',
+      status: (window.RL_HELP_STEP[row.status] || 0), date: (row.created_at || '').slice(0, 10), _live: true
+    }; });
+    try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
+    updateBadges(); renderActive(); renderMyReqs();
+  });
+}
+function loadNearbyLive() {
+  RL_Get('/shelters').then(function(a){
+    if (Array.isArray(a) && a.length) {
+      SHELTERS = a.map(function(x){ return [x.name, x.address || x.city || '', ((x.current_occupancy||0) + '/' + (x.capacity||0) + ' people'), (x.distance_km ? x.distance_km + ' km' : 'nearby')]; });
+      renderNearby();
+    }
+  });
+  RL_Get('/hospitals').then(function(a){
+    if (Array.isArray(a) && a.length) {
+      HOSPS = a.map(function(x){ return [x.name, x.address || x.city || '', ((x.beds_available||0) + ' beds free'), (x.distance_km ? x.distance_km + ' km' : 'nearby')]; });
+      renderNearby();
+    }
+  });
 }
 
 function renderContacts() {
@@ -442,5 +485,7 @@ try { var saved = JSON.parse(localStorage.getItem('rl_help')||'[]'); if (Array.i
 updateBadges();
 renderNotifs(false);
 RL_Icons();
+loadMyReqs();
+loadNearbyLive();
 </script>
 </body></html>

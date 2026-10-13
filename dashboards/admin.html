@@ -96,7 +96,7 @@
           <div class="pulse-dot" style="top:30%;left:40%"></div>
           <div class="pulse-dot" style="top:55%;left:60%;animation-delay:.7s"></div>
           <div class="pulse-dot" style="top:40%;left:25%;animation-delay:1.4s"></div>
-          <div class="mi">🗺️</div><h4>Live Disaster Map</h4><p>6 active zones across Pakistan</p>
+          <div class="mi">🗺️</div><h4>Live Disaster Map</h4><p id="mapZones">6 active zones across Pakistan</p>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Quick Actions</h3></div>
@@ -353,8 +353,41 @@ function jget(p) {
     new Promise(function(_, rj) { setTimeout(function() { rj(0); }, 8000); })
   ]);
 }
+var REQ_TAG = { Pending:'tag-yellow', Assigned:'tag-blue', 'In Progress':'tag-orange', Resolved:'tag-green', Critical:'tag-red' };
+var SHORT_TYPE = { rescue:'Rescue', medical:'Medical', food:'Food', shelter:'Shelter', clothing:'Other', transport:'Other', sanitation:'Other', special:'Other', recovery:'Other', missing:'Other', psychological:'Other', flood_predictor:'Other' };
+var HR_ST = { pending:0, assigned:1, in_progress:2, resolved:3 };
+
+function loadOverview() {
+  RL_Get('/analytics/admin-overview').then(function(o) {
+    if (!o) return;
+    if (o.total_requests != null && RL_$('totalReqs')) RL_$('totalReqs').textContent = o.total_requests;
+    if (o.active_volunteers != null && RL_$('activeVols')) RL_$('activeVols').textContent = o.active_volunteers;
+    if (o.resolved != null && RL_$('resolved')) RL_$('resolved').textContent = o.resolved;
+    if (o.pending != null && RL_$('pending')) RL_$('pending').textContent = o.pending;
+    if (Array.isArray(o.recent_requests) && o.recent_requests.length && RL_$('reqTable')) {
+      RL_$('reqTable').innerHTML = o.recent_requests.map(function(r) {
+        var st = r.status || 'Pending';
+        return '<tr><td>#' + r.id + '</td><td>' + (r.category||'—') + '</td><td>' + (r.location||'—') + '</td><td><span class="tag ' + (REQ_TAG[st]||'tag-blue') + '">' + st + '</span></td></tr>';
+      }).join('');
+    }
+    if (Array.isArray(o.map_markers) && RL_$('mapZones')) RL_$('mapZones').textContent = o.map_markers.length + ' active zones across Pakistan';
+  });
+}
+function loadHelpRequests() {
+  RL_Get('/help-requests?limit=100').then(function(a) {
+    if (!Array.isArray(a) || !a.length) return;
+    helpReqs = a.map(function(x) {
+      return { n: x.full_name || 'Citizen', area: x.city || '', type: SHORT_TYPE[x.category] || 'Other',
+               p: (x.description && /\((\d+) people\)/.exec(x.description) ? parseInt(RegExp.$1,10) : 1),
+               st: HR_ST[x.status] != null ? HR_ST[x.status] : 0 };
+    });
+    renderHelpReqs();
+  });
+}
 function loadLive() {
   if (!API) return;
+  loadOverview();
+  loadHelpRequests();
   jget('/shelters').then(function(j) {
     var a = j && j.data; if (!Array.isArray(a) || !a.length) return;
     SH = a.map(function(x) { return [x.name, x.address||'', x.current_occupancy||0, x.capacity||1]; });
@@ -364,14 +397,6 @@ function loadLive() {
     var a = j && j.data; if (!Array.isArray(a) || !a.length) return;
     HOSP = a.map(function(x) { return [x.name, x.address||'', x.beds_available||0, x.capacity||1]; });
     hospList();
-  }).catch(function(){});
-  jget('/sos?limit=100').then(function(j) {
-    var a = j && j.data; if (!Array.isArray(a)) return;
-    var ET = {flood:'Rescue',medical:'Medical'};
-    a.forEach(function(x) {
-      helpReqs.push({n:(x.message||'').split(' | ')[0]||'Citizen', area:x.address_text||'', type:ET[x.emergency_type]||'Other', p:1, st:{pending:0,assigned:1,dispatched:2,resolved:3}[x.status]||0});
-    });
-    renderHelpReqs();
   }).catch(function(){});
 }
 
