@@ -8,10 +8,17 @@ GET /response-times — Response time metrics
 
 from fastapi import APIRouter
 
-from app.services import location_service, sos_service
+from app.services import location_service, sos_service, help_service
 from app.utils.common import success_response
 
 router = APIRouter()
+
+
+@router.get("/admin-overview", summary="Admin role dashboard overview")
+async def admin_overview():
+    """Aggregate platform metrics, recent help requests, and live map markers
+    for the Admin dashboard."""
+    return await help_service.admin_overview()
 
 
 @router.get("/overview", summary="Dashboard overview")

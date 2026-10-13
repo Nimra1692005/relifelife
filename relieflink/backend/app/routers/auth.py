@@ -14,11 +14,23 @@ from fastapi import APIRouter
 from app.models.schemas import (
     SignUpRequest, LoginRequest,
     OTPSendRequest, OTPVerifyRequest,
-    ProfileUpdateRequest,
+    ProfileUpdateRequest, RoleRegister, AdminSignIn,
 )
-from app.services import auth_service
+from app.services import auth_service, help_service
 
 router = APIRouter()
+
+
+@router.post("/register-role", summary="Register by selected role")
+async def register_role(body: RoleRegister):
+    """Register a Help/Volunteer user or sign in an Admin based on selected role."""
+    return await help_service.register_role(body)
+
+
+@router.post("/admin-signin", summary="Admin sign in")
+async def admin_sign_in(body: AdminSignIn):
+    """Authenticate an admin with email and password."""
+    return await help_service.admin_sign_in(body)
 
 
 @router.post("/signup", summary="Register a new user")

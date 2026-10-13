@@ -1,77 +1,56 @@
+/**
+ * ReliefLink Mobile — Root Layout (Role-Based Navigation)
+ * State machine: splash -> onboarding -> role-select -> register -> {help|volunteer|admin}-app
+ */
+
 import React, { useState } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import { colors } from '../constants/theme';
+import { light } from '../constants/lightTheme';
 
-/* ─── Screens ───────────────────────────────────────────── */
+/* ─── Flow Screens ──────────────────────────────────────────── */
 import { SplashScreen } from './splash';
 import { OnboardingScreen } from './onboarding';
-import { PermissionSetup } from './permissions';
+import { RoleSelectScreen } from './role-select';
+import { RegisterScreen } from './register';
 
-/* ─── Tab Screens ───────────────────────────────────────── */
-import { HomeScreen } from './(tabs)/home';
-import { MapScreen } from './(tabs)/map';
-import { WeatherScreen } from './(tabs)/weather';
-import { SOSScreen } from './(tabs)/sos';
-import { AIAssistantScreen } from './(tabs)/ai';
-import { ProfileScreen } from './(tabs)/profile';
+/* ─── Role Dashboards ───────────────────────────────────────── */
+import { HelpDashboard } from './help';
+import { VolunteerDashboard } from './volunteer';
+import { AdminDashboard } from './admin';
 
-/* ─── Modal Screens ─────────────────────────────────────── */
-import { FindSafePlaceScreen } from './(modals)/find-safe-place';
-import { SafeNavigationScreen } from './(modals)/safe-navigation';
-import { NearbyHelpScreen } from './(modals)/nearby-help';
-import { NotificationsScreen } from './(modals)/notifications';
-import { RouteSafetyScreen } from './(modals)/route-safety';
+/* ─── Auth Context ──────────────────────────────────────────── */
+import { AuthProvider, useAuth, AuthUser } from '../services/authContext';
+import { UserRole } from '../services/api';
 
-/* ─── Custom Tab Bar ────────────────────────────────────── */
-import { CustomTabBar } from './(tabs)/_layout';
+/* ─── Navigation Types ──────────────────────────────────────── */
+type AppFlow = 'splash' | 'onboarding' | 'role-select' | 'register' | 'app';
 
-/* ─── Navigation Types ──────────────────────────────────── */
-
-type MainTab = 'home' | 'map' | 'weather' | 'sos' | 'ai' | 'profile';
-type ModalScreen =
-  | 'find-safe-place'
-  | 'safe-navigation'
-  | 'nearby-help'
-  | 'notifications'
-  | 'route-safety'
-  | null;
-
-type AppFlow = 'splash' | 'onboarding' | 'permissions' | 'main';
-
-/* ─── Root Layout ───────────────────────────────────────── */
-/*
-  This is the main app entry point that manages the full
-  navigation flow: Splash → Onboarding → Permissions → Main Tabs.
-  
-  In production, replace this with Expo Router's file-based
-  routing and a proper state management solution.
-*/
-
-const RootLayout: React.FC = () => {
+/* ─── Inner App (uses context) ──────────────────────────────── */
+const AppNavigator: React.FC = () => {
   const [flow, setFlow] = useState<AppFlow>('splash');
-  const [activeTab, setActiveTab] = useState<MainTab>('home');
-  const [modal, setModal] = useState<ModalScreen>(null);
-
-  // ─── Flow Navigation ────────────────────────────────────
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const { user, setUser } = useAuth();
 
   const handleSplashDone = () => setFlow('onboarding');
-  const handleOnboardingDone = () => setFlow('permissions');
-  const handlePermissionsDone = () => setFlow('main');
+  const handleOnboardingDone = () => setFlow('role-select');
 
-  // ─── Tab Navigation ─────────────────────────────────────
-
-  const handleTabPress = (tab: string) => {
-    setModal(null);
-    setActiveTab(tab as MainTab);
+  const handleRoleSelect = (role: UserRole) => {
+    setSelectedRole(role);
+    setFlow('register');
   };
 
-  // ─── Modal Navigation ──────────────────────────────────
+  const handleRegisterComplete = (u: AuthUser) => {
+    setUser(u);
+    setFlow('app');
+  };
 
-  const openModal = (screen: ModalScreen) => setModal(screen);
-  const closeModal = () => setModal(null);
+  const handleLogout = () => {
+    setUser(null);
+    setSelectedRole(null);
+    setFlow('role-select');
+  };
 
-  // ─── Render Flow Screens ────────────────────────────────
-
+  // ─── Render Flow Screens ─────────────────────────────────
   if (flow === 'splash') {
     return <SplashScreen onFinish={handleSplashDone} />;
   }
@@ -80,97 +59,47 @@ const RootLayout: React.FC = () => {
     return <OnboardingScreen onComplete={handleOnboardingDone} />;
   }
 
-  if (flow === 'permissions') {
-    return <PermissionSetup onComplete={handlePermissionsDone} />;
+  if (flow === 'role-select') {
+    return <RoleSelectScreen onSelect={handleRoleSelect} onBack={() => setFlow('splash')} />;
   }
 
-  // ─── Render Active Tab ──────────────────────────────────
-
-  const renderTab = () => {
-    switch (activeTab) {
-      case 'home':
-        return (
-          <HomeScreen
-            navigation={{ navigate: openModal, switchTab: (t: string) => setActiveTab(t as MainTab) }}
-          />
-        );
-      case 'map':
-        return <MapScreen />;
-      case 'weather':
-        return (
-          <WeatherScreen
-            navigation={{ navigate: openModal }}
-          />
-        );
-      case 'sos':
-        return <SOSScreen />;
-      case 'ai':
-        return <AIAssistantScreen />;
-      case 'profile':
-        return <ProfileScreen />;
-      default:
-        return <HomeScreen onNavigate={openModal} />;
-    }
-  };
-
-  // ─── Render Modal Overlay ───────────────────────────────
-
-  const renderModal = () => {
-    if (!modal) return null;
-
+  if (flow === 'register' && selectedRole) {
     return (
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          {modal === 'find-safe-place' && (
-            <FindSafePlaceScreen onBack={closeModal} />
-          )}
-          {modal === 'safe-navigation' && (
-            <SafeNavigationScreen onBack={closeModal} />
-          )}
-          {modal === 'nearby-help' && (
-            <NearbyHelpScreen onBack={closeModal} />
-          )}
-          {modal === 'notifications' && (
-            <NotificationsScreen onBack={closeModal} />
-          )}
-          {modal === 'route-safety' && (
-            <RouteSafetyScreen onBack={closeModal} />
-          )}
-        </View>
-      </View>
+      <RegisterScreen
+        role={selectedRole}
+        onComplete={handleRegisterComplete}
+        onBack={() => setFlow('role-select')}
+      />
     );
-  };
+  }
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.bg.base} />
+  // ─── Render Role Dashboard ───────────────────────────────
+  if (flow === 'app' && user) {
+    if (user.role === 'help') return <HelpDashboard user={user} onLogout={handleLogout} />;
+    if (user.role === 'volunteer') return <VolunteerDashboard user={user} onLogout={handleLogout} />;
+    if (user.role === 'admin') return <AdminDashboard user={user} onLogout={handleLogout} />;
+  }
 
-      {/* Active tab screen */}
-      <View style={{ flex: 1 }}>{renderTab()}</View>
-
-      {/* Custom bottom tab bar */}
-      <CustomTabBar activeTab={activeTab} onTabPress={handleTabPress} />
-
-      {/* Modal overlay */}
-      {renderModal()}
-    </View>
-  );
+  // Fallback
+  return <RoleSelectScreen onSelect={handleRoleSelect} onBack={() => setFlow('splash')} />;
 };
 
-/* ─── Styles ────────────────────────────────────────────── */
+/* ─── Root Layout (wraps with AuthProvider) ─────────────────── */
+const RootLayout: React.FC = () => {
+  return (
+    <AuthProvider>
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={light.bg} />
+        <AppNavigator />
+      </View>
+    </AuthProvider>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.bg.base,
-  },
-  modalOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.bg.base,
-    zIndex: 100,
-  },
-  modalContent: {
-    flex: 1,
+    backgroundColor: light.bg,
   },
 });
 

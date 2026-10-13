@@ -48,6 +48,8 @@ class SupabaseClient:
             "risk_zones": [],
             "notifications": [],
             "user_locations": [],
+            "help_requests": [],
+            "volunteer_tasks": [],
         }
 
     @property

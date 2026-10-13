@@ -36,6 +36,8 @@ from app.routers import (
     locations,
     weather,
     travel,
+    help_requests,
+    tasks,
 )
 
 
@@ -109,6 +111,8 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytic
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(weather.router, prefix="/api/v1/weather", tags=["Weather Intelligence"])
 app.include_router(travel.router, prefix="/api/v1/travel", tags=["Travel Safety"])
+app.include_router(help_requests.router, prefix="/api/v1/help-requests", tags=["Help Requests"])
+app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["Volunteer Tasks"])
 
 
 # ─── Health Check ────────────────────────────────────────────

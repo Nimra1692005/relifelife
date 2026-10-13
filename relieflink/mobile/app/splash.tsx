@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing, StatusBar } from 'react-native';
-import { colors } from '../../constants/theme';
+import { light } from '../constants/lightTheme';
 
 /**
  * SplashScreen — Premium animated splash for ReliefLink
@@ -133,7 +133,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.bg.base,
+    backgroundColor: light.bg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -191,14 +191,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 38,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: light.text.primary,
     letterSpacing: -1,
     fontFamily: 'SpaceGrotesk-Bold',
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text.secondary,
+    color: light.text.secondary,
     marginTop: 8,
     letterSpacing: 0.5,
   },
@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
     width: '60%',
     height: '100%',
     borderRadius: 2,
-    backgroundColor: colors.brand.primary,
+    backgroundColor: light.brand,
   },
   bottomText: {
     position: 'absolute',
     bottom: 60,
     fontSize: 11,
     fontWeight: '500',
-    color: colors.text.tertiary,
+    color: light.text.muted,
     letterSpacing: 2,
   },
 });

@@ -589,3 +589,150 @@ class RouteSafetyResponse(BaseModel):
     safer_alternative_available: bool
     analyzed_at: str
     disclaimer: str
+
+
+# ─── Role-Based Platform Enums ─────────────────────────────
+
+class PlatformRole(str, Enum):
+    help = "help"
+    volunteer = "volunteer"
+    admin = "admin"
+
+
+class HelpCategory(str, Enum):
+    rescue = "rescue"
+    medical = "medical"
+    food = "food"
+    shelter = "shelter"
+    clothing = "clothing"
+    transport = "transport"
+    sanitation = "sanitation"
+    special = "special"
+    recovery = "recovery"
+    missing = "missing"
+    psychological = "psychological"
+    flood_predictor = "flood_predictor"
+
+
+class HelpRequestStatus(str, Enum):
+    pending = "pending"
+    assigned = "assigned"
+    in_progress = "in_progress"
+    resolved = "resolved"
+
+
+class TaskStatus(str, Enum):
+    open = "open"
+    claimed = "claimed"
+    in_progress = "in_progress"
+    completed = "completed"
+
+
+# ─── Help Request Schemas ──────────────────────────────────
+
+class HelpRequestCreate(BaseModel):
+    category: HelpCategory
+    full_name: Optional[str] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    city: Optional[str] = Field(None, max_length=80)
+    description: Optional[str] = Field(None, max_length=500)
+    urgent: bool = False
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class HelpRequestStatusUpdate(BaseModel):
+    status: HelpRequestStatus
+
+
+class HelpRequestResponse(BaseModel):
+    id: str
+    user_id: str
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    city: Optional[str] = None
+    category: str
+    description: Optional[str] = None
+    urgency: str
+    status: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    created_at: str
+    updated_at: str
+
+
+# ─── Volunteer Task Schemas ────────────────────────────────
+
+class TaskClaim(BaseModel):
+    volunteer_id: str
+
+
+class TaskProgressUpdate(BaseModel):
+    status: TaskStatus
+    progress_note: Optional[str] = Field(None, max_length=500)
+
+
+class VolunteerTaskResponse(BaseModel):
+    id: str
+    request_id: Optional[str] = None
+    title: str
+    category: str
+    city: Optional[str] = None
+    distance_km: float = 0
+    skills_needed: List[str] = []
+    priority: str
+    status: str
+    assigned_volunteer_id: Optional[str] = None
+    progress_note: Optional[str] = None
+    created_at: str
+    updated_at: str
+    completed_at: Optional[str] = None
+
+
+# ─── Role Registration Schemas ─────────────────────────────
+
+class RoleRegister(BaseModel):
+    role: PlatformRole
+    full_name: Optional[str] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    city: Optional[str] = Field(None, max_length=80)
+    email: Optional[str] = None
+    password: Optional[str] = None
+    # Help role
+    category: Optional[HelpCategory] = None
+    urgent: bool = False
+    # Volunteer role
+    skills: Optional[List[str]] = None
+    availability: Optional[str] = None
+
+
+class AdminSignIn(BaseModel):
+    email: str
+    password: str
+
+
+# ─── Admin Overview Schema ─────────────────────────────────
+
+class RecentRequestItem(BaseModel):
+    id: str
+    category: str
+    location: Optional[str] = None
+    status: str
+
+
+class MapMarker(BaseModel):
+    id: str
+    label: str
+    severity: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class AdminOverview(BaseModel):
+    total_requests: int
+    active_volunteers: int
+    resolved: int
+    pending: int
+    deltas: dict = {}
+    recent_requests: List[RecentRequestItem] = []
+    map_markers: List[MapMarker] = []
