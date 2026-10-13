@@ -1268,7 +1268,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 <div class="vol-feat-tip" id="vft3"><span class="vol-feat-ic">&#128506;</span><span class="vol-feat-txt"><b>Live Map</b> — hospitals, shelters, flood zones</span></div>
 <div class="vol-feat-tip" id="vft4"><span class="vol-feat-ic">&#127780;</span><span class="vol-feat-txt"><b>Weather Alerts</b> — real-time monsoon tracking</span></div>
 <div class="vol-feat-tip" id="vft5"><span class="vol-feat-ic">&#129302;</span><span class="vol-feat-txt"><b>AI Chat</b> — weather, disasters and emergency help</span></div>
-<div class="vol-feat-tip" id="vft6"><span class="vol-feat-ic">&#128680;</span><span class="vol-feat-txt"><b>Live Alerts</b> — earthquakes, floods, storms</span></div>
+<div class="vol-feat-tip" id="vft6"><span class="vol-feat-ic">📡</span><span class="vol-feat-txt"><b>Mesh Network</b> — communicate without internet via Bluetooth</span></div>
 <div class="vol-feat-tip" id="vft7"><span class="vol-feat-ic">&#128205;</span><span class="vol-feat-txt"><b>Nearby Help</b> — hospitals and shelters near you</span></div>
 <div class="vol-feat-tip" id="vft8"><span class="vol-feat-ic">&#128663;</span><span class="vol-feat-txt"><b>Safe Route</b> — weather-aware route planner</span></div>
 <div class="vol-feat-tip" id="vft9"><span class="vol-feat-ic">&#127968;</span><span class="vol-feat-txt"><b>Safe Places</b> — shelters, mosques, schools</span></div>
@@ -3554,7 +3554,7 @@ const featPageMap={
   vft1:'predictor',
   vft3:'map',
   vft4:'weather',
-  vft5:'chat',vft6:'alerts',vft7:'nearby',vft8:'route',vft9:'safe'      // AI chat opens modal
+  vft5:'chat',vft6:'mesh',vft7:'nearby',vft8:'route',vft9:'safe'
 };
 document.querySelectorAll('.vol-feat-tip').forEach(function(tip){
   tip.style.cursor='pointer';
@@ -3568,6 +3568,7 @@ document.querySelectorAll('.vol-feat-tip').forEach(function(tip){
     setTimeout(function(){
       if(target==='sos'){ openSOS(); }
       else if(target==='chat'){ openChat(); }
+      else if(target==='mesh'){ window.open('mesh.html','_blank'); }
       else { showPage(target); }
     },300);
   });
