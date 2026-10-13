@@ -1,12 +1,10 @@
 /**
- * ReliefLink — Vercel Serverless API (Node.js)
- * Serves the exact /api/v1/* contract the web app expects and stores data
- * in Supabase (PostgREST). No external npm deps — uses global fetch (Node 18+).
+ * ReliefLink — Vercel Serverless API dispatcher (Node.js)
+ * All /api/v1/* requests are rewritten here (see vercel.json) with the remaining
+ * path passed as ?path=... . Talks to Supabase (PostgREST). No external deps.
  *
  * Env (set in Vercel project):
- *   SUPABASE_URL          e.g. https://xxxx.supabase.co
- *   SUPABASE_SERVICE_KEY  service_role secret (server-side only, never exposed)
- *   ADMIN_EMAIL / ADMIN_PASSWORD  for the admin sign-in gate
+ *   SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_EMAIL, ADMIN_PASSWORD
  */
 
 const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
@@ -25,9 +23,8 @@ function nowIso() { return new Date().toISOString(); }
 
 async function sb(table, { method = 'GET', query, body, prefer } = {}) {
   let url = SB_URL + '/rest/v1/' + table;
-  const qs = Object.assign({}, query);
   const params = new URLSearchParams();
-  for (const k in qs) { const v = qs[k]; if (v != null) params.append(k, String(v)); }
+  for (const k in (query || {})) { const v = query[k]; if (v != null) params.append(k, String(v)); }
   const q = params.toString();
   if (q) url += '?' + q;
   const headers = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
@@ -55,18 +52,11 @@ function fail(res, message, status) { res.status(status || 400).json({ success: 
 /* ── Endpoint handlers ─────────────────────────────────── */
 async function createHelpRequest(res, b) {
   const row = {
-    id: rid('RFL'),
-    user_id: b.user_id || null,
-    full_name: b.full_name || 'Citizen',
-    phone: b.phone || '',
-    city: b.city || '',
-    category: b.category || 'special',
-    description: b.description || '',
-    urgency: b.urgent ? 'critical' : (b.urgency || 'high'),
-    status: 'pending',
-    latitude: b.latitude != null ? b.latitude : null,
-    longitude: b.longitude != null ? b.longitude : null,
-    created_at: nowIso(), updated_at: nowIso()
+    id: rid('RFL'), user_id: b.user_id || null, full_name: b.full_name || 'Citizen',
+    phone: b.phone || '', city: b.city || '', category: b.category || 'special',
+    description: b.description || '', urgency: b.urgent ? 'critical' : (b.urgency || 'high'),
+    status: 'pending', latitude: b.latitude != null ? b.latitude : null,
+    longitude: b.longitude != null ? b.longitude : null, created_at: nowIso(), updated_at: nowIso()
   };
   const out = await sb('help_requests', { method: 'POST', body: row, prefer: 'return=representation' });
   ok(res, (out && out[0]) || row, 'Request received');
@@ -76,100 +66,73 @@ async function listHelpRequests(res, q) {
   const limit = Math.min(parseInt(q.limit, 10) || 100, 500);
   const query = { select: '*', order: 'created_at.desc', limit: String(limit) };
   if (q.user_id) query.user_id = 'eq.' + q.user_id;
-  const rows = await sb('help_requests', { query });
-  ok(res, rows || []);
+  ok(res, (await sb('help_requests', { query })) || []);
 }
 
 async function registerRole(res, b) {
   const uid = rid('usr');
-  const user = { id: uid, full_name: b.full_name || 'User', phone: b.phone || '', email: b.email || null, role: b.role || 'citizen', city: b.city || null, created_at: nowIso(), updated_at: nowIso() };
-  await sb('users', { method: 'POST', body: user, prefer: 'return=representation' });
+  await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name || 'User', phone: b.phone || '', email: b.email || null, role: b.role || 'citizen', city: b.city || null, created_at: nowIso(), updated_at: nowIso() } });
   if (b.role === 'volunteer') {
-    const vol = { id: rid('vol'), user_id: uid, full_name: b.full_name || 'Volunteer', phone: b.phone || '', skills: b.skills || [], availability: b.availability || 'available', registered_at: nowIso() };
-    await sb('volunteers', { method: 'POST', body: vol, prefer: 'return=representation' });
+    await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name || 'Volunteer', phone: b.phone || '', skills: b.skills || [], availability: b.availability || 'available', registered_at: nowIso() } });
   }
-  ok(res, { user: { id: uid, full_name: user.full_name } }, 'Registered');
+  ok(res, { user: { id: uid, full_name: b.full_name || 'User' } }, 'Registered');
 }
 
 async function adminSignin(res, b) {
   const wantEmail = (process.env.ADMIN_EMAIL || '').toLowerCase();
   const wantPw = process.env.ADMIN_PASSWORD || '';
   const email = (b.email || '').toLowerCase();
-  if (wantEmail && wantPw && email === wantEmail && b.password === wantPw) {
-    return ok(res, { user: { id: 'admin', email }, token: 'session-' + rid('tok') }, 'Signed in');
+  if (wantEmail && wantPw) {
+    if (email === wantEmail && b.password === wantPw) return ok(res, { user: { id: 'admin', email }, token: 'session-' + rid('tok') }, 'Signed in');
+    return fail(res, 'Invalid admin email or password', 401);
   }
-  if (!wantEmail || !wantPw) {
-    // No admin credentials configured yet — allow a soft demo sign-in so the UI is testable.
-    return ok(res, { user: { id: 'admin', email: email || 'admin' }, token: 'demo' }, 'Signed in (demo)');
-  }
-  fail(res, 'Invalid admin email or password', 401);
+  // No admin credentials configured yet — demo sign-in so the dashboard is reachable.
+  if (email && b.password) return ok(res, { user: { id: 'admin', email }, token: 'demo' }, 'Signed in (demo)');
+  return fail(res, 'Enter your admin email and password', 400);
 }
 
 async function listTasks(res) {
-  const rows = await sb('volunteer_tasks', { query: { select: '*', status: 'eq.open', order: 'priority.desc,created_at.desc', limit: '100' } });
-  ok(res, rows || []);
+  ok(res, (await sb('volunteer_tasks', { query: { select: '*', status: 'eq.open', order: 'priority.desc,created_at.desc', limit: '100' } })) || []);
 }
-
 async function myAssignments(res, q) {
-  const vid = q.volunteer_id;
-  if (!vid) return ok(res, []);
-  const rows = await sb('volunteer_tasks', { query: { select: '*', assigned_volunteer_id: 'eq.' + vid, order: 'created_at.desc', limit: '100' } });
-  ok(res, rows || []);
+  if (!q.volunteer_id) return ok(res, []);
+  ok(res, (await sb('volunteer_tasks', { query: { select: '*', assigned_volunteer_id: 'eq.' + q.volunteer_id, order: 'created_at.desc', limit: '100' } })) || []);
 }
-
 async function volunteerStats(res, q) {
-  const vid = q.volunteer_id;
   let completed = 0;
-  try { completed = await sbCount('volunteer_tasks', 'assigned_volunteer_id=eq.' + encodeURIComponent(vid) + '&status=eq.completed'); } catch (e) {}
+  try { completed = await sbCount('volunteer_tasks', 'assigned_volunteer_id=eq.' + encodeURIComponent(q.volunteer_id || '') + '&status=eq.completed'); } catch (e) {}
   ok(res, { tasks_completed: completed, hours_served: completed * 4 });
 }
-
 async function claimTask(res, id, b) {
   const patch = { assigned_volunteer_id: b.volunteer_id || null, status: 'claimed', updated_at: nowIso() };
   const out = await sb('volunteer_tasks', { method: 'PATCH', query: { id: 'eq.' + id, select: '*' }, body: patch, prefer: 'return=representation' });
   ok(res, (out && out[0]) || patch, 'Task claimed');
 }
-
 async function taskProgress(res, id, b) {
   const patch = { status: b.status || 'in_progress', progress_note: b.progress_note || '', updated_at: nowIso() };
   if (b.status === 'completed') patch.completed_at = nowIso();
   const out = await sb('volunteer_tasks', { method: 'PATCH', query: { id: 'eq.' + id, select: '*' }, body: patch, prefer: 'return=representation' });
   ok(res, (out && out[0]) || patch, 'Progress saved');
 }
-
 async function adminOverview(res) {
   const [total, resolved, pending, vols] = await Promise.all([
-    sbCount('help_requests', ''),
-    sbCount('help_requests', 'status=eq.resolved'),
-    sbCount('help_requests', 'status=eq.pending'),
-    sbCount('volunteers', '')
+    sbCount('help_requests', ''), sbCount('help_requests', 'status=eq.resolved'),
+    sbCount('help_requests', 'status=eq.pending'), sbCount('volunteers', '')
   ]);
   const recent = await sb('help_requests', { query: { select: '*', order: 'created_at.desc', limit: '5' } }).catch(() => []);
   const alerts = await sb('alerts', { query: { select: '*', is_active: 'eq.true', limit: '50' } }).catch(() => []);
   ok(res, {
-    total_requests: total,
-    active_volunteers: vols,
-    resolved,
-    pending,
-    recent_requests: (recent || []).map(r => ({
-      id: String(r.id).slice(-4),
-      category: CAT_LABEL[r.category] || r.category || 'Help',
-      location: r.city || '—',
-      status: ST_LABEL[r.status] || 'Pending'
-    })),
+    total_requests: total, active_volunteers: vols, resolved, pending,
+    recent_requests: (recent || []).map(r => ({ id: String(r.id).slice(-4), category: CAT_LABEL[r.category] || r.category || 'Help', location: r.city || '—', status: ST_LABEL[r.status] || 'Pending' })),
     map_markers: alerts || []
   });
 }
-
 async function listShelters(res) {
-  const rows = await sb('shelters', { query: { select: '*', type: 'neq.hospital', order: 'created_at.desc', limit: '100' } });
-  ok(res, rows || []);
+  ok(res, (await sb('shelters', { query: { select: '*', type: 'neq.hospital', order: 'created_at.desc', limit: '100' } })) || []);
 }
-
 async function listHospitals(res) {
-  const rows = await sb('shelters', { query: { select: '*', type: 'eq.hospital', limit: '100' } });
-  const out = (rows || []).map(x => Object.assign({}, x, { beds_available: Math.max((x.capacity || 0) - (x.current_occupancy || 0), 0) }));
-  ok(res, out);
+  const rows = (await sb('shelters', { query: { select: '*', type: 'eq.hospital', limit: '100' } })) || [];
+  ok(res, rows.map(x => Object.assign({}, x, { beds_available: Math.max((x.capacity || 0) - (x.current_occupancy || 0), 0) })));
 }
 
 /* ── Router ────────────────────────────────────────────── */
@@ -185,31 +148,23 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  const seg = [].concat(req.query.path || []);
+  const raw = req.query.path || '';
+  const seg = (Array.isArray(raw) ? raw.join('/') : String(raw)).split('/').filter(Boolean);
   const q = Object.assign({}, req.query);
   delete q.path;
   const method = req.method;
   const b = readBody(req);
 
-  // Admin sign-in does NOT need the database — handle it before the config guard
-  // so the dashboard is reachable even before Supabase env vars are set.
-  if (seg[0] === 'auth' && seg[1] === 'admin-signin' && method === 'POST') {
-    return await adminSignin(res, b);
-  }
+  // Admin sign-in needs no DB — handle before the config guard.
+  if (seg[0] === 'auth' && seg[1] === 'admin-signin' && method === 'POST') return await adminSignin(res, b);
 
-  if (!SB_URL || !SB_KEY) {
-    return fail(res, 'Backend not configured: set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel env vars', 500);
-  }
+  if (!SB_URL || !SB_KEY) return fail(res, 'Backend not configured: set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel env vars', 500);
 
   try {
     const r0 = seg[0];
-    if (r0 === 'help-requests') {
-      if (method === 'POST') return await createHelpRequest(res, b);
-      return await listHelpRequests(res, q);
-    }
+    if (r0 === 'help-requests') return method === 'POST' ? await createHelpRequest(res, b) : await listHelpRequests(res, q);
     if (r0 === 'auth') {
       if (seg[1] === 'register-role' && method === 'POST') return await registerRole(res, b);
-      if (seg[1] === 'admin-signin' && method === 'POST') return await adminSignin(res, b);
       return fail(res, 'Unknown auth endpoint', 404);
     }
     if (r0 === 'tasks') {
@@ -223,7 +178,6 @@ module.exports = async function handler(req, res) {
     if (r0 === 'analytics' && seg[1] === 'admin-overview') return await adminOverview(res);
     if (r0 === 'shelters') return await listShelters(res);
     if (r0 === 'hospitals') return await listHospitals(res);
-
     return fail(res, 'Not found: /api/v1/' + seg.join('/'), 404);
   } catch (e) {
     return fail(res, 'Server error: ' + (e && e.message ? e.message : String(e)), 500);
