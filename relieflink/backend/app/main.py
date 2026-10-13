@@ -36,6 +36,7 @@ from app.routers import (
     locations,
     weather,
     travel,
+    mesh,
 )
 
 
@@ -87,7 +88,6 @@ register_error_handlers(app)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_cors_origins(),
-    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -109,6 +109,7 @@ app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytic
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(weather.router, prefix="/api/v1/weather", tags=["Weather Intelligence"])
 app.include_router(travel.router, prefix="/api/v1/travel", tags=["Travel Safety"])
+app.include_router(mesh.router, prefix="/api/v1/mesh", tags=["Mesh Network"])
 
 
 # ─── Health Check ────────────────────────────────────────────
