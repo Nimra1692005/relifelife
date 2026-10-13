@@ -1,19 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "admin": {
-      "root": "relieflink/admin",
-      "framework": "vite",
-      "buildCommand": "npm run build",
-      "outputDirectory": "dist"
-    },
-    "backend": {
-      "root": "relieflink/backend",
-      "framework": "fastapi"
-    }
-  },
+  "framework": "vite",
+  "installCommand": "cd relieflink/admin && npm install",
+  "buildCommand": "cd relieflink/admin && npm run build",
+  "outputDirectory": "relieflink/admin/dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": { "service": "backend" } },
-    { "source": "/(.*)",     "destination": { "service": "admin"   } }
+    { "source": "/api/(.*)", "destination": "https://relieflink-api.onrender.com/api/$1" },
+    { "source": "/health", "destination": "https://relieflink-api.onrender.com/health" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

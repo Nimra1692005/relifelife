@@ -53,7 +53,7 @@ export const SkeletonTable: React.FC<{ rows?: number }> = ({ rows = 5 }) => (
         <Skeleton width="32px" height="32px" rounded="full" />
         <Skeleton height="0.75rem" className="flex-1" />
         <Skeleton height="0.75rem" width="80px" />
-        <Skeleton height="1.25rem" width="70px" rounded="pill" />
+        <Skeleton height="1.25rem" width="70px" rounded="full" />
       </div>
     ))}
   </div>
