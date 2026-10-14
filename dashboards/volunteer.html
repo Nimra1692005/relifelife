@@ -197,6 +197,20 @@
           <div class="card-header"><h3>Task History</h3></div>
           <div id="profHist"></div>
         </div>
+        <div class="card fade-up" style="margin-top:16px">
+          <div class="card-header"><h3>🚤 My Resources</h3><span class="badge-sm">Registry</span></div>
+          <p class="mute" style="font-size:12.5px;margin-bottom:10px">Agar aap ke paas yeh resources hain to mark karein — rescue teams zaroorat ke waqt (naav, generator, vehicle) qareebi registered assets dekhti hain.</p>
+          <div class="pill-row" id="assetPills">
+            <button type="button" class="pill" data-v="Boat">🚤 Boat</button>
+            <button type="button" class="pill" data-v="Small boat">🛶 Small boat</button>
+            <button type="button" class="pill" data-v="Van / 4x4">🚐 Van / 4x4</button>
+            <button type="button" class="pill" data-v="Generator">⚡ Generator</button>
+            <button type="button" class="pill" data-v="Medical kit">🧰 Medical kit</button>
+            <button type="button" class="pill" data-v="Crane / Winch">🏗️ Crane / Winch</button>
+            <button type="button" class="pill" data-v="Radio">📻 Radio</button>
+          </div>
+          <button type="button" class="submit-btn" style="margin-top:12px" id="assetSaveBtn" onclick="saveAssets()">💾 Save My Resources</button>
+        </div>
       </div>
     </div>
   </div>
@@ -376,6 +390,24 @@ function loadProfile() {
     if (RL_$('profSince') && me.registered_at) {
       try { RL_$('profSince').textContent = 'Active Volunteer · Since ' + new Date(me.registered_at).toLocaleDateString('en-PK', { month: 'short', year: 'numeric', timeZone: 'Asia/Karachi' }); } catch (e) {}
     }
+    // reflect saved resources in the registry pills
+    var ap = RL_$('assetPills');
+    if (ap) ap.querySelectorAll('.pill').forEach(function(p) { p.classList.toggle('on', (me.assets || []).indexOf(p.dataset.v) > -1); });
+  });
+}
+
+/* ── RESOURCE REGISTRY: my assets ── */
+document.querySelectorAll('#assetPills .pill').forEach(function(p) {
+  p.addEventListener('click', function () { p.classList.toggle('on'); });
+});
+function saveAssets() {
+  var assets = [].slice.call(document.querySelectorAll('#assetPills .pill.on')).map(function (p) { return p.dataset.v; });
+  var btn = RL_$('assetSaveBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  RL_Send('PATCH', '/volunteers/' + encodeURIComponent(VOL), { assets: assets }).then(function (res) {
+    if (btn) { btn.disabled = false; btn.textContent = '💾 Save My Resources'; }
+    if (res && res.ok) RL_Toast(assets.length ? '✅ Resources saved — admin aur rescue teams ko dikhai denge' : '✅ Cleared — koi asset marked nahi');
+    else RL_Toast('Server tak pohanch na saka — dobara try karein');
   });
 }
 

@@ -83,7 +83,7 @@ async function registerRole(res, b) {
   const uid = rid('usr');
   await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name || 'User', phone: b.phone || '', email: b.email || null, role: b.role || 'citizen', city: b.city || null, created_at: nowIso(), updated_at: nowIso() } });
   if (b.role === 'volunteer') {
-    await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name || 'Volunteer', phone: b.phone || '', skills: b.skills || [], availability: b.availability || 'available', registered_at: nowIso() } });
+    await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name || 'Volunteer', phone: b.phone || '', city: b.city || null, skills: b.skills || [], availability: b.availability || 'available', registered_at: nowIso() } });
   }
   ok(res, { user: { id: uid, full_name: b.full_name || 'User' } }, 'Registered');
 }
@@ -229,6 +229,17 @@ function readBody(req) {
   return {};
 }
 
+async function updateVolunteer(res, id, b) {
+  const patch = {};
+  if (Array.isArray(b.skills)) patch.skills = b.skills.slice(0, 12);
+  if (b.availability) patch.availability = String(b.availability);
+  if (Array.isArray(b.assets)) patch.assets = b.assets.slice(0, 8);
+  if (!Object.keys(patch).length) return fail(res, 'Nothing to update — send skills, availability or assets', 400);
+  const out = await sb('volunteers', { method: 'PATCH', query: { id: 'eq.' + id }, body: patch, prefer: 'return=representation' });
+  if (!out || !out.length) return fail(res, 'Volunteer not found', 404);
+  ok(res, out[0], 'Volunteer updated');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
@@ -266,6 +277,7 @@ module.exports = async function handler(req, res) {
     if (r0 === 'alerts') return method === 'POST' ? await createAlert(res, b) : await listAlerts(res, q);
     if (r0 === 'volunteers') {
       if (seg[1] && seg[2] === 'verify' && method === 'POST') return await verifyVolunteer(res, seg[1]);
+      if (seg[1] && method === 'PATCH') return await updateVolunteer(res, seg[1], b);
       if (!seg[1]) return await listVolunteers(res, q);
       return fail(res, 'Unknown volunteers endpoint', 404);
     }

@@ -320,5 +320,25 @@ window.RL_MyId = function(key) {
   return id;
 };
 
+/* ── BARA TEXT MODE (accessibility — user preference, saved locally) ── */
+window.RL_BigMode = function (on) {
+  document.body.classList.toggle('big-mode', on);
+  try { localStorage.setItem('rl_big', on ? '1' : '0'); } catch (e) {}
+  var b = document.getElementById('rlBigBtn');
+  if (b) { b.classList.toggle('on', on); b.textContent = on ? 'Aa− Normal Text' : 'Aa+ Bara Text'; }
+  window.RL_Toast(on ? '🔠 Bara text mode ON' : '🔡 Normal text mode');
+};
+document.addEventListener('DOMContentLoaded', function () {
+  var on = false;
+  try { on = localStorage.getItem('rl_big') === '1'; } catch (e) {}
+  if (on) document.body.classList.add('big-mode');
+  var b = document.createElement('button');
+  b.id = 'rlBigBtn'; b.className = 'big-toggle' + (on ? ' on' : ''); b.type = 'button';
+  b.textContent = on ? 'Aa− Normal Text' : 'Aa+ Bara Text';
+  b.setAttribute('aria-label', 'Toggle larger text for low vision');
+  b.addEventListener('click', function () { window.RL_BigMode(!document.body.classList.contains('big-mode')); });
+  document.body.appendChild(b);
+});
+
 })();
 

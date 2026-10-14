@@ -159,6 +159,9 @@
   <!-- HOME -->
   <div id="page-home">
     <div class="card-header" style="margin-bottom:16px"><h3>What kind of help do you need?</h3></div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button type="button" class="submit-btn" style="width:auto;flex:1;min-width:200px;margin:0;background:#128C7E" onclick="waSos(this)">📲 No internet? SOS on WhatsApp bhejein</button>
+    </div>
     <div class="cat-grid">
       <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4><p class="cat-desc">Rescue teams reach and move you out fast.</p></div></div>
       <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><div class="cat-body"><h4>Medical Assistance</h4><p class="cat-desc">Ambulance, medicine and hospital support.</p></div></div>
@@ -410,6 +413,27 @@ function selectCat(el, cat) {
 }
 
 var GCO = null; // GPS coords captured via picker
+/* ── WHATSAPP SOS — works even when app/server is unreachable ── */
+function waText(r) {
+  var p = ['🆘 RELIEFLINK SOS'];
+  if (r && r.id && r._live) p.push('Request ID: ' + r.id);
+  p.push('Need: ' + ((r && r.cat) || 'Emergency help (flood / earthquake / medical)'));
+  var loc = (r && r.loc) || ((RL_$('reqLoc') || {}).value || '');
+  if (loc) p.push('Location: ' + loc);
+  if (GCO) p.push('Map: https://maps.google.com/?q=' + GCO.lat + ',' + GCO.lng);
+  var nm = ((RL_$('reqName') || {}).value || '');
+  if (nm) p.push('Name: ' + nm);
+  p.push('Time: ' + new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' }));
+  p.push('Agar 30 minute mein response na aaye to Rescue 1122 ko call karein. — sent via ReliefLink');
+  return 'https://wa.me/?text=' + encodeURIComponent(p.join('\n'));
+}
+function waSos(btn) {
+  var r = (typeof myReqs !== 'undefined' && myReqs.length) ? myReqs[0] : null;
+  var w = window.open(waText(r), '_blank');
+  if (!w) { RL_Toast('Popup allow karein — phir WhatsApp khul jayega'); return; }
+  RL_Toast('WhatsApp khul gaya — message family group ya Rescue contact ko forward karein');
+  if (btn) btn.textContent = '✅ SOS message bana — dobara dabayein to naya khulega';
+}
 function submitReq() {
   var loc = (RL_$('reqLoc')||{}).value||'';
   if (!loc.trim()) { RL_Toast('📍 Sirf apna location dein'); return; }  // location is the only required field
@@ -458,7 +482,8 @@ function renderActive() {
     + mkStep(r.status >= 1, r.status === 1, 'Assigned','check')
     + mkStep(r.status >= 2, r.status === 2, 'On way','check')
     + mkStep(r.status >= 3, false, 'Done','check')
-    + '</div></div>';
+    + '</div><button type="button" class="submit-btn" style="width:auto;margin:10px 0 0;padding:8px 14px;background:#128C7E" onclick="waSos()">📲 WhatsApp par family ko forward karein</button>'
+    + '</div>';
   RL_Icons();
 }
 function mkStep(done, active, label, icon) {

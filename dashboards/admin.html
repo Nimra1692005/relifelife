@@ -161,7 +161,10 @@
       <div class="stat-card"><div class="stat-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="calendar"></i></div><div><div class="val" id="vEvents">14</div><div class="label">Open Tasks</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><div class="val" id="vHours">3,420</div><div class="label">Hours Served</div></div></div>
     </div>
-    <div class="card"><div class="card-header"><h3>Recent Volunteer Signups</h3></div><div id="volReqs2"></div></div>
+    <div class="card"><div class="card-header"><h3>Volunteers &amp; Resources</h3>
+            <select class="badge-sm" style="border:1px solid rgba(22,35,28,.2);border-radius:8px;padding:4px 8px;font-family:inherit;cursor:pointer" onchange="setVolFilter(this.value)" title="Filter by registered resource">
+              <option value="">All volunteers</option><option value="Boat">🚤 Boat owners</option><option value="Van">🚐 Van / 4x4</option><option value="Generator">⚡ Generators</option><option value="Medical">🧰 Medical kits</option><option value="Radio">📻 Radios</option>
+            </select></div><div id="volReqs2"></div></div>
   </div>
 
   <!-- ── RESOURCES ── -->
@@ -305,21 +308,41 @@ function teamList() {
   }).join('');
   RL_Icons();
 }
+var volFilter = '';
+function setVolFilter(v) { volFilter = v; renderVolReqs('volReqs'); renderVolReqs('volReqs2'); }
 function renderVolReqs(id) {
-  RL_$(id).innerHTML = volReqs.length
-    ? volReqs.map(function(r, i) {
+  var el = RL_$(id); if (!el) return;
+  var list = volReqs.map(function(r, idx) { return [r, idx]; }).filter(function(p) {
+    return !volFilter || ((p[0].assets || []).join(' ').toLowerCase().indexOf(volFilter.toLowerCase()) > -1);
+  });
+  el.innerHTML = list.length
+    ? list.map(function(pair, i) {
+        var r = pair[0], idx = pair[1];
         var col = C[i % C.length];
         return '<div class="item"><div class="item-icon" style="background:' + col + '22;color:' + col + '"><i data-i="user"></i></div>'
-             + '<div class="t">' + r.name + '<small>' + (r.skills || 'General') + '</small></div>'
+             + '<div class="t">' + r.name + '<small>' + (r.skills || 'General') + (r.city ? ' · ' + r.city : '') + '</small>'
+             + ((r.assets && r.assets.length) ? '<div style="margin-top:3px">' + r.assets.map(function(a) { return '<span class="chip">' + a + '</span>'; }).join('') + '</div>' : '')
+             + '</div>'
              + (r.verified
                  ? RL_Tag('Verified', '#3CC08E')
-                 : '<button class="action-btn" style="padding:8px 12px;font-size:12px" onclick="actReq(' + i + ')">Approve</button>')
+                 : '<button class="action-btn" style="padding:8px 12px;font-size:12px" onclick="actReq(' + idx + ')">Approve</button>')
              + '</div>';
       }).join('')
-    : '<p class="mute" style="padding:10px 0">No pending signups</p>';
+    : '<p class="mute" style="padding:10px 0">' + (volFilter ? 'Is resource wala koi volunteer nahi mila — filter clear karein' : 'No pending signups') + '</p>';
   var pendingN = volReqs.filter(function(r) { return !r.verified; }).length;
   if (RL_$('reqBadge')) RL_$('reqBadge').textContent = pendingN;
   RL_Icons();
+}
+function loadVols() {
+  jget('/volunteers').then(function(j) {
+    var a = j && j.data;
+    if (!Array.isArray(a) || !a.length) return;
+    volReqs = a.slice(0, 40).map(function(v) {
+      return { id: v.id, name: v.full_name || 'Volunteer', skills: (v.skills || []).join(', '),
+               assets: v.assets || [], verified: !!v.verified, city: v.city || '' };
+    });
+    renderVolReqs('volReqs'); renderVolReqs('volReqs2');
+  }).catch(function(){});
 }
 function actReq(i) {
   var r = volReqs[i];
@@ -514,6 +537,7 @@ function loadLive() {
   loadHelpRequests();
   loadOpenTasks();
   loadAlerts();
+  loadVols();
   jget('/shelters').then(function(j) {
     var a = j && j.data; if (!Array.isArray(a) || !a.length) return;
     SH = a.map(function(x) { return [x.name, x.address||'', x.current_occupancy||0, x.capacity||1]; });
