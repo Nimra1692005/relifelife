@@ -81,6 +81,14 @@ window.RL_Tag = function(label, color) {
 /* ── MAKE CALL ── */
 window.RL_Call = function(svc) { window.RL_Toast('Calling ' + svc + '…'); };
 
+/* ── REAL DIAL — opens the phone dialer with a validated number ── */
+window.RL_Tel = function(num) {
+  var clean = String(num).replace(/[^\d+]/g, '');
+  if (!clean) return;
+  window.RL_Toast('Dialling ' + clean + '…');
+  window.location.href = 'tel:' + clean;
+};
+
 /* ── MODAL ── */
 window.RL_OpenModal  = function(id) { var el = window.RL_$(id); if (el) el.classList.add('open'); };
 window.RL_CloseModal = function(id) { var el = window.RL_$(id); if (el) el.classList.remove('open'); };

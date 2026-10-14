@@ -21,6 +21,16 @@ const CAT_LABEL = {
 function rid(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
 function nowIso() { return new Date().toISOString(); }
 
+// Last n month keys 'YYYY-MM', oldest first — used for growth/hours charts.
+function monthKeys(n) {
+  const out = [], d = new Date();
+  for (let i = n - 1; i >= 0; i--) {
+    const m = new Date(d.getFullYear(), d.getMonth() - i, 1);
+    out.push(m.getFullYear() + '-' + String(m.getMonth() + 1).padStart(2, '0'));
+  }
+  return out;
+}
+
 async function sb(table, { method = 'GET', query, body, prefer } = {}) {
   let url = SB_URL + '/rest/v1/' + table;
   const params = new URLSearchParams();
@@ -115,17 +125,94 @@ async function taskProgress(res, id, b) {
   ok(res, (out && out[0]) || patch, 'Progress saved');
 }
 async function adminOverview(res) {
-  const [total, resolved, pending, vols] = await Promise.all([
+  const [total, resolved, pending, vols, openTasks] = await Promise.all([
     sbCount('help_requests', ''), sbCount('help_requests', 'status=eq.resolved'),
-    sbCount('help_requests', 'status=eq.pending'), sbCount('volunteers', '')
+    sbCount('help_requests', 'status=eq.pending'), sbCount('volunteers', ''),
+    sbCount('volunteer_tasks', 'status=eq.open').catch(() => 0)
   ]);
   const recent = await sb('help_requests', { query: { select: '*', order: 'created_at.desc', limit: '5' } }).catch(() => []);
   const alerts = await sb('alerts', { query: { select: '*', is_active: 'eq.true', limit: '50' } }).catch(() => []);
+
+  // ── Real volunteer / task analytics — each block degrades to null on failure ──
+  let growth = null, hoursMonthly = null, hoursTotal = null, topVols = null,
+    skills = null, avail = null, recentVols = null, availableNow = null;
+  try {
+    const V = (await sb('volunteers', { query: { select: 'id,full_name,skills,availability,verified,registered_at', order: 'registered_at.desc', limit: '500' } })) || [];
+    const keys = monthKeys(12), per = {};
+    keys.forEach(k => { per[k] = 0; });
+    V.forEach(v => { const k = String(v.registered_at || '').slice(0, 7); if (k in per) per[k]++; });
+    let run = 0; growth = keys.map(k => (run += per[k]));
+    const sc = {}; V.forEach(v => (v.skills || []).forEach(s => { sc[s] = (sc[s] || 0) + 1; }));
+    skills = Object.keys(sc).sort((a, b) => sc[b] - sc[a]).slice(0, 4).map(k => ({ name: k, count: sc[k] }));
+    const av = {}; V.forEach(v => { const a = v.availability || 'available'; av[a] = (av[a] || 0) + 1; });
+    avail = Object.keys(av).map(k => ({ name: k, count: av[k] }));
+    availableNow = av.available || 0;
+    recentVols = V.slice(0, 5).map(v => ({
+      id: v.id, name: v.full_name || 'Volunteer',
+      skills: (v.skills || []).join(', ') || 'General',
+      availability: v.availability || 'available', verified: !!v.verified
+    }));
+  } catch (e) {}
+  try {
+    const T = (await sb('volunteer_tasks', { query: { select: 'assigned_volunteer_id,completed_at,updated_at', status: 'eq.completed', order: 'completed_at.desc', limit: '500' } })) || [];
+    const keys = monthKeys(12), per = {};
+    keys.forEach(k => { per[k] = 0; });
+    T.forEach(t => { const k = String(t.completed_at || t.updated_at || '').slice(0, 7); if (k in per) per[k]++; });
+    hoursMonthly = keys.map(k => per[k] * 4);
+    hoursTotal = T.length * 4;
+    const byVol = {}; T.forEach(t => { if (t.assigned_volunteer_id) byVol[t.assigned_volunteer_id] = (byVol[t.assigned_volunteer_id] || 0) + 1; });
+    topVols = Object.keys(byVol).sort((a, b) => byVol[b] - byVol[a]).slice(0, 5)
+      .map(k => ({ volunteer_id: k, tasks: byVol[k], hours: byVol[k] * 4 }));
+    if (topVols.length) {
+      const V2 = (await sb('volunteers', { query: { select: 'id,full_name', limit: '500' } }).catch(() => [])) || [];
+      const nm = {}; V2.forEach(v => { nm[v.id] = v.full_name; });
+      topVols.forEach(t => { t.name = nm[t.volunteer_id] || 'Volunteer'; });
+    }
+  } catch (e) {}
+
   ok(res, {
     total_requests: total, active_volunteers: vols, resolved, pending,
+    open_tasks: openTasks, volunteers_available: availableNow, hours_total: hoursTotal,
+    volunteer_growth: growth, hours_monthly: hoursMonthly, top_volunteers: topVols,
+    skill_distribution: skills, availability: avail, recent_volunteers: recentVols,
     recent_requests: (recent || []).map(r => ({ id: String(r.id).slice(-4), category: CAT_LABEL[r.category] || r.category || 'Help', location: r.city || '—', status: ST_LABEL[r.status] || 'Pending' })),
     map_markers: alerts || []
   });
+}
+
+/* ── Alerts (admin broadcast → volunteer notifications) ── */
+async function createAlert(res, b) {
+  const title = (b.title || '').trim();
+  if (!title) return fail(res, 'Alert title is required', 400);
+  const row = {
+    id: rid('alr'), title,
+    disaster_type: b.disaster_type || 'flood',
+    severity: b.severity || 'high',
+    description: b.description || '',
+    location_text: b.location_text || b.city || '',
+    latitude: b.latitude != null ? +b.latitude : null,
+    longitude: b.longitude != null ? +b.longitude : null,
+    radius_km: b.radius_km != null ? +b.radius_km : null,
+    is_active: true, created_at: nowIso(), updated_at: nowIso()
+  };
+  const out = await sb('alerts', { method: 'POST', body: row, prefer: 'return=representation' });
+  ok(res, (out && out[0]) || row, 'Alert broadcast to volunteers');
+}
+async function listAlerts(res, q) {
+  const query = { select: '*', order: 'created_at.desc', limit: String(Math.min(parseInt(q.limit, 10) || 50, 200)) };
+  if (q.active === 'true') query.is_active = 'eq.true';
+  ok(res, (await sb('alerts', { query })) || []);
+}
+
+/* ── Volunteers (admin roster + verification) ──────────── */
+async function listVolunteers(res, q) {
+  const query = { select: '*', order: 'registered_at.desc', limit: '200' };
+  if (q.availability) query.availability = 'eq.' + q.availability;
+  ok(res, (await sb('volunteers', { query })) || []);
+}
+async function verifyVolunteer(res, id) {
+  const out = await sb('volunteers', { method: 'PATCH', query: { id: 'eq.' + id, select: 'id,verified' }, body: { verified: true }, prefer: 'return=representation' });
+  ok(res, (out && out[0]) || { id: id, verified: true }, 'Volunteer verified');
 }
 async function listShelters(res) {
   ok(res, (await sb('shelters', { query: { select: '*', type: 'neq.hospital', order: 'created_at.desc', limit: '100' } })) || []);
@@ -176,6 +263,12 @@ module.exports = async function handler(req, res) {
       return fail(res, 'Unknown tasks endpoint', 404);
     }
     if (r0 === 'analytics' && seg[1] === 'admin-overview') return await adminOverview(res);
+    if (r0 === 'alerts') return method === 'POST' ? await createAlert(res, b) : await listAlerts(res, q);
+    if (r0 === 'volunteers') {
+      if (seg[1] && seg[2] === 'verify' && method === 'POST') return await verifyVolunteer(res, seg[1]);
+      if (!seg[1]) return await listVolunteers(res, q);
+      return fail(res, 'Unknown volunteers endpoint', 404);
+    }
     if (r0 === 'shelters') return await listShelters(res);
     if (r0 === 'hospitals') return await listHospitals(res);
     return fail(res, 'Not found: /api/v1/' + seg.join('/'), 404);

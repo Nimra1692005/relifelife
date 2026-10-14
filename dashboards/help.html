@@ -23,16 +23,27 @@
 .call-btn:hover { filter: brightness(1.15); transform: scale(1.04); }
 .call-1122   { background: #fff; color: #B91C1C; }
 .call-other  { background: rgba(255,255,255,.15); color: #fff; border: 1.5px solid rgba(255,255,255,.3); }
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 12px; margin-bottom: 24px; }
 .cat-card {
   background: var(--card); border: 1.5px solid var(--line); border-radius: var(--rad);
-  padding: 20px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;
-  cursor: pointer; transition: all .25s; text-align: center;
+  padding: 15px 16px; display: flex; align-items: center; gap: 13px; text-align: left;
+  cursor: pointer; transition: all .22s;
 }
-.cat-card:hover, .cat-card.active { border-color: var(--gold); background: rgba(201,162,39,.08); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(27,58,42,.12); }
-.cat-icon { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; font-size: 24px; transition: .2s; }
-.cat-card:hover .cat-icon, .cat-card.active .cat-icon { transform: scale(1.1); }
-.cat-card h4 { font-size: 12px; font-weight: 700; line-height: 1.3; }
+.cat-card:hover, .cat-card.active { border-color: var(--gold); background: rgba(201,162,39,.07); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(27,58,42,.12); }
+.cat-icon { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 20px; flex: none; transition: .2s; }
+.cat-card:hover .cat-icon, .cat-card.active .cat-icon { transform: scale(1.06); }
+.cat-body { flex: 1; min-width: 0; }
+.cat-card h4 { font-size: 13.5px; font-weight: 700; line-height: 1.25; margin-bottom: 2px; }
+.cat-desc { font-size: 11.5px; line-height: 1.35; color: #5f6f66; }
+.loc-picker { margin-top: 10px; }
+.lp-hint { font-size: 12px; line-height: 1.45; opacity: .72; margin-bottom: 8px; }
+.lp-map { height: 230px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--line); position: relative; }
+.lp-bar { display: flex; gap: 8px; margin: 10px 0 8px; flex-wrap: wrap; }
+.lp-btn { border: 1.5px solid var(--line); background: var(--card); color: var(--g); border-radius: 10px; padding: 8px 13px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 6px; }
+.lp-btn:hover { border-color: var(--gold); background: rgba(201,162,39,.07); }
+.lp-btn.on { background: var(--g); color: #F5EEDB; border-color: var(--g); }
+.lp-addr { font-size: 12.5px; line-height: 1.4; color: var(--g); background: rgba(46,125,50,.07); border: 1px dashed rgba(46,125,50,.35); border-radius: 10px; padding: 10px 12px; }
+.lp-addr.empty { color: #7a8a80; background: transparent; border-color: var(--line); font-style: italic; }
 .track-card {
   background: linear-gradient(135deg,var(--g),var(--g2)); color: #F5EEDB;
   border-radius: var(--rad); padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden;
@@ -91,6 +102,13 @@
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .submit-btn:hover { background: var(--g2); transform: translateY(-1px); }
+.wx-days { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+.wx-day { background: rgba(46,125,50,.06); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
+.wx-day b { display: block; font-size: 15px; font-weight: 800; color: var(--g); }
+.wx-day small { font-size: 10.5px; color: var(--mute); display: block; }
+.rt-step { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.rt-step:last-child { border-bottom: none; }
+.rt-step .n { width: 22px; height: 22px; border-radius: 50%; background: var(--g); color: var(--gold); display: grid; place-items: center; font-size: 10.5px; font-weight: 800; flex: none; }
 @media(max-width:500px){ .cat-grid{ grid-template-columns: repeat(2,1fr); } .call-buttons{ gap:6px; } .call-btn{ padding:8px 12px; font-size:12px; } }
 </style>
 </head><body>
@@ -108,7 +126,8 @@
     <button class="nav-item" data-page="nearby"><i data-i="pin"></i>Nearby Help</button>
     <button class="nav-item" data-page="flood"><i data-i="drop"></i>Flood Predictor</button>
     <button class="nav-item" data-page="route"><i data-i="pin"></i>Safe Route Planner</button>
-    <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">2</span></button>
+    <button class="nav-item" data-page="scan"><i data-i="search"></i>Smart Safety Scan</button>
+    <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">0</span></button>
     <button class="nav-item" data-page="profile"><i data-i="user"></i>Profile</button>
   </div>
   <div class="nav-bottom">
@@ -130,10 +149,10 @@
   <div class="emergency-banner fade-up">
     <div><h3>🚨 Need immediate help?</h3><p>Contact emergency services right now — available 24/7</p></div>
     <div class="call-buttons">
-      <button class="call-btn call-1122"  onclick="RL_Call('1122')"><i data-i="phone"></i>Call 1122</button>
-      <button class="call-btn call-other" onclick="RL_Call('Rescue')"><i data-i="rescue"></i>Rescue</button>
-      <button class="call-btn call-other" onclick="RL_Call('Medical')"><i data-i="hosp"></i>Medical</button>
-      <button class="call-btn call-other" onclick="RL_Call('Police')"><i data-i="shield"></i>Police</button>
+      <button class="call-btn call-1122"  onclick="RL_Tel('1122')"><i data-i="phone"></i>Call 1122</button>
+      <button class="call-btn call-other" onclick="RL_Tel('1122')"><i data-i="rescue"></i>Rescue</button>
+      <button class="call-btn call-other" onclick="RL_Tel('115')"><i data-i="hosp"></i>Medical</button>
+      <button class="call-btn call-other" onclick="RL_Tel('15')"><i data-i="shield"></i>Police</button>
     </div>
   </div>
 
@@ -141,22 +160,21 @@
   <div id="page-home">
     <div class="card-header" style="margin-bottom:16px"><h3>What kind of help do you need?</h3></div>
     <div class="cat-grid">
-      <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><h4>Emergency Rescue &amp; Evacuation</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><h4>Medical Assistance</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon" style="background:#3CC08E22">🍱</div><h4>Food &amp; Clean Water</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon" style="background:#7C6CF022">🏕️</div><h4>Shelter &amp; Accommodation</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon" style="background:#F58A3D22">👕</div><h4>Clothing &amp; Essential Supplies</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Transportation & Relocation')"><div class="cat-icon" style="background:#F5B83D22">🚌</div><h4>Transportation &amp; Relocation</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Sanitation & Hygiene')"><div class="cat-icon" style="background:#4C8DF622">🧼</div><h4>Sanitation &amp; Hygiene</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Special Assistance')"><div class="cat-icon" style="background:#F472A822">♿</div><h4>Special Assistance</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon" style="background:#8B5CF622">🏠</div><h4>Home &amp; Damage Recovery</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><h4>Missing Persons</h4></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><h4>Emotional &amp; Psychological Support</h4></div>
-      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#164670">🌊</div><h4>AI Flood Predictor</h4></div>
-      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D32">🧭</div><h4>Safe Route Planner</h4></div>
-      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#4C8DF622">🛰️</div><h4>AI Dynamic Routing</h4></div>
-      <div class="cat-card fade-up" onclick="navigate('nearby')"><div class="cat-icon" style="background:#F58A3D22">📡</div><h4>Location Smart Alerts</h4></div>
-      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#7C6CF022">📦</div><h4>Aid Tracking</h4></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4><p class="cat-desc">Rescue teams reach and move you out fast.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><div class="cat-body"><h4>Medical Assistance</h4><p class="cat-desc">Ambulance, medicine and hospital support.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon" style="background:#3CC08E22">🍱</div><div class="cat-body"><h4>Food &amp; Clean Water</h4><p class="cat-desc">Daily meals and safe drinking water.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon" style="background:#7C6CF022">🏕️</div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4><p class="cat-desc">Safe camps and staying places nearby.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon" style="background:#F58A3D22">👕</div><div class="cat-body"><h4>Clothing &amp; Supplies</h4><p class="cat-desc">Blankets, clothes and daily essentials.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Transportation & Relocation')"><div class="cat-icon" style="background:#F5B83D22">🚌</div><div class="cat-body"><h4>Transportation &amp; Relocation</h4><p class="cat-desc">Vehicles to move you to a safer area.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Sanitation & Hygiene')"><div class="cat-icon" style="background:#4C8DF622">🧼</div><div class="cat-body"><h4>Sanitation &amp; Hygiene</h4><p class="cat-desc">Clean toilets, kits and hygiene support.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Special Assistance')"><div class="cat-icon" style="background:#F472A822">♿</div><div class="cat-body"><h4>Special Assistance</h4><p class="cat-desc">Priority help for elderly, kids &amp; disabled.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon" style="background:#8B5CF622">🏠</div><div class="cat-body"><h4>Home &amp; Damage Recovery</h4><p class="cat-desc">Repair and rebuild after the disaster.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><div class="cat-body"><h4>Missing Persons</h4><p class="cat-desc">Report and trace a lost family member.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><div class="cat-body"><h4>Emotional Support</h4><p class="cat-desc">Counselling and mental-health care.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#16467022">🌊</div><div class="cat-body"><h4>AI Flood Predictor</h4><p class="cat-desc">Live river &amp; rainfall risk for your area.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D3222">🧭</div><div class="cat-body"><h4>Safe Route Planner</h4><p class="cat-desc">Any address → any address, AI safety-scored.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('scan')"><div class="cat-icon" style="background:#4C8DF622">🛰️</div><div class="cat-body"><h4>Smart Safety Scan</h4><p class="cat-desc">Instant danger report for any area.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#7C6CF022">📦</div><div class="cat-body"><h4>Aid Tracking</h4><p class="cat-desc">Track your request till it&rsquo;s resolved.</p></div></div>
     </div>
   </div>
 
@@ -172,10 +190,20 @@
           <option>Sanitation &amp; Hygiene</option><option>Special Assistance</option>
           <option>Home &amp; Damage Recovery</option><option>Missing Persons</option><option>Psychological Support</option>
         </select></div>
-        <div class="form-group"><label>📍 Your Location <span style="color:var(--r)">*</span> <small style="opacity:.6;font-weight:400">— bas itna hi zaroori hai</small></label>
+        <div class="form-group"><label>📍 Your Location <span style="color:var(--r)">*</span></label>
           <div style="display:flex;gap:8px">
-            <input id="reqLoc" class="field-input" type="text" placeholder="Village / city, ya GPS button dabayein" style="flex:1">
-            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="useMyLoc()">📍 My location</button>
+            <input id="reqLoc" class="field-input" type="text" placeholder="Exact address, ya map par pin rakhein" style="flex:1">
+            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.locateOnce()">📍 GPS</button>
+          </div>
+          <div class="loc-picker">
+            <div class="lp-hint">Map par <b>tap</b> kar ke exact jagah chun lein (marker drag bhi kar sakte hain) — ya <b>Live GPS</b> on kar dein. Street-level address khud bhar jayega.</div>
+            <div class="lp-bar">
+              <button type="button" class="lp-btn" id="lpLiveBtn" onclick="LP.toggleLive()">📡 Live GPS</button>
+              <button type="button" class="lp-btn" onclick="LP.locateOnce()">📍 My location</button>
+              <button type="button" class="lp-btn" onclick="LP.recenter()">🎯 Recenter</button>
+            </div>
+            <div class="lp-map"><div id="locPick" style="position:absolute;inset:0"></div></div>
+            <div class="lp-addr empty" id="lpAddr" style="margin-top:10px">Abhi koi exact location nahi — map par tap karein.</div>
           </div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
@@ -212,19 +240,19 @@
 
   <!-- EMERGENCY CONTACTS -->
   <div id="page-emergency" class="hide">
-    <div class="card fade-up"><div class="card-header"><h3>Emergency Contacts</h3><span class="badge-sm">Always available</span></div><div id="contactList"></div></div>
+    <div class="card fade-up"><div class="card-header"><h3>Emergency Contacts</h3><span class="badge-sm">Tap to dial</span></div><div id="contactList"></div></div>
   </div>
 
   <!-- NEARBY HELP -->
   <div id="page-nearby" class="hide">
     <div class="grid-2">
       <div>
-        <div class="card fade-up" style="margin-bottom:16px"><div class="card-header"><h3>Nearby Shelters</h3><span class="badge-sm">Within 10km</span></div><div id="nearbyShelters"></div></div>
-        <div class="card fade-up"><div class="card-header"><h3>Nearby Hospitals</h3><span class="badge-sm">Open now</span></div><div id="nearbyHosp"></div></div>
+        <div class="card fade-up" style="margin-bottom:16px"><div class="card-header"><h3>Nearby Shelters</h3><span class="badge-sm">Real distance</span></div><div id="nearbyShelters"></div></div>
+        <div class="card fade-up"><div class="card-header"><h3>Nearby Hospitals</h3><span class="badge-sm">Real distance</span></div><div id="nearbyHosp"></div></div>
       </div>
       <div class="map-box fade-up" style="height:360px;position:relative;overflow:hidden">
         <div id="helpMap" style="position:absolute;inset:0"></div>
-        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🇵🇰 Nearby in Pakistan</div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🇵 Nearby in Pakistan</div>
       </div>
     </div>
   </div>
@@ -236,7 +264,7 @@
         <div class="flood-card fade-up" style="margin-bottom:16px">
           <div class="risk-badge risk-high" id="flBadge"><i data-i="drop"></i>LOADING…</div>
           <h3 style="font-size:20px;font-weight:800;margin-bottom:6px">AI Flood Prediction</h3>
-          <p style="opacity:.7;font-size:13px;margin-bottom:16px">Real-time weather, river levels &amp; satellite data</p>
+          <p style="opacity:.7;font-size:13px;margin-bottom:16px">Live rainfall + river discharge model, calibrated on Pakistan flood thresholds</p>
           <div class="gauge-wrap">
             <div class="gauge">
               <svg width="100" height="100" viewBox="0 0 36 36"><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3" stroke-dasharray="75 25"/><path d="M18 2 a16 16 0 0 1 0 32 a16 16 0 0 1 0-32" fill="none" id="flArc" stroke="#EF5B5B" stroke-width="3" stroke-dasharray="57 43"/></svg>
@@ -257,11 +285,8 @@
           </div>
         </div>
         <div class="card fade-up">
-          <div class="card-header"><h3>Safety Recommendations</h3></div>
-          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="home"></i></div><div class="t"><b>Evacuate immediately</b><small>Move to higher ground — do not wait</small></div></div>
-          <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"><i data-i="drop"></i></div><div class="t"><b>Store clean water</b><small>Minimum 3 days supply per person</small></div></div>
-          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="bag"></i></div><div class="t"><b>Pack emergency kit</b><small>Documents, medicines, phone charger</small></div></div>
-          <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="phone"></i></div><div class="t"><b>Stay connected</b><small>Monitor alerts and keep phone charged</small></div></div>
+          <div class="card-header"><h3>Safety Recommendations</h3><span class="badge-sm">For your risk level</span></div>
+          <div id="safetyTips"></div>
         </div>
       </div>
       <div>
@@ -270,7 +295,7 @@
           <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🌊 Pakistan Flood Risk Map</div>
         </div>
         <div class="card fade-up">
-          <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Last 5 years</span></div>
+          <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Documented events</span></div>
           <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">🌊</div><div class="t">2022 Mega Floods<small>Rajanpur — 4,200 families</small></div><span class="tag tag-red">Major</span></div>
           <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)">🌧️</div><div class="t">2021 Seasonal Flood<small>1,200 families displaced</small></div><span class="tag tag-orange">Moderate</span></div>
           <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)">💧</div><div class="t">2020 Flash Flood<small>600 families affected</small></div><span class="tag tag-yellow">Minor</span></div>
@@ -284,25 +309,47 @@
     <div class="grid-2">
       <div>
         <div class="card fade-up" style="margin-bottom:16px">
-          <div class="card-header"><h3>🧭 Safe Route Planner</h3></div>
-          <p style="font-size:13px;opacity:.7;margin-bottom:14px">Bas apna location dein — hum aapko sabse qareeb safe shelter tak behtareen route denge, raaste ke saath flood-risk check kar ke.</p>
-          <div class="form-group"><label>Destination (nearest shelter)</label><select id="rtDest" class="field-input"></select></div>
-          <button class="submit-btn" style="width:100%;margin-bottom:14px" onclick="planRoute()"><i data-i="pin"></i>Plan route from my location</button>
-          <div id="rtResult"><p class="mute" style="font-size:13px">Route aur safety yahan dikhegi.</p></div>
+          <div class="card-header"><h3>🧭 Safe Route Planner</h3><span class="badge-sm">AI safety-scored</span></div>
+          <p style="font-size:13px;opacity:.7;margin-bottom:14px">Kahin se bhi kahin tak — hum route ke 5 points par <b>weather, river flood-level, active alerts aur earthquakes</b> check kar ke <b>sabse SAFE route</b> khud choose karte hain.</p>
+          <div class="form-group"><label>🚩 From (start)</label>
+            <div style="display:flex;gap:8px">
+              <input id="rtFrom" class="field-input" placeholder="Apna area / address likhein… ya GPS lein" style="flex:1">
+              <button type="button" class="lp-btn" style="align-self:flex-start" onclick="rtLocate()">📍 GPS</button>
+            </div>
+          </div>
+          <div class="form-group"><label>🏁 To (destination — koi bhi address, city ya jagah)</label>
+            <input id="rtTo" class="field-input" placeholder="e.g. Race Course Park, Rawalpindi">
+          </div>
+          <div class="form-group"><label>Ya kisi shelter se select karein</label><select id="rtDest" class="field-input" onchange="rtPickDest()"><option value="">— custom destination upar likhein —</option></select></div>
+          <button class="submit-btn" onclick="planRoute()"><i data-i="pin"></i>Plan safest route</button>
+          <div id="rtResult" style="margin-top:14px"><p class="mute" style="font-size:13px">Route, safety score, weather aur turn-by-turn directions yahan aayengi.</p></div>
         </div>
-        <div class="card fade-up"><div class="card-header"><h3>Live Weather</h3><span class="badge-sm">Open-Meteo</span></div><div id="wxLive"><p class="mute" style="font-size:13px">Loading weather…</p></div></div>
+        <div class="card fade-up"><div class="card-header"><h3>Live Weather</h3><span class="badge-sm">3-day outlook</span></div><div id="wxLive"><p class="mute" style="font-size:13px">Loading weather…</p></div><div class="wx-days" id="wx3day"></div></div>
       </div>
       <div class="map-box fade-up" style="height:440px;position:relative;overflow:hidden">
         <div id="routeMap" style="position:absolute;inset:0"></div>
-        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700">🧭 Route to safety</div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700">🧭 Map par tap kar ke start pin set karein</div>
       </div>
     </div>
+  </div>
+
+  <!-- SMART SAFETY SCAN -->
+  <div id="page-scan" class="hide">
+    <div class="card fade-up" style="max-width:680px;margin-bottom:16px">
+      <div class="card-header"><h3>🛰️ Smart Safety Scan</h3><span class="badge-sm">Instant AI report</span></div>
+      <p style="font-size:13px;opacity:.75;margin-bottom:14px">Pakistan ki koi bhi jagah likhein — foran poori safety report: <b>weather, flood risk, earthquakes (30 din), active alerts aur nearest shelter/hospital</b> real distance ke saath.</p>
+      <div style="display:flex;gap:8px">
+        <input id="scanQ" class="field-input" placeholder="e.g. Chitral, Gilgit, Sukkur…" style="flex:1" onkeydown="if(event.key==='Enter')runScan()">
+        <button class="submit-btn" style="width:auto;margin:0;padding:0 22px" onclick="runScan()">Scan</button>
+      </div>
+    </div>
+    <div id="scanOut"></div>
   </div>
 
   <!-- NOTIFICATIONS -->
   <div id="page-notifications" class="hide">
     <div class="card fade-up">
-      <div class="card-header"><h3>Notifications</h3><button class="badge-sm" onclick="clearNotifs()" style="border:none;cursor:pointer">Mark all read</button></div>
+      <div class="card-header"><h3>Notifications</h3><span class="badge-sm">Live alerts + earthquakes</span></div>
       <div id="notifList"></div>
     </div>
   </div>
@@ -342,7 +389,7 @@ var HOSPS   = [['DHQ Hospital','Rajanpur','46 beds free','2.1 km',29.1044,70.330
 var CONTACTS = [
   {name:'1122 Rescue',role:'Emergency Services',phone:'1122',c:'#EF5B5B'},
   {name:'Edhi Foundation',role:'Rescue & Medical',phone:'115',c:'#3CC08E'},
-  {name:'Red Crescent',role:'Humanitarian Aid',phone:'111-745-745',c:'#EF5B5B'},
+  {name:'Red Crescent',role:'Humanitarian Aid',phone:'111745745',c:'#EF5B5B'},
   {name:'NDMA Helpline',role:'Disaster Management',phone:'1700',c:'#4C8DF6'},
   {name:'Pakistan Police',role:'Law & Order',phone:'15',c:'#7C6CF0'},
   {name:'Ambulance',role:'Medical Emergency',phone:'1122',c:'#F58A3D'}
@@ -352,6 +399,7 @@ var NOTIFS = [
   {icon:'check',col:'var(--gr)',title:'Your request has been assigned',desc:'A volunteer has been assigned to your food request.',read:false},
   {icon:'bell',col:'var(--y)',title:'Relief camp opened near you',desc:'Govt School, Rajanpur is now an official relief camp.',read:true}
 ];
+var SEV_COL = { critical:'var(--r)', high:'var(--o)', medium:'var(--y)', low:'var(--gr)' };
 
 /* ── RENDERERS ── */
 function selectCat(el, cat) {
@@ -361,26 +409,7 @@ function selectCat(el, cat) {
   var sel = RL_$('reqCat'); if (sel) sel.value = cat;
 }
 
-var GCO = null; // GPS coords captured via "My location"
-function useMyLoc() {
-  if (!window.RL_LIVE) { RL_Toast('Location service not ready'); return; }
-  var btn = RL_$('reqGeoBtn'); if (btn) btn.textContent = 'Locating…';
-  RL_LIVE.locate(function(pos) {
-    var f = RL_$('reqLoc');
-    if (!pos || !RL_LIVE.inPK(pos.lat, pos.lng)) {
-      if (btn) btn.textContent = '📍 My location';
-      RL_Toast('Pakistan se bahar — please shehar likhein'); return;
-    }
-    GCO = { lat: pos.lat, lng: pos.lng };
-    var near = RL_LIVE.nearest(pos.lat, pos.lng);
-    if (f) f.value = near.name + ', Pakistan';
-    fetch('https://nominatim.openstreetmap.org/reverse?lat=' + pos.lat + '&lon=' + pos.lng + '&format=jsonv2&zoom=12')
-      .then(function(r){ return r.json(); })
-      .then(function(j){ var a = j.address||{}; var nm = a.city||a.town||a.village||a.suburb||a.district||near.name; if (f) f.value = nm; flashSet(); })
-      .catch(function(){ flashSet(); });
-    function flashSet(){ if(btn){ btn.textContent='✓ Set'; setTimeout(function(){ btn.textContent='📍 My location'; },1800); } }
-  });
-}
+var GCO = null; // GPS coords captured via picker
 function submitReq() {
   var loc = (RL_$('reqLoc')||{}).value||'';
   if (!loc.trim()) { RL_Toast('📍 Sirf apna location dein'); return; }  // location is the only required field
@@ -404,6 +433,7 @@ function submitReq() {
   ['reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
   var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
   GCO = null;
+  if (window.LP) LP.reset();
   updateBadges(); renderActive(); renderMyReqs();
   RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted! A volunteer will contact you soon.');
   RL_Send('POST', '/help-requests', body).then(function(res){
@@ -459,7 +489,13 @@ function renderNearby() {
   if (h) h.innerHTML = HOSPS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏥</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
 }
 
-/* ── LIVE: pull real help requests + nearby resources from the backend ── */
+/* ── LIVE: real requests + nearby resources WITH coordinates + true distances ── */
+function userPoint() { return RT_START || (LP && LP.getCur && LP.getCur()) || GCO || liveArea(); }
+function distLabel(from, p) {
+  if (!from || p.lat == null) return '—';
+  var d = RL_LIVE.distKm(from, p);
+  return d < 1 ? '<1 km' : d.toFixed(d < 10 ? 1 : 0) + ' km';
+}
 function loadMyReqs() {
   RL_Get('/help-requests').then(function(rows){
     if (!Array.isArray(rows) || !rows.length) return;
@@ -474,15 +510,22 @@ function loadMyReqs() {
   });
 }
 function loadNearbyLive() {
+  var me = userPoint();
   RL_Get('/shelters').then(function(a){
     if (Array.isArray(a) && a.length) {
-      SHELTERS = a.map(function(x){ return [x.name, x.address || x.city || '', ((x.current_occupancy||0) + '/' + (x.capacity||0) + ' people'), (x.distance_km ? x.distance_km + ' km' : 'nearby')]; });
-      renderNearby();
+      SHELTERS = a.filter(function(x){ return x.latitude != null; }).map(function(x){
+        var p = { lat: +x.latitude, lng: +x.longitude };
+        return [x.name, x.address || '', ((x.current_occupancy||0) + '/' + (x.capacity||0) + ' people'), distLabel(me, p), p.lat, p.lng];
+      });
+      renderNearby(); destList(true);
     }
   });
   RL_Get('/hospitals').then(function(a){
     if (Array.isArray(a) && a.length) {
-      HOSPS = a.map(function(x){ return [x.name, x.address || x.city || '', ((x.beds_available||0) + ' beds free'), (x.distance_km ? x.distance_km + ' km' : 'nearby')]; });
+      HOSPS = a.filter(function(x){ return x.latitude != null; }).map(function(x){
+        var p = { lat: +x.latitude, lng: +x.longitude };
+        return [x.name, x.address || '', ((x.beds_available||0) + ' beds free'), distLabel(me, p), p.lat, p.lng];
+      });
       renderNearby();
     }
   });
@@ -491,7 +534,7 @@ function loadNearbyLive() {
 function renderContacts() {
   var el = RL_$('contactList'); if (!el) return;
   el.innerHTML = CONTACTS.map(function(c) {
-    return '<div class="contact-card"><div class="item-icon" style="background:'+c.c+'22;color:'+c.c+'">📞</div><div><h5>'+c.name+'</h5><p>'+c.role+'</p></div><button class="call-pill" onclick="RL_Call(\''+c.phone+'\')">'+c.phone+'</button></div>';
+    return '<div class="contact-card"><div class="item-icon" style="background:'+c.c+'22;color:'+c.c+'">📞</div><div><h5>'+c.name+'</h5><p>'+c.role+'</p></div><button class="call-pill" onclick="RL_Tel(\''+c.phone+'\')">'+c.phone+'</button></div>';
   }).join('');
 }
 
@@ -505,8 +548,31 @@ function renderNotifs(allRead) {
       + (n.read ? '' : '<div style="width:8px;height:8px;border-radius:50%;background:var(--r);flex:none"></div>')
       + '</div>';
   }).join('');
+  var b = RL_$('notifBadge'); if (b && !allRead) b.textContent = NOTIFS.filter(function(n){ return !n.read; }).length;
 }
-function clearNotifs() { var b=RL_$('notifBadge');if(b)b.textContent='0'; renderNotifs(true); RL_Toast('All marked as read'); }
+function clearNotifs() { var b=RL_$('notifBadge'); if(b) b.textContent='0'; renderNotifs(true); RL_Toast('All marked as read'); }
+
+/* ── LIVE notifications: admin broadcasts + USGS earthquakes near you ── */
+function loadNotifsLive() {
+  var g = liveArea();
+  var pA = RL_Get('/alerts?active=true&limit=8') || Promise.resolve(null);
+  var pQ = window.RL_LIVE ? RL_LIVE.quakes(g.lat, g.lng, 350).catch(function(){ return []; }) : Promise.resolve([]);
+  Promise.all([pA, pQ]).then(function(res) {
+    var alerts = Array.isArray(res[0]) ? res[0] : null;
+    var quakes = Array.isArray(res[1]) ? res[1] : [];
+    var out = [];
+    if (alerts && alerts.length) alerts.forEach(function(x) {
+      out.push({ icon:'bell', col:SEV_COL[x.severity]||'var(--y)', title:(x.title||'Alert')+(x.location_text?' — '+x.location_text:''),
+        desc:x.description||('Severity: '+(x.severity||'medium')), read:false });
+    });
+    quakes.slice(0, 3).forEach(function(q) {
+      var days = Math.max(0, Math.round((Date.now() - q.time) / 864e5));
+      out.push({ icon:'pin', col:'var(--o)', title:'Earthquake M' + q.mag,
+        desc:(q.place||'Region') + ' · ' + days + ' day(s) ago · ' + RL_LIVE.distKm(g, q).toFixed(0) + ' km from you', read:false });
+    });
+    if (out.length) { NOTIFS = out.slice(0, 10); renderNotifs(false); }
+  });
+}
 
 /* ── NAVIGATION ── */
 var PAGES = {
@@ -516,19 +582,20 @@ var PAGES = {
   emergency:     'Emergency Contacts|Call emergency services directly',
   nearby:        'Nearby Help|Shelters and hospitals near you in Pakistan',
   flood:         'Flood Predictor|AI-powered flood risk for your area',
-  route:         'Safe Route Planner|Plan the safest route to the nearest shelter',
-  notifications: 'Notifications|Alerts and updates for you',
+  route:         'Safe Route Planner|Any address to any address — safest route, AI-scored',
+  scan:          'Smart Safety Scan|Instant danger report for any area in Pakistan',
+  notifications: 'Notifications|Live alerts and earthquakes near you',
   profile:       'My Profile|Your personal information'
 };
 function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
-    if (p === 'nearby')      { renderNearby(); initHelpMap(); }
+    if (p === 'nearby')        { renderNearby(); initHelpMap(); }
     if (p === 'flood')         initFloodMap();
     if (p === 'route')         initRouteMap();
     if (p === 'emergency')     renderContacts();
-    if (p === 'notifications') renderNotifs(false);
+    if (p === 'notifications') { renderNotifs(false); loadNotifsLive(); }
     if (p === 'myrequests')    renderMyReqs();
-    if (p === 'request')       renderActive();
+    if (p === 'request')       { renderActive(); LP.init(); }
   });
 }
 RL_WireNav(PAGES, function(p){ navigate(p); });
@@ -544,6 +611,7 @@ renderNotifs(false);
 RL_Icons();
 loadMyReqs();
 loadNearbyLive();
+loadNotifsLive();
 
 /* ── LIVE weather / flood / map (free, no API key) ── */
 function _setTxt(id,v){ var e=RL_$(id); if(e) e.textContent=v; }
@@ -556,6 +624,31 @@ function applyRisk(r,name){
   if(b){ b.innerHTML='<svg class="i" viewBox="0 0 24 24"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"/></svg>'+(r.pct>=60?'HIGH FLOOD RISK':(r.pct>=30?'MODERATE FLOOD RISK':'LOW FLOOD RISK')); b.style.background=r.pct>=60?'rgba(239,91,91,.25)':(r.pct>=30?'rgba(245,183,61,.25)':'rgba(60,192,142,.25)'); b.style.color=r.pct>=60?'#f87171':(r.pct>=30?'#F5B83D':'#3CC08E'); }
   _setTxt('flRec', r.pct>=60?'Move Now':(r.pct>=30?'Stay Alert':'Safe'));
   var arc=RL_$('flArc'); if(arc){ var v=Math.max(2,Math.min(98,r.pct)); arc.setAttribute('stroke-dasharray', v+' '+(100-v)); }
+  renderSafetyTips(r.pct);
+}
+/* Recommendations adapt to the LIVE risk level — not a static list */
+function renderSafetyTips(pct) {
+  var el = RL_$('safetyTips'); if (!el) return;
+  var tips = pct >= 60 ? [
+    ['#EF5B5B','var(--r)','home','Evacuate immediately','Move to higher ground — do not wait'],
+    ['#EF5B5B','var(--r)','drop','Never cross flowing water','30 cm of moving water can knock you down'],
+    ['#F58A3D','var(--o)','phone','Call 1122 if trapped','Keep your phone charged and on'],
+    ['#F5B83D','var(--y)','bag','Grab your emergency kit','Documents, medicines, water']
+  ] : pct >= 30 ? [
+    ['#F58A3D','var(--o)','drop','Store clean water','Minimum 3 days supply per person'],
+    ['#F5B83D','var(--y)','bag','Pack emergency kit','Documents, medicines, phone charger'],
+    ['#4C8DF6','var(--b)','bell','Monitor alerts hourly','NDMA: 1700 · Rescue: 1122'],
+    ['#3CC08E','var(--gr)','pin','Check your route','Safe Route Planner before travelling']
+  ] : [
+    ['#3CC08E','var(--gr)','check','Area currently safe','Keep monitoring during monsoon season'],
+    ['#4C8DF6','var(--b)','phone','Save emergency numbers','1122 · 15 · 115 · 1700'],
+    ['#F5B83D','var(--y)','users','Know your nearest shelter','Check the Nearby Help page'],
+    ['#7C6CF0','var(--p)','list','Keep requests updated','Use Aid Tracking for your help requests']
+  ];
+  el.innerHTML = tips.map(function(t) {
+    return '<div class="item"><div class="item-icon" style="background:'+t[0]+'22;color:'+t[1]+'"><i data-i="'+t[2]+'"></i></div><div class="t"><b>'+t[3]+'</b><small>'+t[4]+'</small></div></div>';
+  }).join('');
+  RL_Icons();
 }
 function liveArea(){ var uu=RL_GetUser()||{}; return (window.RL_LIVE && RL_LIVE.geo(uu.area||uu.city)) || {lat:29.1044,lng:70.3302,name:'Rajanpur'}; }
 function loadFloodLive(){
@@ -588,18 +681,93 @@ function initFloodMap(){
   RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> (your area)','#F5B83D');
   setTimeout(function(){try{FLOOD_MAP.invalidateSize();}catch(e){}},250);
 }
-/* ── SAFE ROUTE PLANNER (OSRM routing + flood-risk check, free & PK-locked) ── */
-var ROUTE_MAP=null;
-function destList(){ var el=RL_$('rtDest'); if(!el||el.options.length) return; SHELTERS.forEach(function(x,i){ var o=document.createElement('option'); o.value=i; o.textContent=x[0]+' — '+x[1]; el.appendChild(o); }); }
+/* ── LOCATION PICKER: exact pin, live GPS, street-level reverse address ── */
+var LP=(function(){
+  var map=null, marker=null, cur=null, watchId=null, liveOn=false;
+  function init(){
+    if(!window.L||!window.RL_LIVE) return;
+    var el=document.getElementById('locPick'); if(!el) return;
+    if(map){ setTimeout(inval,150); if(cur) setPos(cur.lat,cur.lng,false); return; }
+    var g=liveArea(); map=RL_LIVE.map('locPick',g.lat,g.lng,12); if(!map) return;
+    map.on('click',function(e){ setPos(e.latlng.lat,e.latlng.lng); });
+    if(cur) setPos(cur.lat,cur.lng,false);
+    setTimeout(inval,250);
+  }
+  function inval(){ try{ map&&map.invalidateSize(); }catch(e){} }
+  function setPos(lat,lng,rev){
+    if(!RL_LIVE.inPK(lat,lng)){ RL_Toast('Pakistan ke andar location dein'); return; }
+    cur={lat:lat,lng:lng}; GCO={lat:lat,lng:lng};
+    if(map){
+      if(!marker){ marker=window.L.marker([lat,lng],{draggable:true}).addTo(map); marker.on('dragend',function(){ var p=marker.getLatLng(); setPos(p.lat,p.lng); }); }
+      else marker.setLatLng([lat,lng]);
+    }
+    if(rev!==false) resolve(lat,lng);
+  }
+  function resolve(lat,lng){
+    if(!window.RL_LIVE) return;
+    RL_LIVE.reverse(lat,lng).then(function(j){
+      var txt=RL_LIVE.fmtAddr(j)||('('+lat.toFixed(4)+', '+lng.toFixed(4)+')');
+      var f=RL_$("reqLoc"); if(f) f.value=txt;
+      var a=RL_$("lpAddr"); if(a){ a.textContent='📍 '+txt; a.classList.remove('empty'); }
+    }).catch(function(){ var a=RL_$("lpAddr"); if(a){ a.textContent='📍 Exact: '+lat.toFixed(4)+', '+lng.toFixed(4); a.classList.remove('empty'); } });
+  }
+  function locateOnce(){
+    if(!window.RL_LIVE){ RL_Toast('Location service nahi'); return; }
+    RL_LIVE.locate(function(pos){
+      if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS available nahi / Pakistan se bahar'); return; }
+      init(); if(map) map.setView([pos.lat,pos.lng],16); setPos(pos.lat,pos.lng);
+    });
+  }
+  function toggleLive(){
+    if(!window.RL_LIVE) return;
+    liveOn=!liveOn; var b=RL_$("lpLiveBtn"); if(b) b.classList.toggle('on',liveOn);
+    if(liveOn){
+      if(!navigator.geolocation){ RL_Toast('GPS supported nahi'); liveOn=false; if(b)b.classList.remove('on'); return; }
+      RL_Toast('Live GPS ON 📡'); locateOnce();
+      watchId=navigator.geolocation.watchPosition(function(p){
+        var la=p.coords.latitude, lo=p.coords.longitude; if(!RL_LIVE.inPK(la,lo)) return;
+        init(); if(map&&marker) map.panTo([la,lo]); setPos(la,lo,false); resolve(la,lo);
+      }, function(){ RL_Toast('Live GPS band (permission)'); if(liveOn) toggleLive(); }, {enableHighAccuracy:true,timeout:12000,maximumAge:2000});
+    } else { if(watchId!=null&&navigator.geolocation){ navigator.geolocation.clearWatch(watchId); watchId=null; } RL_Toast('Live GPS OFF'); }
+  }
+  function recenter(){ init(); if(map&&cur) map.setView([cur.lat,cur.lng],16); else if(map){ var g=liveArea(); map.setView([g.lat,g.lng],12); } }
+  function reset(){ cur=null; GCO=null; if(marker&&map){ map.removeLayer(marker); marker=null; } var a=RL_$("lpAddr"); if(a){ a.textContent='Abhi koi exact location nahi — map par tap karein.'; a.classList.add('empty'); } }
+  return { init:init, locateOnce:locateOnce, toggleLive:toggleLive, recenter:recenter, getCur:function(){return cur;}, reset:reset, setPos:setPos };
+})();
+/* ── SAFE ROUTE PLANNER v2 — any→any address, AI safety score, alternatives ── */
+var ROUTE_MAP=null, RT_START=null, RT_START_M=null, RT_DEST_SEL=null;
+function destList(rebuild){
+  var el=RL_$('rtDest'); if(!el) return;
+  if (rebuild) el.innerHTML='<option value="">— custom destination upar likhein —</option>';
+  if (el.options.length > 1) return;
+  SHELTERS.forEach(function(x,i){ if(x[4]!=null){ var o=document.createElement('option'); o.value=i; o.textContent=x[0]+' — '+x[1]; el.appendChild(o); } });
+}
+function rtPickDest(){
+  var el=RL_$('rtDest'); var i=parseInt((el||{}).value,10);
+  if (isNaN(i) || !SHELTERS[i]) { RT_DEST_SEL=null; return; }
+  RT_DEST_SEL={ lat:SHELTERS[i][4], lng:SHELTERS[i][5], name:SHELTERS[i][0] };
+  var t=RL_$('rtTo'); if(t && !t.value) t.placeholder=SHELTERS[i][0]+' — '+SHELTERS[i][1];
+}
 function initRouteMap(){
   destList();
-  if(!window.L||!window.RL_LIVE||ROUTE_MAP) return;
+  if(!window.L||!window.RL_LIVE||ROUTE_MAP){ if(ROUTE_MAP) setTimeout(function(){try{ROUTE_MAP.invalidateSize();}catch(e){}},150); return; }
   var g=liveArea(); ROUTE_MAP=RL_LIVE.map('routeMap',g.lat,g.lng,8); loadWxLive();
-  if(ROUTE_MAP){
-    RL_LIVE.marker(ROUTE_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> — you','#B91C1C');
-    SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(ROUTE_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
-  }
-  setTimeout(function(){try{ROUTE_MAP&&ROUTE_MAP.invalidateSize();}catch(e){}},250);
+  ROUTE_MAP.on('click',function(e){ RT_START={lat:e.latlng.lat,lng:e.latlng.lng}; pinStart(); rtReverseStart(); RL_Toast('Start pin set — ab Plan dabayein'); });
+  RL_LIVE.marker(ROUTE_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> — your area','#B91C1C');
+  SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(ROUTE_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
+  setTimeout(function(){try{ROUTE_MAP.invalidateSize();}catch(e){}},250);
+}
+function pinStart(){ if(RT_START_M&&ROUTE_MAP) ROUTE_MAP.removeLayer(RT_START_M); RT_START_M=window.L.marker([RT_START.lat,RT_START.lng],{draggable:true}).addTo(ROUTE_MAP).bindPopup('🚩 Start (drag to adjust)'); RT_START_M.on('dragend',function(){ var p=RT_START_M.getLatLng(); RT_START={lat:p.lat,lng:p.lng}; rtReverseStart(); }); }
+function rtReverseStart(){
+  RL_LIVE.reverse(RT_START.lat,RT_START.lng).then(function(j){ var f=RL_$('rtFrom'); if(f) f.value=RL_LIVE.fmtAddr(j)||('('+RT_START.lat.toFixed(4)+', '+RT_START.lng.toFixed(4)+')'); }).catch(function(){});
+}
+function rtLocate(){
+  RL_LIVE.locate(function(pos){
+    if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS nahi mila / Pakistan se bahar'); return; }
+    RT_START={lat:pos.lat,lng:pos.lng}; initRouteMap(); pinStart(); rtReverseStart();
+    if(ROUTE_MAP) ROUTE_MAP.setView([pos.lat,pos.lng],13);
+    RL_Toast('📍 Start = your location');
+  });
 }
 function loadWxLive(){
   var g=liveArea(); if(!window.RL_LIVE) return;
@@ -607,38 +775,172 @@ function loadWxLive(){
     var el=RL_$('wxLive'); if(!el||!w||!w.current) return; var c=w.current, d=w.daily||{};
     el.innerHTML='<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🌡️</div><div class="t"><b>'+Math.round(c.temperature_2m)+'°C</b><small>'+(c.relative_humidity_2m||0)+'% humidity · wind '+(c.wind_speed_10m||0)+' km/h</small></div></div>'
       +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🌧️</div><div class="t"><b>'+(d.precipitation_sum?d.precipitation_sum[0]:0)+' mm</b><small>Today · '+(d.precipitation_probability_max?d.precipitation_probability_max[0]:0)+'% chance</small></div></div>';
+    var days=RL_$('wx3day');
+    if(days && d.time){
+      days.innerHTML=d.time.slice(0,3).map(function(t,i){
+        var mm=(d.precipitation_sum&&d.precipitation_sum[i]!=null)?d.precipitation_sum[i]:0;
+        var pr=(d.precipitation_probability_max&&d.precipitation_probability_max[i]!=null)?d.precipitation_probability_max[i]:0;
+        return '<div class="wx-day"><small>'+new Date(t).toLocaleDateString('en-PK',{weekday:'short'})+'</small><b>'+mm+' mm</b><small>'+pr+'% chance</small></div>';
+      }).join('');
+    }
   }).catch(function(){});
+}
+function resolveStart(cb){
+  if (RT_START) return cb(RT_START);
+  var picked=(LP.getCur&&LP.getCur())||GCO; if (picked) return cb(picked);
+  var txt=(RL_$('rtFrom')||{}).value||'';
+  if (txt.trim() && window.RL_LIVE) return RL_LIVE.place(txt).then(function(p){ cb(p); });
+  return RL_LIVE.locate(function(pos){ cb(pos&&RL_LIVE.inPK(pos.lat,pos.lng)?pos:liveArea()); });
+}
+function resolveEnd(cb){
+  var txt=(RL_$('rtTo')||{}).value||'';
+  if (txt.trim() && window.RL_LIVE) return RL_LIVE.place(txt).then(function(p){ cb(p||RT_DEST_SEL); });
+  return cb(RT_DEST_SEL);
 }
 function planRoute(){
   if(!window.RL_LIVE||!window.L){ RL_Toast('Map not ready'); return; }
-  var res=RL_$('rtResult'); if(res) res.innerHTML='<p style="font-size:13px">🛰️ Locating you…</p>';
-  RL_LIVE.locate(function(pos){
-    var start=(pos&&RL_LIVE.inPK(pos.lat,pos.lng))?{lat:pos.lat,lng:pos.lng}:liveArea();
-    var idx=parseInt((RL_$('rtDest')||{}).value||'0',10); var d=SHELTERS[idx]||SHELTERS[0];
-    if(!d||d[4]==null){ RL_Toast('Shelter coordinates not available'); return; }
-    drawRoute(start,{lat:d[4],lng:d[5]},d);
+  var res=RL_$('rtResult'); if(res) res.innerHTML='<p style="font-size:13px">🛰️ Locations resolve ho rahe hain…</p>';
+  resolveStart(function(start){
+    if(!start){ RL_Toast('Start location nahi mil saka — likhein ya GPS lein'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Start resolve nahi hua.</p>'; return; }
+    resolveEnd(function(end){
+      if(!end||end.lat==null){ RL_Toast('Destination likhein — kahin bhi Pakistan mein'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Destination resolve nahi hua.</p>'; return; }
+      if(!RL_LIVE.inPK(end.lat,end.lng)){ RL_Toast('Sirf Pakistan ke andar route milta hai'); return; }
+      if(res) res.innerHTML='<p style="font-size:13px">🛣️ Route + 5-point danger scan ho raha hai… (10-15 sec)</p>';
+      RL_LIVE.routeOSRM(start,end).then(function(routes){
+        if(!routes||!routes.length){ RL_Toast('Route service abhi unavailable'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Route service reachable nahi — dobara try karein.</p>'; return; }
+        scoreAndRender(start,end,routes);
+      }).catch(function(){ RL_Toast('Route service unavailable'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Route service offline.</p>'; });
+    });
   });
 }
-function drawRoute(start,end,d){
-  var url='https://router.project-osrm.org/route/v1/driving/'+start.lng+','+start.lat+';'+end.lng+','+end.lat+'?overview=full&geometries=geojson';
-  fetch(url).then(function(r){return r.json();}).then(function(j){
-    if(!j||!j.routes||!j.routes.length){ RL_Toast('Route service abhi unavailable'); return; }
-    if(!ROUTE_MAP){ RL_Toast('Map not ready'); return; }
-    var rt=j.routes[0];
-    if(ROUTE_MAP._rtLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._rtLine); }
-    ROUTE_MAP._rtLine=window.L.geoJSON(rt.geometry,{style:{color:'#2E7D32',weight:5,opacity:.9}}).addTo(ROUTE_MAP);
-    ROUTE_MAP.fitBounds(ROUTE_MAP._rtLine.getBounds(),{padding:[30,30]});
-    RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'🏕️ <b>'+d[0]+'</b> — destination','#2E7D32');
-    var km=(rt.distance/1000).toFixed(1), min=Math.max(1,Math.round(rt.duration/60));
-    var mid={lat:(start.lat+end.lat)/2,lng:(start.lng+end.lng)/2};
-    RL_LIVE.flood(mid.lat,mid.lng).catch(function(){return null;}).then(function(fl){
-      var r=RL_LIVE.risk(null,fl); var safe=r.riverMax<50; var res=RL_$('rtResult');
-      if(res) res.innerHTML='<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">📏</div><div class="t"><b>'+km+' km · '+min+' min</b><small>to '+d[0]+', '+d[1]+'</small></div></div>'
-        +'<div class="item" style="border-color:'+(safe?'#3CC08E44':'#EF5B5B44')+'"><div class="item-icon" style="background:'+(safe?'#3CC08E22':'#EF5B5B22')+';color:'+(safe?'var(--gr)':'var(--r)')+'">'+(safe?'✅':'⚠️')+'</div><div class="t"><b>'+(safe?'Raasta safe lag raha hai':'Raaste mein flood risk ho sakta hai')+'</b><small>River '+r.status+' ('+r.riverMax+' m³/s) midpoint par</small></div></div>';
-      RL_Toast(safe?'✅ Safe route planned ('+km+' km)':'⚠️ Route planned — flood risk ahead');
+function samplePoints(rt,n){
+  var co=rt.geometry&&rt.geometry.coordinates?rt.geometry.coordinates:[]; var out=[];
+  if(!co.length) return out;
+  for(var i=0;i<n;i++){ var c=co[Math.round((co.length-1)*i/(n-1))]; out.push({lat:c[1],lng:c[0]}); }
+  return out;
+}
+function scoreRoute(samples, wxArr, flArr, alerts, quakes){
+  var risk=0, warns=[], temps=[], precip=0, dis=0;
+  samples.forEach(function(s,i){
+    var w=wxArr&&wxArr[i], f=flArr&&flArr[i];
+    if(w){
+      var t=w.current&&w.current.temperature_2m; if(t!=null) temps.push(t);
+      var p=(w.daily&&w.daily.precipitation_sum&&w.daily.precipitation_sum[0])||0; if(p>precip) precip=p;
+    }
+    if(f&&f.daily&&Array.isArray(f.daily.river_discharge)){
+      var d=Math.max.apply(null,f.daily.river_discharge.map(function(x){return x||0;})); if(d>dis) dis=d;
+    }
+  });
+  if(precip>20){ risk+=30; warns.push('🌧️ Route par bohot tez barish ('+precip.toFixed(0)+' mm)'); }
+  else if(precip>6){ risk+=12; warns.push('🌧️ Route par barish ka imkaan ('+precip.toFixed(0)+' mm)'); }
+  if(dis>150){ risk+=35; warns.push('🌊 Nadi danger mark se upar ('+dis.toFixed(0)+' m³/s)'); }
+  else if(dis>50){ risk+=15; warns.push('🌊 Nadi ka level khaufnaak ('+dis.toFixed(0)+' m³/s)'); }
+  (alerts||[]).forEach(function(a){
+    if(a.latitude==null) return;
+    var near=samples.some(function(s){ return RL_LIVE.distKm(s,{lat:+a.latitude,lng:+a.longitude})<40; });
+    if(near){ risk+=20; warns.push('⚠️ Active alert route ke paas: '+(a.title||'')); }
+  });
+  (quakes||[]).forEach(function(q){ if(q.mag>=4.5){ risk+=10; warns.push('🌍 Haal hi ka earthquake M'+q.mag+' — '+(q.place||'')); } });
+  var score=Math.max(5,100-risk);
+  return { score:score, warns:warns, tempLo:temps.length?Math.min.apply(null,temps):null, tempHi:temps.length?Math.max.apply(null,temps):null, precip:precip, dis:dis };
+}
+function scoreColor(s){ return s>=70?'#3CC08E':s>=45?'#F5B83D':'#EF5B5B'; }
+function scoreLabel(s){ return s>=70?'SAFE':s>=45?'CAUTION':'DANGEROUS'; }
+function maneuverText(st){
+  var m=st.maneuver||{}, t=m.type||'', mod=m.modifier||'';
+  var word = t==='depart' ? 'Head out' : t==='arrive' ? 'Arrive at destination' :
+    t==='turn' ? 'Turn '+mod : t==='new name' ? 'Continue on' : t==='continue' ? 'Continue '+mod :
+    t==='merge' ? 'Merge '+mod : t==='on ramp' ? 'Take ramp '+mod : t==='off ramp' ? 'Exit ramp '+mod :
+    t==='roundabout'||t==='rotary' ? 'Take roundabout' : t==='end of road' ? 'At end of road turn '+mod :
+    t==='fork' ? 'Keep '+mod+' at fork' : 'Go '+mod+' '+t;
+  return word + (st.name ? ' onto ' + st.name : '') + ' · ' + (st.distance>1000?(st.distance/1000).toFixed(1)+' km':Math.round(st.distance)+' m');
+}
+function scoreAndRender(start,end,routes){
+  var all=[], seen={};
+  routes.forEach(function(rt){ samplePoints(rt,5).forEach(function(p){ var k=p.lat.toFixed(3)+','+p.lng.toFixed(3); if(!seen[k]){ seen[k]=1; } all.push(p); }); });
+  var uniq=[], used={}; all.forEach(function(p){ var k=p.lat.toFixed(3)+','+p.lng.toFixed(3); if(!used[k]){ used[k]=1; uniq.push(p); } });
+  Promise.all([
+    RL_LIVE.weatherAt(uniq).catch(function(){ return null; }),
+    RL_LIVE.floodAt(uniq).catch(function(){ return null; }),
+    RL_Get('/alerts?active=true&limit=50'),
+    (function(){ var mid=uniq[Math.floor(uniq.length/2)]||start; return RL_LIVE.quakes(mid.lat,mid.lng,350).catch(function(){ return []; }); })()
+  ]).then(function(res){
+    var wxAll=res[0]||[], flAll=res[1]||[], alerts=res[2]||[], quakes=res[3]||[];
+    var idx=0, scored=routes.map(function(rt){
+      var s=samplePoints(rt,5), map=s.map(function(){ return idx++; });
+      return { rt:rt, info:scoreRoute(s, map.map(function(i){return wxAll[i];}), map.map(function(i){return flAll[i];}), alerts, quakes) };
     });
-  }).catch(function(){ RL_Toast('Route service unavailable'); });
+    scored.sort(function(a,b){ return b.info.score-a.info.score; });
+    var best=scored[0], alt=scored[1];
+    if (alt) alt.rt._sc = alt.info.score;
+    drawRoute(start,end,best.rt,alt?alt.rt:null,best.info);
+  });
+}
+function drawRoute(start,end,rt,altRt,info){
+  var res=RL_$('rtResult');
+  if(ROUTE_MAP&&ROUTE_MAP._rtLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._rtLine); ROUTE_MAP._rtLine=null; }
+  if(ROUTE_MAP&&ROUTE_MAP._altLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._altLine); ROUTE_MAP._altLine=null; }
+  if(ROUTE_MAP){
+    if(altRt) ROUTE_MAP._altLine=window.L.geoJSON(altRt.geometry,{style:{color:'#999',weight:4,opacity:.45,dashArray:'6 6'}}).addTo(ROUTE_MAP);
+    ROUTE_MAP._rtLine=window.L.geoJSON(rt.geometry,{style:{color:scoreColor(info.score),weight:5,opacity:.95}}).addTo(ROUTE_MAP);
+    ROUTE_MAP.fitBounds(ROUTE_MAP._rtLine.getBounds(),{padding:[30,30]});
+  }
+  RT_START={lat:start.lat,lng:start.lng}; pinStart();
+  RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'🏁 <b>Destination</b>','#2E7D32');
+  var km=(rt.distance/1000).toFixed(1), min=Math.max(1,Math.round(rt.duration/60));
+  var eta=new Intl.DateTimeFormat('en-PK',{timeZone:'Asia/Karachi',hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date(Date.now()+rt.duration*1000));
+  var steps=((rt.legs&&rt.legs[0]&&rt.legs[0].steps)||[]).slice(0,7);
+  var c=scoreColor(info.score);
+  var wxLine = info.tempLo!=null ? ('🌡️ Route par '+Math.round(info.tempLo)+'–'+Math.round(info.tempHi)+'°C') : '🌡️ Weather data unavailable';
+  res.innerHTML =
+    '<div class="item" style="border-color:'+c+'44"><div class="item-icon" style="background:'+c+'22;color:'+c+'">🛡️</div><div class="t"><b>Safety Score: '+info.score+'/100 — '+scoreLabel(info.score)+'</b><small>'+wxLine+' · rain '+info.precip.toFixed(0)+'mm · river '+info.dis.toFixed(0)+' m³/s</small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">📏</div><div class="t"><b>'+km+' km · ~'+min+' min drive</b><small>Arrival (Karachi time): <b>'+eta+'</b></small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🚩</div><div class="t"><b>Start</b><small id="rtStartAddr">Address la raha hoon…</small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏁</div><div class="t"><b>Destination</b><small id="rtEndAddr">Address la raha hoon…</small></div></div>'
+    +(info.warns.length ? info.warns.map(function(w){ return '<div class="item" style="border-color:#EF5B5B44"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">⚠️</div><div class="t"><b>'+w+'</b></div></div>'; }).join('')
+      : '<div class="item" style="border-color:#3CC08E44"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">✅</div><div class="t"><b>Raaste mein koi danger nahi mili</b><small>Weather, river, alerts aur earthquakes sab clear hain</small></div></div>')
+    +(altRt ? '<div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🔀</div><div class="t"><b>Alternative route skipped</b><small>Safety score '+(altRt._sc!=null?altRt._sc:'kam')+' — is line ko map par grey dekhein</small></div></div>' : '')
+    +(steps.length ? '<div style="margin-top:10px"><b style="font-size:13px">🧭 Turn-by-turn</b>'+steps.map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('')+'</div>' : '');
+  RL_Icons();
+  RL_LIVE.reverse(start.lat,start.lng).then(function(j1){ var e=RL_$('rtStartAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j1)||('('+start.lat.toFixed(4)+', '+start.lng.toFixed(4)+')'); }).catch(function(){});
+  RL_LIVE.reverse(end.lat,end.lng).then(function(j2){ var e=RL_$('rtEndAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j2)||('('+end.lat.toFixed(4)+', '+end.lng.toFixed(4)+')'); }).catch(function(){});
+  RL_Toast(info.score>=70?'✅ Safest route selected ('+km+' km)':'⚠️ Route set — warnings upar hain');
+}
+/* ── SMART SAFETY SCAN — instant danger report for any PK area ── */
+function runScan(){
+  var q=((RL_$('scanQ')||{}).value||'').trim();
+  var out=RL_$('scanOut');
+  if(!q){ RL_Toast('Koi jagah likhein — e.g. Chitral'); return; }
+  if(out) out.innerHTML='<p style="font-size:13px;padding:8px">🛰️ '+q+' scan ho raha hai…</p>';
+  RL_LIVE.place(q).then(function(p){
+    if(!p){ if(out) out.innerHTML='<div class="card"><p class="mute" style="padding:12px">Pakistan mein "'+q+'" nahi mila — doosri spelling try karein.</p></div>'; RL_Toast('Jagah nahi mili'); return; }
+    Promise.all([
+      RL_LIVE.weather(p.lat,p.lng).catch(function(){return null;}),
+      RL_LIVE.flood(p.lat,p.lng).catch(function(){return null;}),
+      RL_LIVE.quakes(p.lat,p.lng,300).catch(function(){return [];}),
+      RL_Get('/alerts?active=true&limit=50')
+    ]).then(function(res){
+      var wx=res[0], fl=res[1], qs=res[2]||[], al=res[3]||[];
+      var r=RL_LIVE.risk(wx,fl);
+      var alNear=al.filter(function(a){ return a.latitude!=null && RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude})<80; });
+      var sh=SHELTERS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
+      var hp=HOSPS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
+      var c=r.pct>=60?'#EF5B5B':r.pct>=30?'#F5B83D':'#3CC08E';
+      var html='<div class="card fade-up" style="border-color:'+c+'55"><div class="card-header"><h3>🛰️ Safety Report — '+p.name+', Pakistan</h3><span class="tag" style="background:'+c+'22;color:'+c+'">'+(r.pct>=60?'HIGH RISK':r.pct>=30?'MODERATE':'LOW RISK')+' '+r.pct+'%</span></div>'
+        +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🌡️</div><div class="t"><b>'+(wx&&wx.current?Math.round(wx.current.temperature_2m)+'°C · '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather unavailable')+'</b><small>'+(wx&&wx.daily&&wx.daily.precipitation_sum?'Aaj '+(wx.daily.precipitation_sum[0]||0)+' mm barish · '+(wx.daily.precipitation_probability_max[0]||0)+'% chance':'')+'</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#16467022;color:#164670">🌊</div><div class="t"><b>Flood risk '+r.pct+'% — '+r.status+'</b><small>River '+(r.riverMax||0)+' m³/s · trend: '+r.trend+' · confidence '+r.confidence+'%</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)">🌍</div><div class="t"><b>'+(qs.length?'30 din mein '+qs.length+' earthquake(s) nearby':'30 din mein koi earthquake nearby nahi')+'</b>'+(qs.length?'<small>'+qs.slice(0,3).map(function(q){return 'M'+q.mag+' — '+(q.place||'')+' ('+Math.round(RL_LIVE.distKm(p,q))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">📡</div><div class="t"><b>'+(alNear.length?alNear.length+' active alert(s) is area ke paas':'Koi active alert is area ke paas nahi')+'</b>'+(alNear.length?'<small>'+alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
+        +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏕️</div><div class="t"><b>Nearest help</b><small>'
+          +(sh.length?'🏕️ '+sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'🏕️ Koi shelter registered nahi')
+          +(hp.length?'<br>🏥 '+hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'')
+        +'</small></div></div></div>';
+      if(out) out.innerHTML=html;
+      RL_Icons();
+    });
+  });
 }
 loadFloodLive();
+renderSafetyTips(20);
 </script>
 </body></html>

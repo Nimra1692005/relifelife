@@ -1,1 +1,0 @@
-﻿"""ReliefLink Backend App"""

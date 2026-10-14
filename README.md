@@ -1,165 +1,101 @@
-# ReliefLink — AI Disaster Emergency Response Platform
+# ReliefLink — Disaster Response Platform (Pakistan)
 
-> **Real-time disaster monitoring, nearby hospitals & shelters, weather intelligence, and AI-powered risk analysis for Pakistan — all in one platform.**
+> **Help requests, volunteer coordination, shelters & hospitals, admin command centre, and live disaster alerts — one deploy, zero cards.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-blue?logo=github)](https://nimra1692005.github.io/relifelife/)
-[![Backend API](https://img.shields.io/badge/Backend%20API-Render.com-green?logo=render)](https://relieflink-api.onrender.com/docs)
-
----
-
-## Features
-
-### User App
-- **Landing Page** — Two-button entry (User / Volunteer) with mobile-responsive scroll
-- **Live Map** — Leaflet.js with real SOS markers, hospitals, shelters, risk zones (OpenStreetMap + OpenWeatherMap)
-- **Weather Intelligence** — Live weather data for all major Pakistani cities via OpenWeatherMap
-- **Nearby Hospitals & Shelters** — GPS-powered search using Overpass API (100% free, no API key needed)
-- **Route Planner** — Safe route planning with disaster alerts along the way (OSRM + OpenWeatherMap)
-- **AI Flood Predictor** — Logistic regression ML model computing flood probability from live rainfall forecasts
-- **AI Chat Assistant** — Multilingual (English / اردو / Roman Urdu) emergency assistant powered by Groq AI
-- **Emergency SOS** — One-tap SOS with GPS location, emergency type, and real-time team assignment
-- **Live Location Tracking** — Real-time GPS with pulsing marker and nearest hospital detection
-- **Famous Hospitals** — 36 real Pakistani hospitals (Lahore, Karachi, Islamabad, Peshawar + more)
-- **Historical Flood Comparison** — Compare live rainfall against documented Pakistani flood events
-
-### Mobile App (React Native / Expo)
-- Cross-platform iOS/Android app with tab navigation
-- Real-time SOS with status timeline
-- AI chat with scope-guarded responses (blocks off-topic / secret-leak attempts)
-- Risk analysis cards with combined severity scoring
-- Safe navigation with route safety overlays
-
-### Volunteer Network
-- Volunteer registration with skill-based matching
-- Team deployment tracking
-- Availability management (Available / Weekends / Evenings / On Call)
-
-### Admin Dashboard
-- Command center with live stats (Active SOS, People Helped, Active Shelters, High-Risk Zones)
-- River level monitoring (FFD baselines + live OpenWeatherMap rainfall)
-- Real-time disaster alerts (USGS earthquakes, GDACS global disasters, OpenWeatherMap weather)
+[![Live Site](https://img.shields.io/badge/Live-ReliefLink-blue?logo=vercel)](https://relieflink-neon.vercel.app)
 
 ---
 
-## Tech Stack
+## Architecture
 
-| Layer | Technology |
+```
+Browser (static HTML)  →  Vercel Serverless Function  →  Supabase (PostgREST)
+index.html + dashboards     api/dispatch.js                Postgres tables
+```
+
+- **Frontend** — plain HTML/CSS/JS (no build step). The root `index.html` is the citizen/volunteer entry; `dashboards/` holds the three role dashboards.
+- **Backend** — a single Vercel serverless function, `api/dispatch.js`. Every `/api/v1/*` request is rewritten to it (see `vercel.json`); it talks to Supabase over the REST API with **zero external dependencies**.
+- **Same-origin API** — `config.js` uses the relative `/api/v1` path on the deployed site, so there are no CORS issues at all.
+
+---
+
+## Pages
+
+| Page | Purpose |
 |---|---|
-| **Frontend** | Vanilla JS + Leaflet.js + HTML/CSS (single-file SPA) |
-| **Mobile** | React Native (Expo) + TypeScript |
-| **Backend** | Python FastAPI + Supabase (PostgreSQL) |
-| **AI/ML** | Logistic Regression (flood predictor) + Groq LLM (chat) |
-| **Maps** | OpenStreetMap + CARTO tiles + OSRM routing |
-| **Weather** | OpenWeatherMap API (free tier) |
-| **Data** | FFD/WAPDA river baselines + PMD weather patterns |
-| **Deployment** | GitHub Pages (frontend) + Render.com (backend) |
+| `index.html` | Landing + help request submission, volunteer signup, admin sign-in |
+| `dashboards/help.html` | Citizen help tracker — submit requests, view nearby shelters/hospitals |
+| `dashboards/volunteer.html` | Task marketplace — browse/claim tasks, log progress, live admin alerts as notifications |
+| `dashboards/admin.html` | Command centre — live stats, real charts, volunteer verification, alert broadcast, disaster map (Leaflet) |
+
+`dashboards/shared.css` / `shared.js` / `live.js` are the shared design system + helpers.
 
 ---
 
-## Project Structure
+## API Endpoints (all served by `api/dispatch.js`)
 
-```
-relieflink/
-├── admin/                    # Frontend (GitHub Pages deploy target)
-│   ├── preview.html          # Main SPA (all pages in one file)
-│   ├── hero.png              # Landing background
-│   ├── hospital.png          # Hospital page header
-│   ├── sos.png               # SOS modal header
-│   ├── weather.png           # Weather page header
-│   ├── route.png             # Route planner header
-│   ├── flood.png             # Flood predictor header
-│   ├── volunteers.png        # Volunteer network header
-│   ├── safe-places.png       # Safe places header
-│   └── src/                  # Admin React components (optional)
-├── backend/                  # Python FastAPI backend
-│   ├── app/
-│   │   ├── main.py           # FastAPI app entry point
-│   │   ├── config.py         # Settings & environment config
-│   │   ├── ai/               # AI chatbot service
-│   │   ├── database/         # Supabase client
-│   │   ├── middleware/       # CORS, auth middleware
-│   │   ├── models/           # Pydantic schemas
-│   │   ├── routers/          # API endpoints (auth, SOS, weather, etc.)
-│   │   ├── services/         # Business logic (SOS, weather, location)
-│   │   └── utils/            # Geo calculations, common helpers
-│   ├── migrations/           # SQL schema for Supabase
-│   ├── Procfile              # Render.com deployment
-│   ├── requirements.txt      # Python dependencies
-│   └── runtime.txt           # Python version
-├── mobile/                   # React Native (Expo) mobile app
-│   ├── app/                  # Screens & navigation
-│   ├── components/           # Reusable UI components
-│   ├── constants/            # Theme constants
-│   ├── services/             # AI assistant, weather, SOS API
-│   └── utils/                # Sample data, helpers
-├── shared/                   # Shared types & constants
-│   ├── constants/            # Color palette
-│   └── types/                # TypeScript disaster types
-├── README.md                 # This file
-└── index.html                # Root redirect to admin/preview.html
-```
-
----
-
-## Quick Start
-
-### Frontend (GitHub Pages)
-The frontend is a **single-file SPA** — just open `relieflink/admin/preview.html` in a browser, or visit the live demo:
-- **Live**: https://nimra1692005.github.io/relifelife/
-
-### Backend (Render.com)
-1. Fork this repo
-2. Go to [render.com](https://render.com) → New Web Service
-3. Connect your GitHub repo
-4. Set build command: `pip install -r relieflink/backend/requirements.txt`
-5. Set start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` (working dir: `relieflink/backend`)
-6. Add environment variables:
-   - `SUPABASE_URL` — your Supabase project URL
-   - `SUPABASE_KEY` — your Supabase anon key
-   - `SUPABASE_SERVICE_KEY` — your Supabase service role key
-   - `WEATHER_API_KEY` — OpenWeatherMap API key (free: https://openweathermap.org/api)
-   - `ENVIRONMENT` — `production`
-   - `CORS_ORIGINS` — `https://nimra1692005.github.io`
-7. Deploy!
-
-### Mobile App
-```bash
-cd relieflink/mobile
-npm install
-npx expo start
-```
-
----
-
-## Data Sources (All Free)
-
-| Source | Data | Cost |
+| Method | Path | Description |
 |---|---|---|
-| **OpenStreetMap** (Overpass API) | Hospitals, shelters, pharmacies, roads | Free |
-| **Nominatim** | Reverse geocoding, address search | Free |
-| **OpenWeatherMap** | Weather forecasts, rainfall data | Free tier (1000 calls/day) |
-| **OSRM** | Route planning, turn-by-turn directions | Free |
-| **USGS** | Real-time earthquake data | Free |
-| **GDACS** | Global disaster alerts | Free |
-| **Groq AI** | AI chat assistant (gpt-oss-20b) | Free tier |
-| **FFD/WAPDA** | River flood thresholds (Pakistan) | Public data |
-| **PMD** | Pakistan weather patterns | Public data |
+| POST | `/api/v1/help-requests` | Create a help request (with GPS) |
+| GET | `/api/v1/help-requests` | List requests (`?user_id=`, `?limit=`) |
+| POST | `/api/v1/auth/register-role` | Register citizen / volunteer |
+| POST | `/api/v1/auth/admin-signin` | Admin sign-in (env credentials, demo fallback) |
+| GET | `/api/v1/tasks` | Open volunteer tasks |
+| GET | `/api/v1/tasks/my-assignments` | Tasks claimed by a volunteer |
+| GET | `/api/v1/tasks/volunteer-stats` | Completed tasks + hours for a volunteer |
+| POST | `/api/v1/tasks/:id/claim` | Claim a task |
+| PATCH | `/api/v1/tasks/:id/progress` | Log task progress / completion |
+| GET | `/api/v1/analytics/admin-overview` | Real admin stats: counts, 12-month volunteer growth, monthly hours, top volunteers, skill/availability distributions, active alerts |
+| GET | `/api/v1/alerts` | List alerts (`?active=true`) |
+| POST | `/api/v1/alerts` | Broadcast a new alert (appears in volunteer notifications + admin map) |
+| GET | `/api/v1/volunteers` | Volunteer roster |
+| POST | `/api/v1/volunteers/:id/verify` | Approve/verify a volunteer |
+| GET | `/api/v1/shelters` | Shelters |
+| GET | `/api/v1/hospitals` | Hospitals with free-bed counts |
+
+Every response is `{ success, data, message }`. If a dashboard can't reach the API it keeps rendering its sample data — the UI never goes blank.
 
 ---
 
-## AI Flood Predictor
+## Database
 
-Our logistic regression model computes flood probability from **live 5-day rainfall forecasts**:
+Supabase Postgres, schema in [`db/migrations/`](db/migrations) (run in Supabase SQL Editor):
 
-```
-Features: cumulative rain (5d), peak 24h rain, humidity, monsoon factor
-Model: z = w₀ + w₁·rain₅d + w₂·rain₂₄h + w₃·humidity + w₄·monsoon
-Output: P(flood) = 1/(1+e⁻ᶻ) → Low/Medium/High/Critical
-```
-
-Weights calibrated on documented Pakistan flood thresholds (FFD/PMD: 150mm+ cumulative = high alert).
+- `001_initial_schema.sql` — users, volunteers, alerts, shelters, rescue teams, risk zones…
+- `002_role_platform_tables.sql` — help_requests, volunteer_tasks
+- `002_help_tasks.sql`, `supabase_setup.sql` — task seeding + RLS/service-key setup notes
 
 ---
+
+## Deploy (free tier, no credit card)
+
+1. Create a Supabase project → run `db/migrations/*.sql` in the SQL Editor.
+2. `npm i -g vercel` → `cd relifelife` → `vercel` (framework: None, no build — `vercel.json` is ready).
+3. Project Settings → Environment Variables:
+   - `SUPABASE_URL` — project URL
+   - `SUPABASE_SERVICE_KEY` — service-role key
+   - `ADMIN_EMAIL`, `ADMIN_PASSWORD` — admin login credentials
+4. `vercel --prod`
+
+## Run locally
+
+```bash
+cd relifelife
+npx serve .          # any static server; index.html + dashboards work as-is
+```
+`config.js` automatically points localhost requests at the deployed API, so local previews stay live without running a backend.
+
+---
+
+## Data Sources (all free)
+
+OpenStreetMap + Overpass (places), Nominatim (addresses), Leaflet/CARTO (maps), OSRM (routing), USGS (earthquakes), GDACS (global disasters), OpenWeatherMap (weather).
+
+---
+
+## Legacy
+
+The old Python FastAPI backend, React admin app, and single-file `preview.html` SPA are archived outside this repository (`archive/`) — the Vercel function + HTML dashboards fully replaced them.
 
 ## License
 

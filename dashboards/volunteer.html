@@ -320,7 +320,7 @@ function submitUpdate() {
   RL_CloseModal('updateModal');
   updateProgress(st, note);
 }
-function loadVolunteerLive() { loadTasks(); loadMyAssignments(); loadStats(); }
+function loadVolunteerLive() { loadTasks(); loadMyAssignments(); loadStats(); loadNotifs(); }
 
 function taskCard(t, mine) {
   return '<div class="task-card ' + t.pri + ' fade-up">'
@@ -388,6 +388,28 @@ function renderNotifs(allRead) {
       + '</div>';
   }).join('');
 }
+/* Real admin broadcasts → notifications feed (mock list kept as offline fallback) */
+var SEV_STYLE = {
+  critical: { icon:'flame', col:'var(--r)'  },
+  high:     { icon:'bell',  col:'var(--o)'  },
+  medium:   { icon:'bell',  col:'var(--y)'  },
+  low:      { icon:'check', col:'var(--gr)' }
+};
+function loadNotifs() {
+  RL_Get('/alerts?active=true&limit=10').then(function(a) {
+    if (!Array.isArray(a) || !a.length) return;
+    notifs = a.map(function(x) {
+      var s = SEV_STYLE[x.severity] || SEV_STYLE.medium;
+      return { icon: s.icon, col: s.col,
+        title: x.title || 'Alert',
+        desc: (x.location_text ? x.location_text + ' · ' : '') + (x.description || 'Severity: ' + (x.severity || 'medium')),
+        read: false };
+    });
+    renderNotifs(false);
+    var b = RL_$('notifBadge');
+    if (b) b.textContent = notifs.filter(function(n) { return !n.read; }).length;
+  });
+}
 function clearNotifs() { if (RL_$('notifBadge')) RL_$('notifBadge').textContent = '0'; renderNotifs(true); RL_Toast('All notifications marked as read'); }
 
 /* ── TRAINING ── */
@@ -427,7 +449,7 @@ function navigate(page) {
     if (p === 'tasks')         filterTasks();
     if (p === 'assignments')   renderMyTasks();
     if (p === 'training')      renderTraining();
-    if (p === 'notifications') renderNotifs(false);
+    if (p === 'notifications') { renderNotifs(false); loadNotifs(); }
   });
 }
 RL_WireNav(PAGES, function(p){ navigate(p); });

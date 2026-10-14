@@ -55,11 +55,89 @@ window.RL_LIVE = (function () {
     return fetchJSON('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
       '&format=jsonv2&limit=1&countrycodes=pk');
   }
+  // Street-level reverse geocode (house number + road + area). zoom=18 = most detail.
+  function reverse(lat, lng) {
+    return fetchJSON('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng +
+      '&format=jsonv2&zoom=18&addressdetails=1');
+  }
+  function fmtAddr(j) {
+    if (!j) return '';
+    var a = j.address || {};
+    var line1 = (a.house_number ? a.house_number + (a.road ? ' ' : '') : '') + (a.road || a.neighbourhood || a.footway || a.block || '');
+    var bits = [];
+    if (line1.trim()) bits.push(line1.trim());
+    bits.push(a.suburb || a.city_district || a.quarter || a.village || a.town || a.city || a.municipality || a.county);
+    bits.push(a.state);
+    bits = bits.filter(Boolean);
+    if (!bits.length) return j.name || a.country || '';
+    return bits.join(', ');
+  }
   function locate(cb) {
     if (!navigator.geolocation) return cb(null);
     navigator.geolocation.getCurrentPosition(
       function (p) { cb({ lat: p.coords.latitude, lng: p.coords.longitude }); },
       function () { cb(null); }, { timeout: 9000, maximumAge: 300000 });
+  }
+
+  /* ── Real distance between two {lat,lng} points (haversine, km) ── */
+  function distKm(a, b) {
+    var R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180;
+    var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+  }
+
+  /* ── USGS earthquakes near a point — free, no key, last 30 days ── */
+  function quakes(lat, lng, radiusKm) {
+    var d = new Date(Date.now() - 30 * 864e5);
+    var u = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=8&orderby=time' +
+      '&latitude=' + lat + '&longitude=' + lng + '&maxradiuskm=' + (radiusKm || 350) +
+      '&starttime=' + d.toISOString().slice(0, 10);
+    return fetchJSON(u).then(function (j) {
+      return ((j && j.features) || []).map(function (f) {
+        return {
+          mag: f.properties.mag, place: f.properties.place, time: f.properties.time,
+          lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0]
+        };
+      }).filter(function (q) { return q.mag >= 2.5; });
+    });
+  }
+
+  /* ── Multi-point weather (Open-Meteo accepts comma-separated coords) ── */
+  function weatherAt(points) {
+    var lats = points.map(function (p) { return p.lat; }).join(',');
+    var lngs = points.map(function (p) { return p.lng; }).join(',');
+    return fetchJSON('https://api.open-meteo.com/v1/forecast?latitude=' + lats + '&longitude=' + lngs +
+      '&current=temperature_2m,precipitation,relative_humidity_2m,wind_speed_10m&daily=precipitation_sum&timezone=Asia%2FKarachi&forecast_days=2'
+    ).then(function (j) { return Array.isArray(j) ? j : [j]; });
+  }
+  /* ── Multi-point river discharge (Open-Meteo flood API) ── */
+  function floodAt(points) {
+    var lats = points.map(function (p) { return p.lat; }).join(',');
+    var lngs = points.map(function (p) { return p.lng; }).join(',');
+    return fetchJSON('https://flood-api.open-meteo.com/v1/flood?latitude=' + lats + '&longitude=' + lngs +
+      '&daily=river_discharge&past_days=2&forecast_days=5'
+    ).then(function (j) { return Array.isArray(j) ? j : [j]; });
+  }
+
+  /* ── OSRM driving route: alternatives + turn-by-turn steps ── */
+  function routeOSRM(from, to) {
+    var u = 'https://router.project-osrm.org/route/v1/driving/' + from.lng + ',' + from.lat + ';' +
+      to.lng + ',' + to.lat + '?overview=full&geometries=geojson&alternatives=2&steps=true';
+    return fetchJSON(u).then(function (j) { return (j && j.code === 'Ok' && j.routes && j.routes.length) ? j.routes : null; });
+  }
+
+  /* ── Resolve a free-text place in Pakistan → {lat,lng,name} or null ── */
+  function place(text) {
+    text = (text || '').trim();
+    if (!text) return Promise.resolve(null);
+    var g = geo(text);
+    if (g) return Promise.resolve(g);
+    return search(text).then(function (r) {
+      if (r && r.length && inPK(+r[0].lat, +r[0].lon))
+        return { lat: +r[0].lat, lng: +r[0].lon, name: (r[0].display_name || '').split(',')[0] };
+      return null;
+    }).catch(function () { return null; });
   }
 
   // Combine weather + river discharge into an honest flood-risk estimate.
@@ -104,5 +182,5 @@ window.RL_LIVE = (function () {
     return mk;
   }
 
-  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest };
+  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
 })();
