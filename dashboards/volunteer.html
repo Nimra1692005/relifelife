@@ -69,12 +69,12 @@
   <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
   <div class="nav-group">
     <button class="nav-item active" data-page="home"><i data-i="home"></i>Home</button>
-    <button class="nav-item" data-page="tasks"><i data-i="list"></i>Available Tasks<span class="badge" id="taskBadge">6</span></button>
+    <button class="nav-item" data-page="tasks"><i data-i="list"></i>Available Tasks<span class="badge" id="taskBadge">0</span></button>
     <button class="nav-item" data-page="assignments"><i data-i="check"></i>My Assignments</button>
     <button class="nav-item" data-page="progress"><i data-i="chart"></i>Update Progress</button>
     <div class="nav-sep"></div>
     <button class="nav-item" data-page="training"><i data-i="award"></i>Training &amp; Resources</button>
-    <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">2</span></button>
+    <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">0</span></button>
     <button class="nav-item" data-page="profile"><i data-i="user"></i>Profile</button>
   </div>
   <div class="nav-bottom">
@@ -97,47 +97,29 @@
   <!-- HOME -->
   <div id="page-home">
     <div class="stats-grid">
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><div class="val" id="vTasks">12</div><div class="label">Tasks Completed</div><div class="sub">↑ 3 this week</div></div></div>
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><div class="val" id="vHours">1,240+</div><div class="label">Hours Served</div><div class="sub">Since registration</div></div></div>
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="star"></i></div><div><div class="val">4.9</div><div class="label">Rating</div><div class="sub">38 reviews</div></div></div>
-      <div class="stat-card fade-up"><div class="stat-icon" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div><div class="val">3</div><div class="label">Badges Earned</div><div class="sub">First Aid, Rescue, Food</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="check"></i></div><div><div class="val" id="vTasks">0</div><div class="label">Tasks Completed</div><div class="sub">From your assignments</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="clock"></i></div><div><div class="val" id="vHours">0</div><div class="label">Hours Served</div><div class="sub">4h per completed task</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="star"></i></div><div><div class="val" id="vActive">0</div><div class="label">Active Tasks</div><div class="sub">Assigned to you</div></div></div>
+      <div class="stat-card fade-up"><div class="stat-icon" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div><div class="val" id="vOpen">0</div><div class="label">Open Tasks</div><div class="sub">Waiting for volunteers</div></div></div>
     </div>
     <div class="grid-2">
       <div>
-        <div class="assign-card fade-up">
-          <div class="assign-status"><i data-i="flame"></i>Active Assignment</div>
-          <h4 style="margin-top:10px">Food Distribution — Rajanpur</h4>
-          <p>Distributing food packages to 120 families in flood-affected zone 3</p>
-          <div class="assign-detail">
-            <div><b>120</b>People</div><div><b>Zone 3</b>Area</div><div><b>Today</b>Deadline</div><div><b>8</b>Team</div>
-          </div>
-          <button class="upd-btn" onclick="RL_OpenModal('updateModal')">Update Progress</button>
-        </div>
-        <div class="card fade-up">
+        <div id="homeAssign"></div>
+        <div class="card fade-up" style="margin-top:14px">
           <div class="card-header"><h3>Task Progress</h3></div>
-          <div class="steps">
-            <div class="step done"><div class="step-dot"><i data-i="check"></i></div><label>Assigned</label></div>
-            <div class="step done"><div class="step-dot"><i data-i="check"></i></div><label>Briefed</label></div>
-            <div class="step active"><div class="step-dot">3</div><label>In Progress</label></div>
-            <div class="step"><div class="step-dot">4</div><label>Complete</label></div>
-          </div>
-          <div class="bar"><i style="width:65%;background:var(--gold)"></i></div>
-          <p class="center mute" style="font-size:12px;margin-top:6px">65% Complete · Est. 3h remaining</p>
+          <div id="homeProgress"></div>
         </div>
       </div>
       <div>
         <div class="card fade-up" style="margin-bottom:16px">
           <div class="card-header"><h3>Your Stats</h3><span class="badge-sm">All time</span></div>
-          <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="bag"></i></div><div class="t">Food Relief<div class="bar"><i style="width:80%;background:var(--gr)"></i></div></div><b>6</b></div>
-          <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="home"></i></div><div class="t">Shelter Setup<div class="bar"><i style="width:25%;background:var(--b)"></i></div></div><b>3</b></div>
-          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="rescue"></i></div><div class="t">Rescue Ops<div class="bar"><i style="width:17%;background:var(--r)"></i></div></div><b>2</b></div>
-          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="hosp"></i></div><div class="t">Medical Aid<div class="bar"><i style="width:8%;background:var(--y)"></i></div></div><b>1</b></div>
+          <div id="homeCatStats"></div>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Quick Actions</h3></div>
           <div style="display:grid;gap:8px">
             <button class="action-btn" onclick="navigate('tasks')"><div class="ic" style="background:#7C6CF022;color:var(--p)"><i data-i="list"></i></div>Browse Available Tasks</button>
-            <button class="action-btn" onclick="RL_OpenModal('updateModal')"><div class="ic" style="background:#3CC08E22;color:var(--gr)"><i data-i="chart"></i></div>Update Current Progress</button>
+            <button class="action-btn" onclick="openUpdateModal()"><div class="ic" style="background:#3CC08E22;color:var(--gr)"><i data-i="chart"></i></div>Update Current Progress</button>
             <button class="action-btn" onclick="navigate('training')"><div class="ic" style="background:#F5B83D22;color:var(--y)"><i data-i="award"></i></div>Training Resources</button>
           </div>
         </div>
@@ -160,15 +142,6 @@
 
   <!-- ASSIGNMENTS -->
   <div id="page-assignments" class="hide">
-    <div class="assign-card fade-up">
-      <div class="assign-status"><i data-i="flame"></i>Current Assignment</div>
-      <h4 style="margin-top:10px">Food Distribution — Rajanpur</h4>
-      <p>Zone 3 · Team lead: Ahmad Raza. 120 families.</p>
-      <div class="assign-detail">
-        <div><b>120</b>Families</div><div><b>Zone 3</b>Area</div><div><b>Today</b>Deadline</div><div><b>8</b>Team</div>
-      </div>
-      <button class="upd-btn" onclick="RL_OpenModal('updateModal')">Mark Complete / Update</button>
-    </div>
     <div id="myTasks"></div>
   </div>
 
@@ -176,21 +149,14 @@
   <div id="page-progress" class="hide">
     <div class="card fade-up" style="margin-bottom:16px">
       <div class="card-header"><h3>Current Task Progress</h3></div>
-      <div class="steps">
-        <div class="step done"><div class="step-dot"><i data-i="check"></i></div><label>Assigned</label></div>
-        <div class="step done"><div class="step-dot"><i data-i="check"></i></div><label>Briefed</label></div>
-        <div class="step active"><div class="step-dot">3</div><label>In Progress</label></div>
-        <div class="step"><div class="step-dot">4</div><label>Complete</label></div>
-      </div>
-      <div class="bar" style="margin:16px 0 4px"><i style="width:65%;background:var(--gold)"></i></div>
-      <p class="center mute" style="font-size:13px">65% Complete</p>
+      <div id="progCurrent"></div>
     </div>
     <div class="card fade-up">
       <div class="card-header"><h3>Log Progress Update</h3></div>
       <div style="display:grid;gap:12px">
-        <div><label class="form-group" style="margin:0 0 6px">Status</label><select class="filter-sel" style="width:100%"><option>In Progress</option><option>Needs Help</option><option>Completed</option></select></div>
-        <div><label class="form-group" style="margin:0 0 6px">Notes</label><textarea class="field-input" style="min-height:80px" placeholder="Describe your progress…"></textarea></div>
-        <button class="task-btn" style="justify-content:center" onclick="RL_Toast('Progress updated successfully!')">Submit Update</button>
+        <div><label class="form-group" style="margin:0 0 6px">Status</label><select id="pgStatus" class="filter-sel" style="width:100%"><option value="in_progress">In Progress</option><option value="claimed">Needs Help / Backup</option><option value="completed">Completed</option></select></div>
+        <div><label class="form-group" style="margin:0 0 6px">Notes</label><textarea id="pgNote" class="field-input" style="min-height:80px" placeholder="Describe your progress…"></textarea></div>
+        <button class="task-btn" style="justify-content:center" onclick="submitPageUpdate()">Submit Update</button>
       </div>
     </div>
   </div>
@@ -215,25 +181,21 @@
       <div class="card fade-up">
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
           <div style="width:72px;height:72px;border-radius:50%;background:var(--g);border:3px solid var(--gold);display:grid;place-items:center;font-weight:800;font-size:24px;color:var(--gold)" id="profAv">VL</div>
-          <div><h3 id="profName" style="font-size:20px;font-weight:800">Volunteer</h3><p class="mute" style="font-size:13px">Active Volunteer · Since 2024</p><div class="tag tag-green" style="margin-top:6px"><i data-i="check"></i>Verified</div></div>
+          <div><h3 id="profName" style="font-size:20px;font-weight:800">Volunteer</h3><p class="mute" style="font-size:13px" id="profSince">Registered Volunteer</p><div class="tag tag-green" style="margin-top:6px;display:none" id="profVerified"><i data-i="check"></i>Verified</div></div>
         </div>
         <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">Volunteer</small></div></div>
         <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
-        <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">City<small id="profCity">Not set</small></div></div>
-        <div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div class="t">Skill<small id="profSkill">Not set</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Availability<small id="profCity">Not set</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)"><i data-i="award"></i></div><div class="t">Skills<small id="profSkill">Not set</small></div></div>
       </div>
       <div>
         <div class="card fade-up" style="margin-bottom:16px">
           <div class="card-header"><h3>Achievements</h3></div>
-          <div class="item"><div class="item-icon" style="background:var(--gold)22;color:var(--gold)"><i data-i="award"></i></div><div class="t">First Aid Certified<small>Completed basic first aid training</small></div><span class="tag tag-yellow">🏅</span></div>
-          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="award"></i></div><div class="t">Flood Rescue<small>2 rescue operations</small></div><span class="tag tag-red">🎖</span></div>
-          <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="award"></i></div><div class="t">Food Relief Hero<small>1,200+ meal packages</small></div><span class="tag tag-green">⭐</span></div>
+          <div id="profAch"></div>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Task History</h3></div>
-          <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="bag"></i></div><div class="t">Food Distribution<small>Rajanpur · Oct 10</small></div><span class="tag tag-green">Done</span></div>
-          <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="home"></i></div><div class="t">Shelter Setup<small>Muzaffargarh · Oct 5</small></div><span class="tag tag-green">Done</span></div>
-          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="rescue"></i></div><div class="t">Rescue Operation<small>Layyah · Sep 28</small></div><span class="tag tag-green">Done</span></div>
+          <div id="profHist"></div>
         </div>
       </div>
     </div>
@@ -246,7 +208,7 @@
 <div class="modal-overlay" id="updateModal" onclick="RL_CloseModalOutside(event,'updateModal')">
   <div class="modal">
     <h3>Update Progress</h3>
-    <p>Log your current status for <b>Food Distribution — Rajanpur</b></p>
+    <p>Log your current status for <b id="upTaskName">your task</b></p>
     <label>Status</label>
     <select class="field-input" id="upStatus" style="margin-bottom:16px"><option value="in_progress">In Progress</option><option value="claimed">Needs Backup</option><option value="claimed">Blocked</option><option value="completed">Completed</option></select>
     <label>Notes</label>
@@ -272,7 +234,7 @@ var allTasks = [
   {id:5,title:'Flood Victim Registration',cat:'Logistics',loc:'Rajanpur',pri:'medium',desc:'Register displaced persons and distribute ID cards.',people:300,hours:6,team:5},
   {id:6,title:'Blanket & Clothing Drive',cat:'Logistics',loc:'Sukkur',pri:'medium',desc:'Sort, pack, and distribute donated blankets and clothing.',people:180,hours:4,team:10}
 ];
-var myAssignments = [{id:7,title:'Food Distribution — Rajanpur',cat:'Food & Water',loc:'Rajanpur',pri:'high',desc:'Zone 3. Team lead: Ahmad Raza.',people:120,hours:6,team:8}];
+var myAssignments = [];
 var priFilter = 'all';
 var PT = {critical:'tag-red',high:'tag-orange',medium:'tag-yellow',low:'tag-green'};
 var PL = {critical:'Critical',high:'High Priority',medium:'Medium',low:'Low'};
@@ -285,17 +247,17 @@ function _normTask(x) {
     cat: (window.RL_CAT_KEY2LABEL && window.RL_CAT_KEY2LABEL[x.category]) || x.category || 'General',
     loc: x.city || '', pri: x.priority || 'medium',
     desc: (x.skills_needed && x.skills_needed.length) ? ('Skills needed: ' + x.skills_needed.join(', ') + '.') : 'Volunteer relief task coordinated from the command centre.',
-    people: x.people || 0, hours: x.hours || 0, team: x.team || 0
+    people: x.people || 0, hours: x.hours || 0, team: x.team || 0, status: x.status || 'open'
   };
 }
 function loadTasks() {
   RL_Get('/tasks').then(function(a) {
-    if (Array.isArray(a) && a.length) { allTasks = a.map(_normTask); filterTasks(); }
+    if (Array.isArray(a) && a.length) { allTasks = a.map(_normTask); filterTasks(); renderHome(); }
   });
 }
 function loadMyAssignments() {
   RL_Get('/tasks/my-assignments?volunteer_id=' + encodeURIComponent(VOL)).then(function(a) {
-    if (Array.isArray(a) && a.length) { myAssignments = a.map(_normTask); renderMyTasks(); }
+    if (Array.isArray(a)) { myAssignments = a.map(_normTask); renderMyTasks(); }
   });
 }
 function loadStats() {
@@ -307,8 +269,8 @@ function loadStats() {
   });
 }
 function updateProgress(status, note) {
-  var t = myAssignments[0] || allTasks[0];
-  if (!t) { RL_Toast('No active task to update'); return; }
+  var t = myAssignments[0];
+  if (!t) { RL_Toast('No active task yet — accept one from Available Tasks'); return; }
   RL_Send('PATCH', '/tasks/' + encodeURIComponent(t.id) + '/progress', { status: status, progress_note: note || '' }).then(function(res) {
     RL_Toast(res && res.ok ? 'Progress saved to server' : 'Progress updated');
     if (res && res.ok) { loadTasks(); loadMyAssignments(); loadStats(); }
@@ -320,7 +282,102 @@ function submitUpdate() {
   RL_CloseModal('updateModal');
   updateProgress(st, note);
 }
-function loadVolunteerLive() { loadTasks(); loadMyAssignments(); loadStats(); loadNotifs(); }
+function submitPageUpdate() {
+  var st = (RL_$('pgStatus') || {}).value || 'in_progress';
+  var note = (RL_$('pgNote') || {}).value || '';
+  updateProgress(st, note);
+}
+function openUpdateModal() {
+  var t = myAssignments[0];
+  var nm = RL_$('upTaskName');
+  if (nm) nm.textContent = t ? t.title : 'your task';
+  if (!t) { RL_Toast('No active task yet — accept one from Available Tasks'); return; }
+  RL_OpenModal('updateModal');
+}
+function loadVolunteerLive() { loadTasks(); loadMyAssignments(); loadStats(); loadNotifs(); loadProfile(); }
+
+/* ── REAL home rendering (no mock progress) ── */
+var ST_STEP = { claimed: 2, in_progress: 3, completed: 4 };
+var ST_TEXT = { open: 'Open', claimed: 'Claimed', in_progress: 'In Progress', completed: 'Completed' };
+function stepperHTML(t) {
+  var step = ST_STEP[t.status] || 2;
+  var labels = ['Assigned', 'Claimed', 'In Progress', 'Completed'];
+  var pct = [15, 40, 70, 100][step - 1];
+  var s = '<div class="steps">';
+  for (var i = 0; i < 4; i++) {
+    var n = i + 1, cls = n < step ? 'done' : (n === step ? 'active' : '');
+    s += '<div class="step ' + cls + '"><div class="step-dot">' + (n < step ? RL_Icon('check') : n) + '</div><label>' + labels[i] + '</label></div>';
+  }
+  s += '</div><div class="bar" style="margin:16px 0 4px"><i style="width:' + pct + '%;background:var(--gold)"></i></div>'
+    + '<p class="center mute" style="font-size:12px;margin-top:6px">' + pct + '% Complete · Status: ' + (ST_TEXT[t.status] || t.status) + '</p>';
+  return s;
+}
+function renderHome() {
+  var t = myAssignments.filter(function(x){ return x.status !== 'completed'; })[0] || myAssignments[0];
+  var el = RL_$('homeAssign');
+  if (el) el.innerHTML = t
+    ? '<div class="assign-card fade-up"><div class="assign-status">' + RL_Icon('flame') + ' Active Assignment</div>'
+      + '<h4 style="margin-top:10px">' + t.title + '</h4><p>' + (t.desc || '') + '</p>'
+      + '<div class="assign-detail">'
+      + '<div><b>' + (t.loc || '—') + '</b>Area</div>'
+      + '<div><b>' + (PL[t.pri] || t.pri) + '</b>Priority</div>'
+      + '<div><b>' + (ST_TEXT[t.status] || t.status) + '</b>Status</div>'
+      + '<div><b>' + (t.team || '—') + '</b>Team</div>'
+      + '</div><button class="upd-btn" onclick="openUpdateModal()">Update Progress</button></div>'
+    : '<div class="assign-card fade-up center" style="padding:30px 22px"><div style="font-size:34px;margin-bottom:6px">🧭</div>'
+      + '<h4 style="font-size:16px;font-weight:800;margin-bottom:4px">No active assignment yet</h4>'
+      + '<p style="opacity:.8;font-size:13px;margin-bottom:14px">You joined ReliefLink — claim your first task from the queue and every hour will count here.</p>'
+      + '<button class="upd-btn" style="max-width:260px;margin:0 auto" onclick="navigate(\'tasks\')">Browse Available Tasks</button></div>';
+  var pe = RL_$('homeProgress');
+  if (pe) pe.innerHTML = t ? stepperHTML(t) : '<p class="mute center" style="font-size:13px;padding:8px 0">Progress tracking starts as soon as you accept a task.</p>';
+  var pc = RL_$('progCurrent');
+  if (pc) pc.innerHTML = t ? stepperHTML(t) : '<p class="mute center" style="font-size:13px;padding:8px 0">No task assigned yet — nothing to track.</p>';
+  var ae = RL_$('vActive'); if (ae) ae.textContent = myAssignments.filter(function(x){ return x.status !== 'completed'; }).length;
+  var oe = RL_$('vOpen'); if (oe) oe.textContent = allTasks.length;
+  renderCatStats();
+  renderProfileDynamic();
+}
+function renderCatStats() {
+  var el = RL_$('homeCatStats'); if (!el) return;
+  if (!myAssignments.length) { el.innerHTML = '<p class="mute" style="font-size:13px;padding:8px 0">Your category stats will appear once you claim tasks.</p>'; return; }
+  var m = {};
+  myAssignments.forEach(function(t) { m[t.cat] = (m[t.cat] || 0) + 1; });
+  var keys = Object.keys(m), max = Math.max.apply(null, keys.map(function(k) { return m[k]; }));
+  var COL = { 'Food & Water': 'var(--gr)', 'Shelter': 'var(--b)', 'Medical': 'var(--r)', 'Rescue': 'var(--o)', 'Logistics': 'var(--y)' };
+  el.innerHTML = keys.map(function(k) {
+    return '<div class="item"><div class="item-icon" style="background:rgba(201,162,39,.15);color:var(--g)">' + RL_Icon('bag') + '</div>'
+      + '<div class="t">' + k + '<div class="bar"><i style="width:' + (m[k] / max * 100) + '%;background:' + (COL[k] || 'var(--gold)') + '"></i></div></div><b>' + m[k] + '</b></div>';
+  }).join('');
+}
+function renderProfileDynamic() {
+  var done = myAssignments.filter(function(t) { return t.status === 'completed'; });
+  var h = RL_$('profHist');
+  if (h) h.innerHTML = done.length
+    ? done.map(function(t) {
+        return '<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">' + RL_Icon('check') + '</div>'
+          + '<div class="t">' + t.title + '<small>' + (t.loc || '') + '</small></div><span class="tag tag-green">Done</span></div>';
+      }).join('')
+    : '<p class="mute" style="font-size:13px;padding:8px 0">No completed tasks yet — your history will build up here.</p>';
+  var a = RL_$('profAch');
+  if (a) a.innerHTML = done.length >= 1
+    ? '<div class="item"><div class="item-icon" style="background:rgba(201,162,39,.18);color:var(--gold)">' + RL_Icon('award') + '</div><div class="t">First Task Done<small>Completed ' + done.length + ' task' + (done.length > 1 ? 's' : '') + ' — thank you!</small></div><span class="tag tag-yellow">🏅</span></div>'
+    : '<p class="mute" style="font-size:13px;padding:8px 0">Complete your first task to earn your first badge.</p>';
+}
+function loadProfile() {
+  RL_Get('/volunteers').then(function(v) {
+    if (!Array.isArray(v)) return;
+    var me = v.filter(function(x) { return String(x.id) === String(VOL); })[0];
+    if (!me) return;
+    if (RL_$('profVerified') && me.verified) RL_$('profVerified').style.display = '';
+    if (RL_$('profNameFull')) RL_$('profNameFull').textContent = me.full_name || '—';
+    if (RL_$('profPhone')) RL_$('profPhone').textContent = me.phone || 'Not set';
+    if (RL_$('profCity')) RL_$('profCity').textContent = me.availability || 'Not set';
+    if (RL_$('profSkill')) RL_$('profSkill').textContent = (me.skills && me.skills.length) ? me.skills.join(', ') : 'Not set';
+    if (RL_$('profSince') && me.registered_at) {
+      try { RL_$('profSince').textContent = 'Active Volunteer · Since ' + new Date(me.registered_at).toLocaleDateString('en-PK', { month: 'short', year: 'numeric', timeZone: 'Asia/Karachi' }); } catch (e) {}
+    }
+  });
+}
 
 function taskCard(t, mine) {
   return '<div class="task-card ' + t.pri + ' fade-up">'
@@ -329,7 +386,7 @@ function taskCard(t, mine) {
     + '<p class="task-desc">' + t.desc + '</p>'
     + '<div class="task-footer"><span class="tag tag-blue">' + t.cat + '</span>'
     + (mine
-      ? '<button class="task-btn accepted" onclick="RL_OpenModal(\'updateModal\')"><i data-i="chart"></i> Update</button>'
+      ? '<button class="task-btn accepted" onclick="openUpdateModal()"><i data-i="chart"></i> Update</button>'
       : '<button class="task-btn" onclick="acceptTask(\'' + t.id + '\',this)"><i data-i="check"></i> Accept</button>')
     + '</div></div>';
 }
@@ -356,29 +413,34 @@ function setPri(p, btn) {
 function acceptTask(id, btn) {
   var t = allTasks.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!t) return;
-  if (btn) { btn.innerHTML = '✓ Accepted'; btn.classList.add('accepted'); btn.disabled = true; }
-  myAssignments.push(t);
-  renderMyTasks();
-  RL_Toast('Task accepted! Check My Assignments.');
+  if (btn) { btn.innerHTML = '… claiming'; btn.disabled = true; }
   RL_Send('POST', '/tasks/' + encodeURIComponent(id) + '/claim', { volunteer_id: VOL }).then(function(res){
-    if (res && res.ok) loadTasks();
+    if (res && res.ok) {
+      RL_Toast('Task accepted! Check My Assignments.');
+    } else {
+      RL_Toast('Could not claim on server — try again');
+      if (btn) { btn.innerHTML = RL_Icon('check') + ' Accept'; btn.disabled = false; return; }
+    }
+    loadTasks(); loadMyAssignments(); loadStats();
   });
 }
 function renderMyTasks() {
   var el = RL_$('myTasks');
-  if (el) { el.innerHTML = myAssignments.map(function(t){return taskCard(t,true)}).join(''); RL_Icons(); }
+  if (el) {
+    el.innerHTML = myAssignments.length
+      ? myAssignments.map(function(t){return taskCard(t,true)}).join('')
+      : '<div class="card center mute" style="padding:40px">No assignments yet — accept a task from Available Tasks and it will appear here.</div>';
+    RL_Icons();
+  }
+  renderHome();
 }
 
-/* ── NOTIFICATIONS ── */
-var notifs = [
-  {icon:'flame',col:'var(--r)',title:'Critical task in Muzaffargarh',desc:'Emergency medical support needed.',read:false},
-  {icon:'bell', col:'var(--y)',title:'New task available near you',desc:'Food distribution in Rajanpur — 3km away.',read:false},
-  {icon:'check',col:'var(--gr)',title:'Your update was submitted',desc:'Admin has received your progress update.',read:true},
-  {icon:'award',col:'var(--gold)',title:'New badge: Food Relief Hero',desc:'You\'ve distributed 1,200+ meal packages!',read:true}
-];
+/* ── NOTIFICATIONS (real admin alerts via /alerts; empty until loaded) ── */
+var notifs = [];
 function renderNotifs(allRead) {
   var el = RL_$('notifList');
   if (!el) return;
+  if (!notifs.length) { el.innerHTML = '<p class="mute center" style="font-size:13px;padding:26px 0">No notifications right now. Admin broadcasts and field alerts will appear here.</p>'; return; }
   el.innerHTML = notifs.map(function(n) {
     if (allRead) n.read = true;
     return '<div class="item" style="' + (n.read ? 'opacity:.6' : '') + '">'
@@ -448,15 +510,18 @@ function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
     if (p === 'tasks')         filterTasks();
     if (p === 'assignments')   renderMyTasks();
+    if (p === 'progress')      renderHome();
     if (p === 'training')      renderTraining();
     if (p === 'notifications') { renderNotifs(false); loadNotifs(); }
+    if (p === 'home')          renderHome();
   });
 }
 RL_WireNav(PAGES, function(p){ navigate(p); });
 
-/* ── BOOT ── */
+/* ── BOOT ─ */
 RL_BootUser({ defaultName: 'Volunteer', defaultRole: 'volunteer' });
 renderNotifs(false);
+renderHome();
 RL_Icons();
 loadVolunteerLive();
 </script>
