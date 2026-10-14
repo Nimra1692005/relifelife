@@ -110,25 +110,6 @@
 .rt-step:last-child { border-bottom: none; }
 .rt-step .n { width: 22px; height: 22px; border-radius: 50%; background: var(--g); color: var(--gold); display: grid; place-items: center; font-size: 10.5px; font-weight: 800; flex: none; }
 @media(max-width:500px){ .cat-grid{ grid-template-columns: repeat(2,1fr); } .call-buttons{ gap:6px; } .call-btn{ padding:8px 12px; font-size:12px; } }
-/* ── Smart form pills ── */
-.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.pill { padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--bd, #d8cfc0); background: #fff; color: var(--ink, #16231c); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: all .15s; }
-.pill:hover { border-color: var(--g); }
-.pill.on { background: var(--g); color: #F5EEDB; border-color: var(--g); }
-.pill.pill-r.on { background: var(--r); border-color: var(--r); color: #fff; }
-.pill.pill-o.on { background: var(--o, #F58A3D); border-color: var(--o, #F58A3D); color: #fff; }
-/* ── AI triage preview box ── */
-.tri-box { border: 1.5px dashed var(--g); border-radius: 14px; padding: 12px 14px; margin: 4px 0 16px; background: rgba(60,192,142,.06); font-size: 12.5px; }
-.tri-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 800; font-size: 11px; color: #fff; margin-right: 6px; }
-/* ── Copilot chat ── */
-.cp-chat { max-height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: rgba(22,35,28,.04); border-radius: 14px; }
-.cp-msg { max-width: 85%; padding: 10px 13px; border-radius: 14px; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
-.cp-msg.ai { background: #fff; border: 1px solid rgba(22,35,28,.1); align-self: flex-start; border-bottom-left-radius: 4px; }
-.cp-msg.me { background: var(--g); color: #F5EEDB; align-self: flex-end; border-bottom-right-radius: 4px; }
-.cp-guide { background: rgba(245,184,61,.12); border: 1px solid rgba(245,184,61,.4); border-radius: 10px; padding: 8px 12px; font-size: 12px; margin: 4px 0; }
-.cp-draft { border: 1.5px solid var(--gold); border-radius: 14px; padding: 12px 14px; margin-top: 12px; background: rgba(201,137,58,.07); }
-.mic-on { animation: micPulse 1s infinite; }
-@keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,91,91,.5); } 50% { box-shadow: 0 0 0 8px rgba(239,91,91,0); } }
 </style>
 </head><body>
 
@@ -138,22 +119,14 @@
   <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
   <div class="nav-group">
     <button class="nav-item active" data-page="home"><i data-i="home"></i>Home</button>
-    <div class="nav-sep"></div>
-    <div class="nav-lbl">02 · Disaster Intelligence</div>
-    <button class="nav-item" data-page="flood"><i data-i="drop"></i>Flood Predictor</button>
-    <button class="nav-item" data-page="scan"><i data-i="search"></i>Smart Safety Scan</button>
-    <div class="nav-lbl">03 · Safe Navigation</div>
-    <button class="nav-item" data-page="route"><i data-i="pin"></i>Safe Route Planner</button>
-    <button class="nav-item" data-page="nearby"><i data-i="pin"></i>Nearby Help</button>
-    <div class="nav-lbl">04 · AI Assistant</div>
-    <button class="nav-item" data-page="copilot"><i data-i="phone"></i>AI Copilot</button>
-    <div class="nav-lbl">05 · Emergency Assistance</div>
     <button class="nav-item" data-page="request"><i data-i="plus"></i>Request Help</button>
     <button class="nav-item" data-page="myrequests"><i data-i="list"></i>My Requests<span class="badge" id="reqBadge">0</span></button>
+    <div class="nav-sep"></div>
     <button class="nav-item" data-page="emergency"><i data-i="phone"></i>Emergency Contacts</button>
-    <div class="nav-lbl">06 · Relief Coordination</div>
-    <button class="nav-item" data-page="relief"><i data-i="search"></i>Resources &amp; Matching</button>
-    <div class="nav-lbl">07 · You</div>
+    <button class="nav-item" data-page="nearby"><i data-i="pin"></i>Nearby Help</button>
+    <button class="nav-item" data-page="flood"><i data-i="drop"></i>Flood Predictor</button>
+    <button class="nav-item" data-page="route"><i data-i="pin"></i>Safe Route Planner</button>
+    <button class="nav-item" data-page="scan"><i data-i="search"></i>Smart Safety Scan</button>
     <button class="nav-item" data-page="notifications"><i data-i="bell"></i>Notifications<span class="badge" id="notifBadge">0</span></button>
     <button class="nav-item" data-page="profile"><i data-i="user"></i>Profile</button>
   </div>
@@ -185,18 +158,23 @@
 
   <!-- HOME -->
   <div id="page-home">
-    <div class="card-header" style="margin-bottom:16px"><h3>How can we help you today?</h3></div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px">
-      <button class="submit-btn" style="width:auto;flex:1;min-width:220px;margin:0" onclick="navigate('request')">🆘 Request Emergency Help</button>
-      <button class="submit-btn" style="width:auto;flex:1;min-width:220px;margin:0;background:var(--gold);color:var(--g)" onclick="navigate('copilot')">🤖 Talk to AI Copilot</button>
-    </div>
+    <div class="card-header" style="margin-bottom:16px"><h3>What kind of help do you need?</h3></div>
     <div class="cat-grid">
-      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#16467022">🌊</div><div class="cat-body"><h4>Disaster Intelligence</h4><p class="cat-desc">Live flood risk, storms, earthquakes &amp; safety scan for your area.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D3222">🧭</div><div class="cat-body"><h4>Safe Navigation</h4><p class="cat-desc">Hazard-aware routes, shelters, hospitals &amp; road reports.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('copilot')"><div class="cat-icon" style="background:#7C6CF022">🤖</div><div class="cat-body"><h4>AI Copilot</h4><p class="cat-desc">Batao ya bolo — English, Urdu, Roman Urdu. Request khud banegi.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('request')"><div class="cat-icon" style="background:#EF5B5B22">🆘</div><div class="cat-body"><h4>Emergency Assistance</h4><p class="cat-desc">One smart form — rescue, medical, shelter, food, transport.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('relief')"><div class="cat-icon" style="background:#3CC08E22">🤝</div><div class="cat-body"><h4>Relief Coordination</h4><p class="cat-desc">Free shelter space, food, medical aid &amp; volunteers near you.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#F5B83D22">📦</div><div class="cat-body"><h4>Aid Tracking</h4><p class="cat-desc">Track your request till it&rsquo;s resolved.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4><p class="cat-desc">Rescue teams reach and move you out fast.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><div class="cat-body"><h4>Medical Assistance</h4><p class="cat-desc">Ambulance, medicine and hospital support.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon" style="background:#3CC08E22">🍱</div><div class="cat-body"><h4>Food &amp; Clean Water</h4><p class="cat-desc">Daily meals and safe drinking water.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon" style="background:#7C6CF022">🏕️</div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4><p class="cat-desc">Safe camps and staying places nearby.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon" style="background:#F58A3D22">👕</div><div class="cat-body"><h4>Clothing &amp; Supplies</h4><p class="cat-desc">Blankets, clothes and daily essentials.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Transportation & Relocation')"><div class="cat-icon" style="background:#F5B83D22">🚌</div><div class="cat-body"><h4>Transportation &amp; Relocation</h4><p class="cat-desc">Vehicles to move you to a safer area.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Sanitation & Hygiene')"><div class="cat-icon" style="background:#4C8DF622">🧼</div><div class="cat-body"><h4>Sanitation &amp; Hygiene</h4><p class="cat-desc">Clean toilets, kits and hygiene support.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Special Assistance')"><div class="cat-icon" style="background:#F472A822">♿</div><div class="cat-body"><h4>Special Assistance</h4><p class="cat-desc">Priority help for elderly, kids &amp; disabled.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon" style="background:#8B5CF622">🏠</div><div class="cat-body"><h4>Home &amp; Damage Recovery</h4><p class="cat-desc">Repair and rebuild after the disaster.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><div class="cat-body"><h4>Missing Persons</h4><p class="cat-desc">Report and trace a lost family member.</p></div></div>
+      <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><div class="cat-body"><h4>Emotional Support</h4><p class="cat-desc">Counselling and mental-health care.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#16467022">🌊</div><div class="cat-body"><h4>AI Flood Predictor</h4><p class="cat-desc">Live river &amp; rainfall risk for your area.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D3222">🧭</div><div class="cat-body"><h4>Safe Route Planner</h4><p class="cat-desc">Any address → any address, AI safety-scored.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('scan')"><div class="cat-icon" style="background:#4C8DF622">🛰️</div><div class="cat-body"><h4>Smart Safety Scan</h4><p class="cat-desc">Instant danger report for any area.</p></div></div>
+      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#7C6CF022">📦</div><div class="cat-body"><h4>Aid Tracking</h4><p class="cat-desc">Track your request till it&rsquo;s resolved.</p></div></div>
     </div>
   </div>
 
@@ -204,42 +182,14 @@
   <div id="page-request" class="hide">
     <div class="grid-2">
       <div class="card fade-up">
-        <div class="card-header"><h3>Emergency Assistance Request</h3><span class="badge-sm">Smart form</span></div>
-        <div class="form-group"><label>1 · What is the emergency?</label>
-          <div class="pill-row" id="reqInc">
-            <button type="button" class="pill" data-v="flood">🌊 Flood</button>
-            <button type="button" class="pill" data-v="earthquake">🏚️ Earthquake</button>
-            <button type="button" class="pill" data-v="fire">🔥 Fire</button>
-            <button type="button" class="pill" data-v="storm">🌀 Storm</button>
-            <button type="button" class="pill" data-v="medical">🏥 Medical</button>
-            <button type="button" class="pill" data-v="missing">🔍 Missing Person</button>
-            <button type="button" class="pill" data-v="other">Other</button>
-          </div>
-        </div>
-        <div class="form-group"><label>2 · Current situation</label>
-          <div class="pill-row" id="reqSit">
-            <button type="button" class="pill pill-r" data-v="critical">🚨 Immediate danger / life at risk</button>
-            <button type="button" class="pill pill-o" data-v="high">⚠️ Urgent assistance needed</button>
-            <button type="button" class="pill" data-v="low">Non-urgent</button>
-          </div>
-        </div>
-        <div class="form-group"><label>3 · Number of people affected</label>
-          <div class="pill-row" id="reqPeople">
-            <button type="button" class="pill" data-v="1">1 person</button>
-            <button type="button" class="pill" data-v="3">2–3</button>
-            <button type="button" class="pill" data-v="5">4–5</button>
-            <button type="button" class="pill" data-v="7">6 or more</button>
-          </div>
-        </div>
-        <div class="form-group"><label>4 · What help do you need? <span class="mute" style="font-weight:400">(select all that apply)</span></label>
-          <div class="pill-row" id="reqNeeds">
-            <button type="button" class="pill" data-v="rescue">Rescue / Evacuation</button>
-            <button type="button" class="pill" data-v="medical">Medical</button>
-            <button type="button" class="pill" data-v="shelter">Shelter</button>
-            <button type="button" class="pill" data-v="food_water">Food &amp; Water</button>
-            <button type="button" class="pill" data-v="transport">Transport</button>
-          </div>
-        </div>
+        <div class="card-header"><h3>Quick Help Request</h3><span class="badge-sm">Location only</span></div>
+        <div class="form-group"><label>What do you need?</label><select id="reqCat" class="field-input">
+          <option>Emergency Rescue &amp; Evacuation</option><option>Medical Assistance</option>
+          <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
+          <option>Clothing &amp; Supplies</option><option>Transportation &amp; Relocation</option>
+          <option>Sanitation &amp; Hygiene</option><option>Special Assistance</option>
+          <option>Home &amp; Damage Recovery</option><option>Missing Persons</option><option>Psychological Support</option>
+        </select></div>
         <div class="form-group"><label>📍 Your Location <span style="color:var(--r)">*</span></label>
           <div style="display:flex;gap:8px">
             <input id="reqLoc" class="field-input" type="text" placeholder="Exact address, ya map par pin rakhein" style="flex:1">
@@ -256,17 +206,19 @@
             <div class="lp-addr empty" id="lpAddr" style="margin-top:10px">Abhi koi exact location nahi — map par tap karein.</div>
           </div>
         </div>
-        <div class="form-group"><label>5 · Describe the situation <span class="mute" style="font-weight:400">(English / Urdu / Roman Urdu — AI parhega)</span></label>
-          <textarea id="reqDesc" class="field-input" style="min-height:70px" placeholder="e.g. Paani ghar mein aa raha hai, 4 log hain, buzurg nani bhi hain…"></textarea>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+          <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
+          <label for="reqUrgent" style="font-weight:700;color:var(--r);cursor:pointer">🚨 Mark as URGENT</label>
         </div>
-        <div id="aiTriage" class="tri-box hide"></div>
-        <details style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--g)">Contact details (optional — helps volunteers reach you)</summary>
+        <details style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--g)">Add details (optional)</summary>
           <div style="margin-top:12px">
             <div class="form-group"><label>Full Name</label><input id="reqName" class="field-input" type="text" placeholder="Your full name"></div>
             <div class="form-group"><label>Phone Number</label><input id="reqPhone" class="field-input" type="tel" placeholder="e.g. 0300-1234567"></div>
+            <div class="form-group"><label>Number of People</label><input id="reqPeople" class="field-input" type="number" placeholder="e.g. 4" min="1"></div>
+            <div class="form-group"><label>Describe Your Situation</label><textarea id="reqDesc" class="field-input" style="min-height:80px" placeholder="Tell us what you need…"></textarea></div>
           </div>
         </details>
-        <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Send Request</button>
+        <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Request Help</button>
       </div>
       <div>
         <div class="card fade-up" style="background:linear-gradient(135deg,var(--g),var(--g2));color:#F5EEDB;border:none;margin-bottom:16px">
@@ -277,49 +229,6 @@
           <div class="item" style="border:none"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">4</div><div class="t" style="color:#F5EEDB">Request marked complete<small style="color:rgba(255,255,255,.6)">You'll be notified</small></div></div>
         </div>
         <div class="card fade-up"><div class="card-header"><h3>My Active Request</h3></div><div id="activeReqCard"><p class="mute" style="font-size:13px;padding:10px 0">No active requests yet.</p></div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI COPILOT -->
-  <div id="page-copilot" class="hide">
-    <div class="card fade-up">
-      <div class="card-header"><h3>🤖 AI Disaster Copilot</h3><span class="badge-sm">English · Urdu · Roman Urdu</span></div>
-      <p class="mute" style="font-size:12.5px;margin-bottom:12px">Apni situation likh ya bol ke batao — AI samajh kar emergency request ka draft bana dega. <b>Jaan ka khatra ho to foran 1122 dial karein — chat ka intezar na karein.</b></p>
-      <div class="cp-chat" id="cpChat">
-        <div class="cp-msg ai">Main ReliefLink Copilot hoon. Batao kya ho raha hai? (Type or tap 🎤 and speak — English, Urdu ya Roman Urdu).</div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <select id="cpLang" class="field-input" style="width:110px;flex:none" title="Voice language">
-          <option value="en-PK">🎤 en-PK</option>
-          <option value="ur-PK">🎤 ur-PK</option>
-        </select>
-        <input id="cpInput" class="field-input" style="flex:1" placeholder="e.g. Paani ghar mein aa raha hai, 4 log phanse hain…" onkeydown="if(event.key==='Enter')cpSend()">
-        <button type="button" class="submit-btn" id="cpMic" style="width:auto;margin:0;padding:0 14px;flex:none" title="Voice request">🎤</button>
-        <button type="button" class="submit-btn" style="width:auto;margin:0;padding:0 16px;flex:none" onclick="cpSend()">Send</button>
-      </div>
-      <div id="cpDraft"></div>
-    </div>
-  </div>
-
-  <!-- RELIEF COORDINATION -->
-  <div id="page-relief" class="hide">
-    <div class="card fade-up">
-      <div class="card-header"><h3>🤝 Relief Coordination — Live Resources</h3><span class="badge-sm">From database</span></div>
-      <p class="mute" style="font-size:12.5px;margin-bottom:12px">Qareebi shelters (free space ke saath) aur available verified volunteers — location ke hisaab se distance calculate hoti hai.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
-        <button type="button" class="pill" id="rlGeoBtn" onclick="RL_geo()">📍 Use my GPS</button>
-        <span class="mute" id="rlLocLbl" style="font-size:12px">Location nahi li — buttons dabao ya list dekho.</span>
-      </div>
-      <div class="pill-row" id="rlNeeds" style="margin-bottom:14px">
-        <button type="button" class="pill" data-v="shelter">Shelter</button>
-        <button type="button" class="pill" data-v="medical">Medical</button>
-        <button type="button" class="pill" data-v="food">Food &amp; Water</button>
-        <button type="button" class="pill" data-v="transport">Transport</button>
-      </div>
-      <div class="grid-2">
-        <div><div class="card-header"><h4 style="font-size:14px">🏕️ Shelters &amp; Relief Centers</h4></div><div id="rlShelters"><p class="mute" style="font-size:13px">Loading…</p></div></div>
-        <div><div class="card-header"><h4 style="font-size:14px">🙋 Available Volunteers</h4></div><div id="rlVols"><p class="mute" style="font-size:13px">Loading…</p></div></div>
       </div>
     </div>
   </div>
@@ -492,101 +401,39 @@ var NOTIFS = [
 ];
 var SEV_COL = { critical:'var(--r)', high:'var(--o)', medium:'var(--y)', low:'var(--gr)' };
 
-/* ── SMART FORM: pills + AI triage ── */
-function pillSingle(id) {
-  var w = RL_$(id); if (!w) return;
-  w.querySelectorAll('.pill').forEach(function(p) {
-    p.addEventListener('click', function() {
-      var on = p.classList.contains('on');
-      w.querySelectorAll('.pill').forEach(function(x) { x.classList.remove('on'); });
-      if (!on) p.classList.add('on');
-      triagePreview();
-    });
-  });
-}
-function pillMulti(id, onChange) {
-  var w = RL_$(id); if (!w) return;
-  w.querySelectorAll('.pill').forEach(function(p) {
-    p.addEventListener('click', function() { p.classList.toggle('on'); if (onChange) onChange(); triagePreview(); });
-  });
-}
-function pillVal(id) { var w = RL_$(id); var p = w && w.querySelector('.pill.on'); return p ? p.dataset.v : ''; }
-function pillVals(id) { var w = RL_$(id); return w ? [].slice.call(w.querySelectorAll('.pill.on')).map(function(p) { return p.dataset.v; }) : []; }
-function setPill(id, v) {
-  var w = RL_$(id); if (!w) return;
-  w.querySelectorAll('.pill').forEach(function(p) { p.classList.toggle('on', p.dataset.v === String(v)); });
-}
-function setPills(id, vals) {
-  var w = RL_$(id); if (!w) return;
-  w.querySelectorAll('.pill').forEach(function(p) { if (vals.indexOf(p.dataset.v) > -1) p.classList.add('on'); });
-}
-var TRI_COL = { critical: '#EF5B5B', high: '#F58A3D', medium: '#F5B83D', low: '#3CC08E' };
-function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-var _tpT = null;
-function triagePreview() {
-  clearTimeout(_tpT);
-  var box = RL_$('aiTriage'); if (!box) return;
-  var v = ((RL_$('reqDesc') || {}).value || '');
-  if (v.length < 12) { box.classList.add('hide'); return; }
-  _tpT = setTimeout(function() {
-    RL_Send('POST', '/ai/copilot', { message: v }).then(function(res) {
-      if (!res || !res.ok || !res.data) { box.classList.add('hide'); return; }
-      var d = res.data, t = d.triage || {}, i = d.intent || {};
-      window._lastTriage = d;
-      box.innerHTML = '<span class="tri-chip" style="background:' + (TRI_COL[t.recommended] || 'var(--g)') + '">AI PRIORITY: ' + esc(t.recommended || '').toUpperCase() + ' · ' + (t.score || 0) + '/100</span>'
-        + '<b>' + esc(i.incident_type || '') + '</b>' + (i.flags && i.flags.length ? ' · ⚑ ' + esc(i.flags.join(', ')) : '')
-        + (i.people_count ? ' · 👥 ' + i.people_count : '')
-        + '<div style="margin-top:6px">Suggested needs: <b>' + esc((i.needs || []).join(', ')) + '</b> '
-        + '<button type="button" class="pill" style="padding:4px 10px;font-size:11px" onclick="applyTriageSug()">✓ Apply</button></div>'
-        + '<div class="mute" style="margin-top:5px;font-size:11px">Recommendation only — final priority admin officer set karta hai. Aap ke answers bhi theek hain to Apply skip karein.</div>';
-      box.classList.remove('hide');
-    });
-  }, 700);
-}
-function applyTriageSug() {
-  var d = window._lastTriage; if (!d || !d.intent) return;
-  var i = d.intent;
-  if (i.incident_type && i.incident_type !== 'other') setPill('reqInc', i.incident_type);
-  setPills('reqNeeds', (i.needs || []).filter(function(n) { return ['rescue', 'medical', 'shelter', 'food_water', 'transport'].indexOf(n) > -1; }));
-  if (i.people_count >= 6) setPill('reqPeople', '7'); else if (i.people_count >= 4) setPill('reqPeople', '5'); else if (i.people_count >= 2) setPill('reqPeople', '3'); else if (i.people_count === 1) setPill('reqPeople', '1');
-  if (i.urgency === 'critical' && !pillVal('reqSit')) setPill('reqSit', 'critical');
-  RL_Toast('AI suggestions form mein apply ho gaye');
+/* ── RENDERERS ── */
+function selectCat(el, cat) {
+  document.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('active'); });
+  el.classList.add('active');
+  navigate('request');
+  var sel = RL_$('reqCat'); if (sel) sel.value = cat;
 }
 
 var GCO = null; // GPS coords captured via picker
 function submitReq() {
-  var loc = (RL_$('reqLoc') || {}).value || '';
+  var loc = (RL_$('reqLoc')||{}).value||'';
   if (!loc.trim()) { RL_Toast('📍 Sirf apna location dein'); return; }  // location is the only required field
-  var inc = pillVal('reqInc') || 'other', sit = pillVal('reqSit') || '';
-  var needs = pillVals('reqNeeds');
-  var people = parseInt(pillVal('reqPeople'), 10) || 0;
-  if (!needs.length) { RL_Toast('Step 4 mein kam az kam ek help type chunein'); return; }
-  var desc = (RL_$('reqDesc') || {}).value || '';
-  var nm = (RL_$('reqName') || {}).value || '', ph = (RL_$('reqPhone') || {}).value || '';
-  var INC_LBL = { flood: 'Flood', earthquake: 'Earthquake', fire: 'Fire', storm: 'Storm', medical: 'Medical emergency', missing: 'Missing person', other: 'Other' };
-  var NEED_CAT = { rescue: 'rescue', medical: 'medical', shelter: 'shelter', food_water: 'food', transport: 'transport' };
-  var cat = inc === 'missing' ? 'missing' : (NEED_CAT[needs[0]] || 'special');
-  var catLabel = (INC_LBL[inc] || 'Help') + ' — ' + needs.join(', ');
+  var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'';
+  var catLabel = (RL_$('reqCat')||{}).value || '';
   var r = {
     id: 'RL-' + Date.now(), cat: catLabel, name: nm, phone: ph, loc: loc,
-    desc: desc, people: people || 1, urgent: sit === 'critical', status: 0, date: new Date().toLocaleDateString()
+    desc: (RL_$('reqDesc')||{}).value||'', people: (RL_$('reqPeople')||{}).value||1,
+    urgent: !!(RL_$('reqUrgent')||{}).checked, status: 0, date: new Date().toLocaleDateString()
   };
   myReqs.unshift(r);
   try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
   var body = {
-    category: cat, full_name: nm || 'Help seeker', phone: ph, city: loc,
-    description: desc || catLabel, urgent: sit === 'critical',
-    incident_type: inc, needs: needs, people_count: people
+    category: (window.RL_CAT_LABEL2KEY[catLabel] || 'special'),
+    full_name: nm || 'Help seeker', phone: ph, city: loc,
+    description: catLabel + (r.desc ? ' — ' + r.desc : '') + (r.people ? ' (' + r.people + ' people)' : ''),
+    urgent: r.urgent
   };
-  if (sit) body.urgency = sit;
   if (GCO) { body.latitude = GCO.lat; body.longitude = GCO.lng; }
   else { var g = window.RL_LIVE ? RL_LIVE.geo(loc) : null; if (g) { body.latitude = g.lat; body.longitude = g.lng; } }
-  ['reqLoc','reqDesc'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
-  ['reqInc','reqSit','reqPeople','reqNeeds'].forEach(function(id){ var w=RL_$(id); if(w) w.querySelectorAll('.pill').forEach(function(p){p.classList.remove('on');}); });
+  ['reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
+  var uc = RL_$('reqUrgent'); if (uc) uc.checked = false;
   GCO = null;
   if (window.LP) LP.reset();
-  var tb = RL_$('aiTriage'); if (tb) tb.classList.add('hide');
   updateBadges(); renderActive(); renderMyReqs();
   RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted! A volunteer will contact you soon.');
   RL_Send('POST', '/help-requests', body).then(function(res){
@@ -594,12 +441,9 @@ function submitReq() {
       r.id = res.data.id; r._live = true;
       try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
       renderActive();
-      var t = res.data.ai_triage;
-      if (t) RL_Toast('AI triage: ' + t.recommended.toUpperCase() + ' (' + t.score + '/100) — admin ko priority queue dikhai gayi');
-      if (res.data.duplicate_suspect) RL_Toast('⚠ Aap ki pichli request already queue mein hai — duplicate flag kar di gayi');
     }
   });
-  setTimeout(function(){ navigate('myrequests'); }, 1400);
+  setTimeout(function(){ navigate('myrequests'); }, 1200);
 }
 
 function renderActive() {
@@ -730,136 +574,16 @@ function loadNotifsLive() {
   });
 }
 
-/* ── AI COPILOT: chat + voice + draft→request ── */
-function cpBubble(cls, html) {
-  var box = RL_$('cpChat'); if (!box) return null;
-  var d = document.createElement('div');
-  d.className = 'cp-msg ' + cls; d.innerHTML = html;
-  box.appendChild(d); box.scrollTop = box.scrollHeight;
-  return d;
-}
-function cpSend() {
-  var inp = RL_$('cpInput'); var v = inp ? inp.value.trim() : '';
-  if (!v) return;
-  cpBubble('me', esc(v)); inp.value = '';
-  var wait = cpBubble('ai', '<span class="mute">soch raha hoon…</span>');
-  RL_Send('POST', '/ai/copilot', { message: v }).then(function(res) {
-    if (!res || !res.ok || !res.data) { wait.innerHTML = 'Server reachable nahi. Emergency ho to <b>1122</b> dial karein.'; return; }
-    cpRender(res.data, wait);
-  });
-}
-function cpRender(d, el) {
-  var i = d.intent || {}, t = d.triage || {};
-  var html = (d.reply ? esc(d.reply) + '\n\n' : '');
-  html += '<span class="tri-chip" style="background:' + (TRI_COL[t.recommended] || 'var(--g)') + '">' + esc((t.recommended || '?').toUpperCase()) + ' · ' + (t.score || 0) + '/100</span>'
-    + '<span class="tri-chip" style="background:var(--g2)">' + esc(i.incident_type || '?') + '</span>'
-    + (i.people_count ? '<span class="tri-chip" style="background:#4C8DF6">👥 ' + i.people_count + '</span>' : '')
-    + (i.flags && i.flags.length ? '<span class="tri-chip" style="background:#7C6CF0">⚑ ' + esc(i.flags.join(', ')) + '</span>' : '');
-  if (d.guidance && d.guidance.length) {
-    html += '<div class="cp-guide"><b>Abhi ke liye safety:</b><br>• ' + d.guidance.map(esc).join('<br>• ') + '</div>';
-  }
-  if (d.question) html += '\n<b>' + esc(d.question) + '</b>';
-  el.innerHTML = html;
-  var dr = RL_$('cpDraft');
-  if (dr && d.draft) {
-    window._cpDraft = d.draft;
-    dr.innerHTML = '<div class="cp-draft"><b>📝 Request draft tayyar hai</b> — '
-      + esc(d.draft.incident_type) + ' · ' + esc((d.draft.needs || []).join(', ')) + (d.draft.people_count ? ' · ' + d.draft.people_count + ' log' : '')
-      + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">'
-      + '<button type="button" class="submit-btn" style="width:auto;margin:0;padding:8px 14px" onclick="cpUseDraft()">✅ Emergency form mein le jao</button>'
-      + '<button type="button" class="pill" onclick="document.getElementById(\'cpDraft\').innerHTML=\'\'">Cancel</button></div></div>';
-  }
-  RL_$('cpChat').scrollTop = RL_$('cpChat').scrollHeight;
-}
-function cpUseDraft() {
-  var d = window._cpDraft; if (!d) return;
-  try { localStorage.setItem('rl_copilot_draft', JSON.stringify(d)); } catch(e) {}
-  navigate('request');
-}
-function applyCopilotDraft() {
-  var d = null;
-  try { d = JSON.parse(localStorage.getItem('rl_copilot_draft') || 'null'); } catch(e) {}
-  if (!d) return;
-  try { localStorage.removeItem('rl_copilot_draft'); } catch(e) {}
-  if (d.incident_type) setPill('reqInc', d.incident_type);
-  setPills('reqNeeds', (d.needs || []).filter(function(n) { return ['rescue', 'medical', 'shelter', 'food_water', 'transport'].indexOf(n) > -1; }));
-  if (d.people_count >= 6) setPill('reqPeople', '7'); else if (d.people_count >= 4) setPill('reqPeople', '5'); else if (d.people_count >= 2) setPill('reqPeople', '3'); else if (d.people_count === 1) setPill('reqPeople', '1');
-  if (d.urgency === 'critical') setPill('reqSit', 'critical'); else if (d.urgency === 'high') setPill('reqSit', 'high');
-  var de = RL_$('reqDesc'); if (de && d.description) de.value = d.description;
-  RL_Toast('Copilot ka draft bhar gaya — check kar ke Send dabayein');
-}
-/* voice input — Web Speech API (free, Chrome/Edge/Android) */
-var CP_REC = null;
-function cpMicToggle() {
-  var btn = RL_$('cpMic');
-  if (CP_REC) { CP_REC.stop(); return; }
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { RL_Toast('Is browser mein voice support nahi — type karke bhejein'); return; }
-  CP_REC = new SR();
-  CP_REC.lang = (RL_$('cpLang') || {}).value || 'en-PK';
-  CP_REC.interimResults = true; CP_REC.continuous = false;
-  btn.classList.add('mic-on'); btn.textContent = '🔴';
-  CP_REC.onresult = function(e) {
-    var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;
-    var inp = RL_$('cpInput'); if (inp) inp.value = t;
-    if (e.results[e.results.length - 1].isFinal) cpSend();
-  };
-  CP_REC.onend = function() { CP_REC = null; btn.classList.remove('mic-on'); btn.textContent = '🎤'; };
-  CP_REC.onerror = function(e) { RL_Toast('Mic error: ' + (e && e.error ? e.error : 'unknown') + ' — permission/check confirm karein'); if (CP_REC) CP_REC.onend(); };
-  CP_REC.start();
-}
-
-/* ── RELIEF COORDINATION: live matching ── */
-var RL_GEO = null;
-function RL_geo() {
-  if (!navigator.geolocation) { RL_Toast('Browser GPS support nahi karta'); return; }
-  RL_Toast('Location le rahe hain…');
-  navigator.geolocation.getCurrentPosition(function(p) {
-    var la = p.coords.latitude, lo = p.coords.longitude;
-    if (la < 23.6 || la > 37.3 || lo < 58.4 || lo > 78.4) { RL_Toast('Location Pakistan se bahar — results without distance denge'); loadRelief(); return; }
-    RL_GEO = { lat: la, lng: lo };
-    var l = RL_$('rlLocLbl'); if (l) l.textContent = '📍 GPS lock: ' + la.toFixed(3) + ', ' + lo.toFixed(3);
-    loadRelief();
-  }, function() { RL_Toast('GPS allow nahi hua — bina distance ke list dikha rahe hain'); loadRelief(); }, { timeout: 10000 });
-}
-function loadRelief() {
-  var needs = pillVals('rlNeeds');
-  var q = '/matching?' + (RL_GEO ? 'lat=' + RL_GEO.lat + '&lng=' + RL_GEO.lng + '&' : '') + (needs.length ? 'needs=' + needs.join(',') : '');
-  var sh = RL_$('rlShelters'), vo = RL_$('rlVols');
-  if (sh) sh.innerHTML = '<p class="mute" style="font-size:13px">Loading…</p>';
-  if (vo) vo.innerHTML = '<p class="mute" style="font-size:13px">Loading…</p>';
-  RL_Send('GET', q).then(function(res) {
-    if (!res || !res.ok || !res.data) {
-      if (sh) sh.innerHTML = '<p class="mute" style="font-size:13px">Server reachable nahi — baad mein try karein.</p>';
-      if (vo) vo.innerHTML = '';
-      return;
-    }
-    var d = res.data;
-    if (sh) sh.innerHTML = (d.shelters || []).length ? d.shelters.map(function(s) {
-      return '<div class="item"><div style="flex:1"><b>' + esc(s.name) + '</b><small class="mute" style="display:block;font-size:11.5px">' + esc(s.city || s.address || '') + ' · ' + esc(s.type || 'shelter') + '</small></div>'
-        + '<div style="text-align:right"><span class="tri-chip" style="background:var(--g)">' + s.free_space + ' free</span>'
-        + '<small class="mute" style="display:block;font-size:11px">' + (s.distance_km != null ? s.distance_km + ' km' : 'distance —') + '</small></div></div>';
-    }).join('') : '<p class="mute" style="font-size:13px">Abhi koi shelter free space ke saath list mein nahi — admin capacity update kare to yahan dikhega.</p>';
-    if (vo) vo.innerHTML = (d.volunteers || []).length ? d.volunteers.map(function(v) {
-      return '<div class="item"><div style="flex:1"><b>' + esc(v.full_name) + '</b><small class="mute" style="display:block;font-size:11.5px">' + esc((v.skills || []).join(', ') || 'General help') + ' · ' + esc(v.city || '') + '</small></div>'
-        + '<div style="text-align:right"><span class="tri-chip" style="background:#4C8DF6">✓ verified</span>'
-        + '<small class="mute" style="display:block;font-size:11px">' + (v.distance_km != null ? v.distance_km + ' km' : 'distance —') + '</small></div></div>';
-    }).join('') : '<p class="mute" style="font-size:13px">Is need ke liye abhi available verified volunteer nahi — doosri needs chunein ya baad mein dekhein.</p>';
-  });
-}
-
 /* ── NAVIGATION ── */
 var PAGES = {
-  home:          'Home Dashboard|Alerts, quick actions and all modules in one place',
-  request:       'Emergency Assistance|One smart form — AI priority ke saath',
+  home:          'Request Help|Select a category — you only need to give your location',
+  request:       'Quick Help Request|Just enter your location and tap Request',
   myrequests:    'My Requests|Track the status of your help requests',
   emergency:     'Emergency Contacts|Call emergency services directly',
   nearby:        'Nearby Help|Shelters and hospitals near you in Pakistan',
-  flood:         'Flood Predictor|Live river & rainfall flood risk for your area',
-  route:         'Safe Route Planner|Any address to any address — safest route, hazard-scored',
+  flood:         'Flood Predictor|AI-powered flood risk for your area',
+  route:         'Safe Route Planner|Any address to any address — safest route, AI-scored',
   scan:          'Smart Safety Scan|Instant danger report for any area in Pakistan',
-  copilot:       'AI Disaster Copilot|Likho ya bolo — English, Urdu, Roman Urdu',
-  relief:        'Relief Coordination|Live shelter space & available verified volunteers',
   notifications: 'Notifications|Live alerts and earthquakes near you',
   profile:       'My Profile|Your personal information'
 };
@@ -871,9 +595,7 @@ function navigate(page) {
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') { renderNotifs(false); loadNotifsLive(); }
     if (p === 'myrequests')    renderMyReqs();
-    if (p === 'request')       { renderActive(); LP.init(); applyCopilotDraft(); }
-    if (p === 'copilot')       { var ci = RL_$('cpInput'); if (ci) ci.focus(); }
-    if (p === 'relief')        loadRelief();
+    if (p === 'request')       { renderActive(); LP.init(); }
   });
 }
 RL_WireNav(PAGES, function(p){ navigate(p); });
@@ -890,11 +612,6 @@ RL_Icons();
 loadMyReqs();
 loadNearbyLive();
 loadNotifsLive();
-/* smart-form + copilot + relief wiring */
-pillSingle('reqInc'); pillSingle('reqSit'); pillSingle('reqPeople'); pillMulti('reqNeeds');
-pillMulti('rlNeeds', loadRelief);
-var _rd = RL_$('reqDesc'); if (_rd) _rd.addEventListener('input', triagePreview);
-var _mic = RL_$('cpMic'); if (_mic) _mic.addEventListener('click', cpMicToggle);
 
 /* ── LIVE weather / flood / map (free, no API key) ── */
 function _setTxt(id,v){ var e=RL_$(id); if(e) e.textContent=v; }
