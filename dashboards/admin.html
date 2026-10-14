@@ -322,6 +322,10 @@ donut('split',[['Food',9,C[0],'h'],['Shelter',6,C[1],'h'],['Other',3,C[3],'h']],
 bars('bars1',[40,55,48,70,82,65,90,76,60,85,95,70],[30,42,38,50,60,48,66,55,44,62,70,52],M);
 bars('bars2',[8,12,10,14,9,16,12,18,11,15,10,7],null,M);
 var API=(window.RELIEF_API||'').replace(/\/$/,'');
+(function(){var h=document.documentElement,t='';h.style.visibility='hidden';try{t=sessionStorage.getItem('rl_token')||''}catch(e){}
+function out(){location.replace('../index.html')}
+if(!t||!API){out();return}
+fetch(API+'/auth/me',{headers:{Authorization:'Bearer '+t}}).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(j){if(j&&j.data&&j.data.is_admin)h.style.visibility='visible';else out()}).catch(out)})();
 function jget(p){return Promise.race([fetch(API+p).then(function(r){if(!r.ok)throw 0;return r.json()}),new Promise(function(_,r){setTimeout(function(){r(0)},45000)})])}
 function rows(j){var d=j&&j.data;return Array.isArray(d)?d:[]}
 function live(ok){var s=document.querySelector('#'+(role=='admin'?'admin':'vol')+' .top .sub');if(s)s.textContent+=ok?' · Live data':' · Demo data (server offline)'}

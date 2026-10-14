@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     weather_provider: str = "mock"  # mock | openweathermap | weatherapi
     weather_api_key: str = ""
 
+    # ─── Admin access ───────────────────────────────────
+    admin_emails: str = ""  # comma-separated, e.g. "me@gmail.com,boss@gmail.com"
+
     # ─── CORS ───────────────────────────────────────────
     cors_origins: Union[List[str], str] = [
         "http://localhost:3000",
@@ -55,6 +58,10 @@ class Settings(BaseSettings):
             except (json.JSONDecodeError, TypeError):
                 return [o.strip() for o in self.cors_origins.split(",")]
         return self.cors_origins
+
+    @property
+    def admin_email_list(self) -> List[str]:
+        return [e.strip().lower() for e in self.admin_emails.split(",") if e.strip()]
 
     @property
     def effective_supabase_key(self) -> str:

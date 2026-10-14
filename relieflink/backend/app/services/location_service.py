@@ -302,6 +302,27 @@ class LocationService:
             "source": "OpenStreetMap (Overpass API)",
         }
 
+    # ─── Overview stats (used by /analytics) ───────────────
+
+    async def get_overview_stats(self) -> Dict[str, Any]:
+        """Aggregate counts for the admin dashboard."""
+        from app.database import db
+        teams = await db.table_select("rescue_teams", limit=1000)
+        shelters = await db.table_select("shelters", limit=1000)
+        volunteers = await db.table_select("volunteers", limit=1000)
+        capacity = sum(int(x.get("capacity") or 0) for x in shelters)
+        occupied = sum(int(x.get("current_occupancy") or 0) for x in shelters)
+        return {
+            "teams_total": len(teams),
+            "teams_available": len([t for t in teams if t.get("status") == "available"]),
+            "teams_deployed": len([t for t in teams if t.get("status") == "deployed"]),
+            "shelters_active": len([x for x in shelters if x.get("status") == "active"]),
+            "shelter_capacity": capacity,
+            "shelter_occupancy": occupied,
+            "volunteers_total": len(volunteers),
+            "volunteers_available": len([v for v in volunteers if v.get("availability") == "available"]),
+        }
+
     # ─── Volunteers ────────────────────────────────────────
 
     async def list_volunteers(self) -> Dict[str, Any]:

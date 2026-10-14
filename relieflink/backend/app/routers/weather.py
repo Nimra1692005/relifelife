@@ -6,12 +6,28 @@ POST   /risk           — Combined weather + disaster risk assessment
 POST   /route-safety   — Analyze route safety with alternatives
 """
 
+from typing import Optional
+
 from fastapi import APIRouter
 
 from app.models.schemas import WeatherRequest, RouteSafetyRequest
 from app.services.weather_service import weather_service
 
 router = APIRouter()
+
+
+@router.get("", summary="Get current weather (alias, accepts lat/lng)")
+async def weather_root(lat: Optional[float] = None, lng: Optional[float] = None,
+                       latitude: Optional[float] = None, longitude: Optional[float] = None):
+    la = latitude if latitude is not None else (lat if lat is not None else 33.6844)
+    lo = longitude if longitude is not None else (lng if lng is not None else 73.0479)
+    return await weather_service.get_weather(la, lo)
+
+
+@router.get("/forecast", summary="Weather forecast (alias, accepts lat/lng)")
+async def weather_forecast(lat: Optional[float] = None, lng: Optional[float] = None,
+                           latitude: Optional[float] = None, longitude: Optional[float] = None):
+    return await weather_root(lat, lng, latitude, longitude)
 
 
 @router.get("/current", summary="Get current weather")

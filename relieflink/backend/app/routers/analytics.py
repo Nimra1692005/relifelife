@@ -14,6 +14,7 @@ from app.utils.common import success_response
 router = APIRouter()
 
 
+@router.get("", summary="Dashboard overview (alias)")
 @router.get("/overview", summary="Dashboard overview")
 async def overview():
     """Get comprehensive dashboard overview statistics including

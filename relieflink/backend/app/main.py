@@ -13,13 +13,14 @@ Architecture:
     middleware/  — Request logging, rate limiting
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.utils.common import register_error_handlers
 from app.database import db
+from app.middleware.auth import require_admin
 from app.routers import (
     auth,
     alerts,
@@ -105,7 +106,7 @@ app.include_router(risk_zones.router, prefix="/api/v1/risk-zones", tags=["Risk Z
 app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Disaster Alerts"])
 app.include_router(ai.router, prefix="/api/v1/ai", tags=["AI Assistant"])
 app.include_router(safe_routes.router, prefix="/api/v1/safe-route", tags=["Safe Routes"])
-app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"], dependencies=[Depends(require_admin)])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(weather.router, prefix="/api/v1/weather", tags=["Weather Intelligence"])
 app.include_router(travel.router, prefix="/api/v1/travel", tags=["Travel Safety"])

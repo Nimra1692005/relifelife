@@ -16,6 +16,9 @@ from app.models.schemas import (
 )
 from app.services import sos_service
 
+from fastapi import Depends
+from app.middleware.auth import require_admin
+
 router = APIRouter()
 
 
@@ -48,13 +51,14 @@ async def get_sos(sos_id: str):
     return await sos_service.get_by_id(sos_id)
 
 
+@router.patch("/{sos_id}/status", summary="Update SOS status (alias)")
 @router.patch("/{sos_id}", summary="Update SOS request")
 async def update_sos(sos_id: str, body: SOSUpdateRequest):
     """Update SOS request status, priority, or assign a team."""
     return await sos_service.update(sos_id, body)
 
 
-@router.post("/{sos_id}/assign", summary="Assign rescue team")
+@router.post("/{sos_id}/assign", dependencies=[Depends(require_admin)], summary="Assign rescue team")
 async def assign_team(sos_id: str, body: SOSAssignRequest):
     """Assign a rescue team to an SOS request."""
     return await sos_service.assign_team(sos_id, body)

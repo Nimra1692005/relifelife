@@ -9,7 +9,8 @@ GET  /profile/{id}  — Get user profile
 PATCH /profile/{id} — Update user profile
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from app.middleware.auth import get_current_user
 
 from app.models.schemas import (
     SignUpRequest, LoginRequest,
@@ -19,6 +20,11 @@ from app.models.schemas import (
 from app.services import auth_service
 
 router = APIRouter()
+
+
+@router.get("/me", summary="Current user + admin flag")
+async def me(user: dict = Depends(get_current_user)):
+    return {"success": True, "data": {**user, "is_admin": user["role"] == "admin"}}
 
 
 @router.post("/signup", summary="Register a new user")

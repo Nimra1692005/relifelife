@@ -613,14 +613,14 @@ if(role==='admin'){o.email=tx[0];P.pw=tx[1];o.name=(tx[0]||'admin').split('@')[0
 else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
 P[role]=o;sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o))}catch(e){}}
 function queue(role,o){try{var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
-function send(role){var o=P[role];if(!o||!API)return Promise.resolve({offline:true});var c=geo(o.area),req;
+function send(role){var o=P[role];if(!o||!API)return Promise.resolve(role==='admin'?{blocked:true,msg:'Server not configured'}:{offline:true});var c=geo(o.area),req;
 if(role==='help'){var ET={'Flood rescue':'flood','Medical help':'medical'};
  req=post('/sos',{latitude:(c||PK)[0],longitude:(c||PK)[1],address_text:o.area,emergency_type:ET[o.type]||'other',urgency:o.urgent?'critical':'medium',message:[o.name,o.phone,o.type].join(' | ').slice(0,500)})}
 else if(role==='volunteer'){var b={full_name:o.name,phone:o.phone,skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};if(c){b.latitude=c[0];b.longitude=c[1]}req=post('/volunteers/register',b)}
 else req=post('/auth/login',{email:o.email,password:P.pw||''});
-return req.then(function(r){if(r.ok)return {ok:true,data:r.data};
+return req.then(function(r){if(r.ok){if(role==='admin'){try{sessionStorage.setItem('rl_token',(r.data&&r.data.data&&r.data.data.access_token)||'')}catch(e){}}return {ok:true,data:r.data}};
  if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
- if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
+ if(role==='admin')return {blocked:true,msg:'Admin login needs the server. Please try again.'};queue(role,o);return {offline:true}}).catch(function(){if(role==='admin')return {blocked:true,msg:'Server not reachable. Admin login needs internet.'};queue(role,o);return {offline:true}})}
 return {collect:collect,send:send,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':null}}})();
 </script>
 <script>

@@ -159,6 +159,7 @@ class ReliefLinkAPI {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(sessionStorage.getItem('rl_token') ? { Authorization: `Bearer ${sessionStorage.getItem('rl_token')}` } : {}),
         ...options?.headers,
       },
     });
@@ -225,7 +226,7 @@ class ReliefLinkAPI {
   async getRouteSafety(origin: { lat: number; lng: number }, dest: { lat: number; lng: number }): Promise<any> {
     return this.fetch('/api/v1/weather/route-safety', {
       method: 'POST',
-      body: JSON.stringify({ origin, destination: dest }),
+      body: JSON.stringify({ from_lat: origin.lat, from_lng: origin.lng, to_lat: dest.lat, to_lng: dest.lng }),
     });
   }
 

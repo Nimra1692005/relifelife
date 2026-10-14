@@ -20,6 +20,11 @@ async def list_risk_zones():
     return await risk_service.get_disaster_zones()
 
 
+@router.get("/assessment", summary="Risk assessment for a point (default: Islamabad)")
+async def risk_assessment(latitude: float = 33.6844, longitude: float = 73.0479):
+    return await risk_service.analyze_location(RiskAnalysisRequest(latitude=latitude, longitude=longitude))
+
+
 @router.post("/analyze", summary="Analyze location risk")
 async def analyze_risk(body: RiskAnalysisRequest):
     """Perform comprehensive risk analysis for a geographic location.

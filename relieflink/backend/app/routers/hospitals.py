@@ -10,6 +10,9 @@ from fastapi import APIRouter
 from app.models.schemas import HospitalCreate
 from app.services import location_service
 
+from fastapi import Depends
+from app.middleware.auth import require_admin
+
 router = APIRouter()
 
 
@@ -19,7 +22,7 @@ async def list_hospitals():
     return await location_service.list_hospitals()
 
 
-@router.post("", status_code=201, summary="Create hospital")
+@router.post("", dependencies=[Depends(require_admin)], status_code=201, summary="Create hospital")
 async def create_hospital(body: HospitalCreate):
     """Register a new hospital (admin)."""
     data = body.model_dump()

@@ -13,6 +13,9 @@ from app.services import location_service
 from app.database import db
 from app.utils.common import success_response, NotFoundError
 
+from fastapi import Depends
+from app.middleware.auth import require_admin
+
 router = APIRouter()
 
 
@@ -22,14 +25,14 @@ async def list_shelters():
     return await location_service.list_shelters()
 
 
-@router.post("", status_code=201, summary="Create shelter")
+@router.post("", dependencies=[Depends(require_admin)], status_code=201, summary="Create shelter")
 async def create_shelter(body: ShelterCreate):
     """Register a new emergency shelter (admin)."""
     data = body.model_dump()
     return await location_service.create_shelter(data)
 
 
-@router.patch("/{shelter_id}", summary="Update shelter")
+@router.patch("/{shelter_id}", dependencies=[Depends(require_admin)], summary="Update shelter")
 async def update_shelter(shelter_id: str, body: ShelterCreate):
     """Update an existing shelter's details."""
     updated = await db.table_update("shelters", {"id": shelter_id}, body.model_dump())

@@ -12,6 +12,9 @@ from app.models.schemas import AlertCreate
 from app.database import db
 from app.utils.common import success_response, NotFoundError, now_iso
 
+from fastapi import Depends
+from app.middleware.auth import require_admin
+
 router = APIRouter()
 
 
@@ -84,7 +87,7 @@ async def list_alerts():
     return success_response(data=rows)
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, summary="Create alert")
+@router.post("", dependencies=[Depends(require_admin)], status_code=status.HTTP_201_CREATED, summary="Create alert")
 async def create_alert(body: AlertCreate):
     """Create and broadcast a new disaster alert (admin)."""
     await _ensure_seeded()
@@ -94,7 +97,7 @@ async def create_alert(body: AlertCreate):
     return success_response(data=row, message="Alert created and broadcast")
 
 
-@router.patch("/{alert_id}", summary="Update alert")
+@router.patch("/{alert_id}", dependencies=[Depends(require_admin)], summary="Update alert")
 async def update_alert(alert_id: str, body: AlertCreate):
     """Update or deactivate an existing alert."""
     await _ensure_seeded()
