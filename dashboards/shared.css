@@ -61,6 +61,7 @@ svg.i {
   font-size: 10px; font-weight: 700; display: grid; place-items: center; padding: 0 6px;
 }
 .nav-sep { height: 1px; background: rgba(255,255,255,.1); margin: 12px 8px; }
+.nav-lbl { padding: 12px 14px 4px; font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); opacity: .65; }
 
 .nav-bottom { margin-top: auto; padding-top: 12px; }
 .user-card {
