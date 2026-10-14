@@ -13,10 +13,15 @@ class Settings(BaseSettings):
     environment: str = "development"
     debug: bool = True
 
-    # ─── Supabase ───────────────────────────────────────
+    # ─── Supabase (old format: anon/service keys) ───────
     supabase_url: str = ""
-    supabase_key: str = ""
-    supabase_service_key: str = ""
+    supabase_key: str = ""           # anon key OR sb_publishable_
+    supabase_service_key: str = ""   # service_role OR sb_secret_
+
+    # ─── Supabase (new format: sb_publishable / sb_secret) ─
+    supabase_publishable_key: str = ""
+    supabase_secret_key: str = ""
+    supabase_jwks_url: str = ""
 
     # ─── OpenAI ─────────────────────────────────────────
     openai_api_key: str = ""
@@ -31,7 +36,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
         "http://localhost:8081",
-        "exp://localhost:8081",
+        "https://relifelife.vercel.app",
     ]
 
     # ─── Rate Limiting ──────────────────────────────────
@@ -50,6 +55,16 @@ class Settings(BaseSettings):
             except (json.JSONDecodeError, TypeError):
                 return [o.strip() for o in self.cors_origins.split(",")]
         return self.cors_origins
+
+    @property
+    def effective_supabase_key(self) -> str:
+        """Return whichever key format is available."""
+        return self.supabase_publishable_key or self.supabase_key
+
+    @property
+    def effective_service_key(self) -> str:
+        """Return whichever service key format is available."""
+        return self.supabase_secret_key or self.supabase_service_key or self.supabase_key
 
 
 settings = Settings()
