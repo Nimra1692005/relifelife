@@ -330,12 +330,13 @@ body::after{
   <header class="head">
     <small>ReliefLink · AI Disaster Response</small>
     <h1>When disaster strikes, we respond.<span>Choose your role.</span></h1>
+  <div style="margin-top:14px;display:flex;align-items:center;gap:6px;font-size:12px;opacity:.9">پریفتانی / Language <select class="rl-lang" aria-label="App language" onchange="RL.lang(this.value)" style="background:rgba(255,255,255,.12);color:inherit;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:4px 8px;font-family:inherit;cursor:pointer"><option value="en">English</option><option value="ur">اردو</option><option value="roman">Roman Urdu</option></select></div>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Choose your role">
-    <button role="tab" data-role="help" aria-selected="true">I need help</button>
-    <button role="tab" data-role="volunteer" aria-selected="false">Volunteer</button>
-    <button role="tab" data-role="admin" aria-selected="false">Admin</button>
+    <button role="tab" data-role="help" aria-selected="true" data-rl="tabHelp">I need help</button>
+    <button role="tab" data-role="volunteer" aria-selected="false" data-rl="tabVol">Volunteer</button>
+    <button role="tab" data-role="admin" aria-selected="false" data-rl="tabAdmin">Admin</button>
   </div>
 
   <main class="card" id="card" data-side="right">
@@ -364,7 +365,7 @@ body::after{
     </div>
 
     <form class="form f active" data-role="help" data-pos="left" data-msg="Request sent. A volunteer will contact you soon.">
-      <h3 style="--i:0">I need help</h3>
+      <h3 style="--i:0" data-rl="hHelp">I need help</h3>
       <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required></div>
       <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone / WhatsApp" required></div>
       <div class="field" style="--i:3">
@@ -379,29 +380,29 @@ body::after{
           <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📍 My location</button>
         </div>
       </div>
-      <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> This is urgent</label></div>
-      <button class="btn" style="--i:6">Request help</button>
+      <div class="row" style="--i:5"><label data-rl="chkUrgent"><input type="checkbox" id="urgentCheck"> This is urgent</label></div>
+      <button class="btn" style="--i:6" data-rl="btnHelp">Request help</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
     </form>
 
     <form class="form f" data-role="volunteer" data-pos="right" data-msg="Thank you! We will message you with your first task.">
-      <h3 style="--i:0">Join as volunteer</h3>
-      <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required></div>
-      <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone / WhatsApp" required></div>
-      <div class="field" style="--i:3"><input aria-label="Area" placeholder="Area / city" required></div>
+      <h3 style="--i:0" data-rl="hVol">Join as volunteer</h3>
+      <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required minlength="2" maxlength="40" pattern="[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}" title="Apna poora naam likhein (e.g. Ali Raza)"></div>
+      <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone: 03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17" title="Pakistani mobile number — 03XXXXXXXXX"></div>
+      <div class="field" style="--i:3"><input aria-label="Area" placeholder="Area / city" required minlength="2" maxlength="40"></div>
       <div class="field" style="--i:4">
         <select aria-label="Skill" required>
           <option value="" disabled selected>How can you help?</option>
           <option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option>
         </select>
       </div>
-      <div class="row" style="--i:5"><label><input type="checkbox"> Weekends only</label></div>
-      <button class="btn" style="--i:6">Join as volunteer</button>
+      <div class="row" style="--i:5"><label data-rl="chkWeekend"><input type="checkbox"> Weekends only</label></div>
+      <button class="btn" style="--i:6" data-rl="btnVol">Join as volunteer</button>
       <p class="alt" style="--i:7">Need help? <a data-go="help" tabindex="0" role="button">Ask for help</a></p>
     </form>
 
     <form class="form f" data-role="admin" data-pos="left" data-msg="Signed in (demo). Connect your backend here.">
-      <h3 style="--i:0">Admin sign in</h3>
+      <h3 style="--i:0" data-rl="hAdmin">Admin sign in</h3>
       <p class="sub" style="--i:1">For ReliefLink team members only.</p>
       <div class="field" style="--i:2"><input type="email" aria-label="Email" placeholder="Admin email" required></div>
       <div class="field" style="--i:3">
@@ -412,7 +413,7 @@ body::after{
         <label><input type="checkbox" checked> Keep me signed in</label>
         <a tabindex="0" role="button" onclick="return RL.forgot()">Forgot?</a>
       </div>
-      <button class="btn" style="--i:5">Sign in</button>
+      <button class="btn" style="--i:5" data-rl="btnAdmin">Sign in</button>
       <p class="alt" style="--i:6">Not admin? <a data-go="help" tabindex="0" role="button">Back to help</a></p>
     </form>
   </main>
@@ -530,7 +531,7 @@ body::after{
       </div>
       <div class="m-field"><label>Area / City</label><input type="text" placeholder="Your location" required></div>
       <label class="m-check"><input type="checkbox" id="mUrgentCheck"> Mark as urgent</label>
-      <button type="submit" class="m-btn">Send Request for Help</button>
+      <button type="submit" class="m-btn" data-rl="btnHelp">Send Request for Help</button>
       <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a></p>
     </form>
   </div>
@@ -555,15 +556,15 @@ body::after{
       <p>We match you with people who need your skills, close to you.</p>
     </div>
     <form class="m-sheet-form" data-mmsg="Thank you! We'll message you with your first task.">
-      <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required></div>
-      <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92 3xx-xxxxxxx" required></div>
-      <div class="m-field"><label>Area / City</label><input type="text" placeholder="Where are you based?" required></div>
+      <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required minlength="2" maxlength="40" pattern="[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}" title="Apna poora naam likhein (e.g. Ali Raza)"></div>
+      <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17" title="Pakistani mobile number — 03XXXXXXXXX"></div>
+      <div class="m-field"><label>Area / City</label><input type="text" placeholder="Where are you based?" required minlength="2" maxlength="40"></div>
       <div class="m-field">
         <label>How can you help?</label>
         <select required><option value="" disabled selected>Choose skill…</option><option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option></select>
       </div>
       <label class="m-check"><input type="checkbox"> Available weekends only</label>
-      <button type="submit" class="m-btn">Register as Volunteer</button>
+      <button type="submit" class="m-btn" data-rl="mobVol">Register as Volunteer</button>
       <p class="m-alt">Need help yourself? <a data-mopen="help">Ask for help</a></p>
     </form>
   </div>
@@ -613,6 +614,8 @@ CITY={lahore:[31.5204,74.3587],karachi:[24.8607,67.0011],islamabad:[33.6844,73.0
 function geo(t){t=(t||'').toLowerCase();for(var k in CITY)if(t.indexOf(k)>-1)return CITY[k];return null}
 function post(path,body){var t=new Promise(function(_,r){setTimeout(function(){r(new Error('timeout'))},45000)});
  return Promise.race([fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),t]).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,status:r.status,data:j}})})}
+function normPK(raw){var d=String(raw||'').replace(/\D/g,'');if(d.indexOf('0092')===0)d=d.slice(4);else if(d.indexOf('92')===0)d=d.slice(2);if(d.indexOf('0')===0)d=d.slice(1);if(!/^3\d{9}$/.test(d))return null;return '03'+d.slice(1);}
+function validateClient(role,o){o=o||{};var RE=/^[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}$/;if(!o.name||o.name.length<2||!RE.test(o.name))return 'Please write your real full name (e.g. Ali Raza)';if(!normPK(o.phone))return 'Mobile number theek nahi — 03XXXXXXXXX likhein (jaise 03001234567)';if(role==='volunteer'&&(!o.area||String(o.area).trim().length<2))return 'City likhein — aap kis shehar mein hain?';return '';}
 function collect(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
 if(role==='admin'){o.email=tx[0];P.pw=tx[1];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
 else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
@@ -624,7 +627,7 @@ if(role==='help'){var HC={'Flood rescue':'rescue','Medical help':'medical','Shel
 else if(role==='volunteer'){var b={role:'volunteer',full_name:o.name,phone:o.phone,city:o.area,skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};req=post('/auth/register-role',b)}
 else req=post('/auth/admin-signin',{email:o.email,password:P.pw||''});
 return req.then(function(r){if(r.ok){if(role==='volunteer'&&r.data&&r.data.data&&r.data.data.user){try{localStorage.setItem('rl_vol_id',r.data.data.user.id)}catch(e){}}return {ok:true,data:r.data};}
- if(role==='admin'&&r.status>=400&&r.status<500)return {blocked:true,msg:'Invalid admin email or password'};
+ if(r.status>=400&&r.status<500){if(role==='admin')return {blocked:true,msg:'Invalid admin email or password'};var em=(r.data&&r.data.message)||'';if(em)return {blocked:true,msg:em};}
  if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
 function _msg(t){var el=document.getElementById('toast');if(el){el.textContent=t;el.classList.add('show');clearTimeout(el._mt);el._mt=setTimeout(function(){el.classList.remove('show');},2800);}}
 function useGeo(fid){
@@ -641,8 +644,33 @@ function useGeo(fid){
       .catch(function(){ done(true); });
   }, function(){ _msg('Could not get your location — please type your area'); done(false); }, {timeout:10000, maximumAge:60000});
 }
+var LANGD={
+ tabHelp:{en:"I need help",ur:"\u0645\u062c\u06be\u06cc \u0645\u062f\u062f \u0686\u0627\u06c1\u06cc\u06d2",roman:"Mujhe madad chahiye"},
+ tabVol:{en:"Volunteer",ur:"\u0648\u0644\u0646\u0679\u0631",roman:"Volunteer"},
+ tabAdmin:{en:"Admin",ur:"\u0627\u06cc\u0688\u0645\u0646",roman:"Admin"},
+ hHelp:{en:"I need help",ur:"\u0645\u062c\u06be\u06cc \u0645\u062f\u062f \u0686\u0627\u06c1\u06cc\u06d2",roman:"Mujhe madad chahiye"},
+ hVol:{en:"Join as volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0628\u0646\u0646\u06d2 \u06a9\u06d2 \u0644\u0626\u06d2 \u0634\u0627\u0645\u0644 \u06c1\u0648\u06ba",roman:"Volunteer banne ke liye shaamil ho\u0101n"},
+ hAdmin:{en:"Admin sign in",ur:"\u0627\u06cc\u0688\u0645\u0646 \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Admin sign in"},
+ lblName:{en:"Full name",ur:"\u067e\u0648\u0631\u0627 \u0646\u0627\u0645",roman:"Poora naam"},
+ btnHelp:{en:"Request help",ur:"\u0645\u062f\u062f \u0628\u06be\u06cc\u062c\u06cc\u06ba",roman:"Madad bhejein"},
+ btnVol:{en:"Join as volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0628\u0646\u0646 \u0634\u0627\u0645\u0644 \u06c1\u0648\u06ba",roman:"Volunteer ban kar shaamil ho\u0101n"},
+ btnAdmin:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Sign in"},
+ chkUrgent:{en:"This is urgent",ur:"\u06cc\u06c1 \u0641\u0648\u0631\u06cc \u06c1\u06d2",roman:"Yeh fori hai"},
+ chkWeekend:{en:"Weekends only",ur:"\u0633\u0631\u0641 \u0648\u06cc\u06a9 \u0627\u06cc\u0646\u0688",roman:"Sirf weekends"},
+ mobVol:{en:"Register as Volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0631\u062c\u0633\u0679\u0631",roman:"Volunteer register karein"}
+};
+function applyLang(lang){
+ if(lang){try{localStorage.setItem("rl_lang",lang)}catch(e){}}
+ var cur="";try{cur=localStorage.getItem("rl_lang")||"en"}catch(e){cur="en"}
+ if(cur!=="ur"&&cur!=="roman")cur="en";
+ document.querySelectorAll("[data-rl]").forEach(function(el){var k=el.getAttribute("data-rl"),e=LANGD[k];if(!e)return;
+  if(cur==="en"){if(e.en!=null)el.textContent=e.en}
+  else if(cur==="ur"){if(e.ur!=null)el.textContent=e.ur;el.setAttribute("dir","rtl")}
+  else{if(e.roman!=null)el.textContent=e.roman}});
+ var selc=document.querySelectorAll(".rl-lang");for(var i=0;i<selc.length;i++)selc[i].value=cur;return cur;}
+window.RL_LangApp=applyLang;
 function forgot(){var t=document.getElementById('toast');if(t){t.textContent='Password reset is handled by your ReliefLink administrator.';t.classList.add('show');clearTimeout(t._ft);t._ft=setTimeout(function(){t.classList.remove('show');},3400);}return false;}
-return {collect:collect,send:send,forgot:forgot,useGeo:useGeo,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
+return {collect:collect,send:send,forgot:forgot,lang:applyLang,useGeo:useGeo,normPK:normPK,validate:validateClient,P:P,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
 </script>
 <script>
 (function(){
@@ -660,6 +688,7 @@ function nextSlide(){slides[bgCur].classList.remove('visible');bgCur=(bgCur+1)%s
 setInterval(nextSlide,5000);
 
 /* ══ TOAST ══ */
+try{setTimeout(function(){RL.lang();var c=RL.lang();document.querySelectorAll(".rl-lang").forEach(function(x){x.value=c})},50)}catch(e){}
 var toast=document.getElementById('toast'),tt;
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show');},3200);}
 
@@ -703,6 +732,7 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
       RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
       return;
     }
+    if(f.dataset.role==='volunteer'){var ve=RL.validate('volunteer',RL.P.volunteer);if(ve){showToast(ve);return;}}
     var d=RL.dest(f.dataset.role);
     if(d){showToast('Connecting to server… (first request can take a few seconds)');RL.send(f.dataset.role).then(function(r){if(r.blocked){showToast(r.msg);return;}showToast(r.offline?'Server not reachable. Opening in demo mode…':'Done! Opening your dashboard…');setTimeout(function(){window.location.href=d;},700);});return;}
     showToast(f.dataset.msg);
@@ -803,6 +833,7 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     var sheet = f.closest('.m-sheet');
     var mrole = sheet ? sheet.id.replace('sheet-','') : '';
     RL.collect(f,mrole);
+    if(mrole==='volunteer'){var mve=RL.validate('volunteer',RL.P.volunteer);if(mve){showToast(mve);return;}}
     // help sheet — open help dashboard
     if(sheet && sheet.id === 'sheet-help'){
       showToast('Request sent! Opening your dashboard…');

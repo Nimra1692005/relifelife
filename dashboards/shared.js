@@ -340,5 +340,42 @@ document.addEventListener('DOMContentLoaded', function () {
   document.body.appendChild(b);
 });
 
+/* ── APP LANGUAGE (English / Urdu / Roman Urdu) ──
+   Pages define window.RL_LANGDICT = { key: {en, ur, roman} } before shared.js loads.
+   Elements opt in with data-rl="key" (text) or data-rl-ph="key" (placeholder). */
+window.RL_Lang = function (lang) {
+  if (lang) { try { localStorage.setItem('rl_lang', lang); } catch (e) {} }
+  var cur = '';
+  try { cur = localStorage.getItem('rl_lang') || 'en'; } catch (e) { cur = 'en'; }
+  cur = cur === 'ur' || cur === 'roman' ? cur : 'en';
+  var D = window.RL_LANGDICT || {};
+  document.querySelectorAll('[data-rl]').forEach(function (el) {
+    var k = el.getAttribute('data-rl'), e = D[k];
+    if (!e) return;
+    if (cur === 'en') { if (e.en != null) el.textContent = e.en; }
+    else if (cur === 'ur') { if (e.ur != null) el.textContent = e.ur; el.setAttribute('dir', 'rtl'); }
+    else { if (e.roman != null) el.textContent = e.roman; }
+  });
+  document.querySelectorAll('[data-rl-ph]').forEach(function (el) {
+    var k = el.getAttribute('data-rl-ph'), e = D[k];
+    if (!e) return;
+    var v = cur === 'en' ? e.ph_en : cur === 'ur' ? e.ph_ur : e.ph_roman;
+    if (v != null) el.setAttribute('placeholder', v);
+  });
+  var sel = document.getElementById('rlLangSel');
+  if (sel) sel.value = cur;
+  document.documentElement.setAttribute('lang', cur === 'ur' ? 'ur' : 'en');
+  return cur;
+};
+document.addEventListener('DOMContentLoaded', function () {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;left:14px;bottom:52px;z-index:999;background:#fff;border:1.5px solid rgba(22,35,28,.2);border-radius:10px;padding:4px 6px;font-size:11px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.12)';
+  wrap.innerHTML = '\u067e\u0631\u06cc\u0641\u062a\u0627\u0646\u06cc <select id="rlLangSel" aria-label="App language" style="border:none;background:transparent;font-weight:700;font-family:inherit;cursor:pointer"><option value="en">English</option><option value="ur">\u0627\u0631\u062f\u0648</option><option value="roman">Roman Urdu</option></select>';
+  document.body.appendChild(wrap);
+  var sel = document.getElementById('rlLangSel');
+  sel.addEventListener('change', function () { window.RL_Lang(sel.value); window.RL_Toast && window.RL_Toast('\u0628\u0627\u0634\u0627 \u0628\u062f\u0644 \u06af\u0626\u06cc'); });
+  window.RL_Lang();
+});
+
 })();
 
