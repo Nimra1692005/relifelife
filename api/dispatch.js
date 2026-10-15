@@ -209,13 +209,19 @@ async function promoteCitizen(res, b) {
   const rows = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '5' } }) || [];
   if (rows.some(r => r.password_hash)) return fail(res, 'This number already has an account — please sign in', 409);
   const hash = hashPassword(b.password);
+  // Real world: the dashboard already knows this person — name/city come from the request they sent, never re-asked
+  const dName = validName(b.full_name) ? String(b.full_name).trim() : '';
+  const dCity = String(b.city || '').trim();
   let u = rows[0];
   if (u) {
-    const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: { password_hash: hash, updated_at: nowIso() }, prefer: 'return=representation' });
+    const patch = { password_hash: hash, updated_at: nowIso() };
+    if (dName && (!u.full_name || /help seeker|citizen/i.test(u.full_name))) patch.full_name = dName;
+    if (dCity && !u.city) patch.city = dCity;
+    const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: patch, prefer: 'return=representation' });
     u = (out && out[0]) || u;
   } else {
-    const name = validName(b.full_name) ? String(b.full_name).trim() : 'Citizen';
-    const out = await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: rid('usr'), full_name: name, phone, role: 'citizen', city: b.city || '', password_hash: hash, created_at: nowIso(), updated_at: nowIso() } });
+    const name = dName || 'Citizen';
+    const out = await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: rid('usr'), full_name: name, phone, role: 'citizen', city: dCity, password_hash: hash, created_at: nowIso(), updated_at: nowIso() } });
     u = (out && out[0]) || { id: rid('usr'), full_name: name, phone, role: 'citizen' };
   }
   await sb('help_requests', { method: 'PATCH', query: { phone: 'eq.' + phone, user_id: 'is.null' }, body: { user_id: u.id } }).catch(function () {});
