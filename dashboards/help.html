@@ -416,8 +416,8 @@
 <div id="accOffer" style="display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(430px,92vw);z-index:999;background:var(--card,#fff);border:1px solid var(--line,#d9d1c4);border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.22);padding:16px">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
     <div>
-      <h4 style="margin:0 0 4px;font-size:14px" data-rl="accOfferTitle">Account bana lein — status har device par track karein</h4>
-      <p class="mute" style="margin:0;font-size:12px" data-rl="accOfferSub">Apna mobile number aur password set karein — aap ki purani requests bhi link ho jayengi.</p>
+      <h4 style="margin:0 0 4px;font-size:14px" data-rl="accOfferTitle">Create an account — track status on any device</h4>
+      <p class="mute" style="margin:0;font-size:12px" data-rl="accOfferSub">Set your mobile number and password — your past requests will be linked too.</p>
     </div>
     <button type="button" onclick="dismissAccOffer()" aria-label="Close" style="border:none;background:none;font-size:18px;cursor:pointer;color:inherit;line-height:1">×</button>
   </div>
@@ -426,8 +426,8 @@
     <input id="aoPass" type="password" placeholder="Password (6+)" minlength="6" style="flex:1;min-width:130px;padding:10px 12px;border:1px solid var(--line,#d9d1c4);border-radius:10px;background:var(--inp,#fff);color:inherit;font-size:13px">
   </div>
   <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
-    <button type="button" class="btn ghost" onclick="dismissAccOffer()" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#d9d1c4);background:none;cursor:pointer;font-size:13px;color:inherit"><span data-rl="accOfferSkip">Baad me</span></button>
-    <button type="button" onclick="aoSubmit()" style="padding:9px 16px;border-radius:10px;border:none;background:var(--g,#0f3d2e);color:#fff;cursor:pointer;font-size:13px;font-weight:700"><span data-rl="accOfferBtn">Account banayein</span></button>
+    <button type="button" class="btn ghost" onclick="dismissAccOffer()" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#d9d1c4);background:none;cursor:pointer;font-size:13px;color:inherit"><span data-rl="accOfferSkip">Later</span></button>
+    <button type="button" onclick="aoSubmit()" style="padding:9px 16px;border-radius:10px;border:none;background:var(--g,#0f3d2e);color:#fff;cursor:pointer;font-size:13px;font-weight:700"><span data-rl="accOfferBtn">Create account</span></button>
   </div>
 </div>
 
@@ -572,16 +572,16 @@ function dismissAccOffer() {
 }
 function aoSubmit() {
   var ph = (RL_$('aoPhone') || {}).value || '', pw = (RL_$('aoPass') || {}).value || '';
-  if (!ph || pw.length < 6) { RL_Toast('Mobile number aur 6+ character password likhein'); return; }
+  if (!ph || pw.length < 6) { RL_Toast('Enter your mobile number and a password of at least 6 characters'); return; }
   RL_Send('POST', '/auth/promote-citizen', { phone: ph, password: pw }).then(function(res) {
     if (res && res.ok && res.data && res.data.token) {
       window.RL_Auth.set(res.data, true);
       var el = RL_$('accOffer'); if (el) el.style.display = 'none';
       try { localStorage.setItem('rl_acc_offer', 'done'); } catch (e) {}
-      RL_Toast(res.message || 'Account ban gaya — purani requests bhi link ho gayi');
+      RL_Toast(res.message || 'Account created — your past requests are now linked');
       loadMyReqs();
     } else {
-      RL_Toast((res && res.message) || 'Account nahi ban saka — internet check karke dobara koshish karein');
+      RL_Toast((res && res.message) || 'Could not create the account — check your connection and try again');
     }
   });
 }

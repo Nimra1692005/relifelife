@@ -141,7 +141,7 @@ async function register(res, b) {
   const phone = normPKPhone(b.phone);
   if (!phone) return fail(res, 'Invalid mobile number — use a real Pakistani number like 03001234567', 400);
   if (!validName(b.full_name)) return fail(res, 'Invalid name — please write your real name (2-40 letters)', 400);
-  if (String(b.password || '').length < 6) return fail(res, 'Password kam az kam 6 characters ka ho', 400);
+  if (String(b.password || '').length < 6) return fail(res, 'Password must be at least 6 characters', 400);
   const city = String(b.city || '').trim();
   if (!city) return fail(res, 'City is required — type your area or city', 400);
   let skills = [];
@@ -151,8 +151,23 @@ async function register(res, b) {
     const known = PK_CITIES.some(k => city.toLowerCase().indexOf(k) > -1);
     if (!known && city.length < 3) return fail(res, 'Please write your city name properly', 400);
   }
-  const dup = await sb('users', { query: { select: 'id', phone: 'eq.' + phone, limit: '1' } });
-  if (dup && dup.length) return fail(res, 'Yeh number pehle se registered hai — sign in karein', 409);
+  const dup = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '1' } });
+  if (dup && dup.length) {
+    const ex = dup[0];
+    if (ex.password_hash) return fail(res, 'This number is already registered — please sign in', 409);
+    // Pre-password account (old volunteer or guest row): set the password and sign them straight in
+    const up = await sb('users', { method: 'PATCH', query: { id: 'eq.' + ex.id, select: '*' }, body: { password_hash: hashPassword(b.password), updated_at: nowIso() }, prefer: 'return=representation' });
+    const user = (up && up[0]) || ex;
+    let vol = null;
+    if (user.role === 'volunteer' || role === 'volunteer') {
+      vol = ((await sb('volunteers', { query: { select: '*', user_id: 'eq.' + user.id, limit: '1' } }).catch(function () { return []; })) || [])[0] || null;
+      if (!vol) {
+        const v = await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: user.id, full_name: user.full_name, phone, city: user.city || city, skills, availability: b.availability || 'available', registered_at: nowIso() } });
+        vol = (v && v[0]) || null;
+      }
+    }
+    return ok(res, { user: publicUser(user), volunteer: vol, token: makeToken(user) }, 'Password set — you are now signed in');
+  }
   const uid = rid('usr');
   const out = await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name, phone, email: b.email || null, role, city, password_hash: hashPassword(b.password), created_at: nowIso(), updated_at: nowIso() } });
   const user = (out && out[0]) || { id: uid, full_name: b.full_name, phone, role, city };
@@ -161,15 +176,15 @@ async function register(res, b) {
     const v = await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name, phone, city, skills, availability: b.availability || 'available', registered_at: nowIso() } });
     vol = (v && v[0]) || null;
   }
-  ok(res, { user: publicUser(user), volunteer: vol, token: makeToken(user) }, role === 'volunteer' ? 'Volunteer account ban gaya' : 'Account ban gaya');
+  ok(res, { user: publicUser(user), volunteer: vol, token: makeToken(user) }, role === 'volunteer' ? 'Volunteer account created' : 'Account created');
 }
 
 async function signin(res, b) {
   const phone = normPKPhone(b.phone);
-  if (!phone || !b.password) return fail(res, 'Mobile number aur password likhein', 400);
+  if (!phone || !b.password) return fail(res, 'Enter your mobile number and password', 400);
   const rows = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '5' } });
   const u = (rows || []).find(r => verifyPassword(b.password, r.password_hash));
-  if (!u) return fail(res, 'Mobile number ya password ghalat hai', 401);
+  if (!u) return fail(res, 'Incorrect mobile number or password', 401);
   let vol = null;
   if (u.role === 'volunteer') vol = ((await sb('volunteers', { query: { select: '*', user_id: 'eq.' + u.id, limit: '1' } }).catch(function () { return []; })) || [])[0] || null;
   ok(res, { user: publicUser(u), volunteer: vol, token: makeToken(u) }, 'Welcome back!');
@@ -177,10 +192,10 @@ async function signin(res, b) {
 
 async function me(res, req) {
   const t = readToken(req);
-  if (!t) return fail(res, 'Session khatam — dobara sign in karein', 401);
+  if (!t) return fail(res, 'Session expired — please sign in again', 401);
   const rows = await sb('users', { query: { select: '*', id: 'eq.' + t.uid, limit: '1' } });
   const u = (rows || [])[0];
-  if (!u) return fail(res, 'Account nahi mila', 404);
+  if (!u) return fail(res, 'Account not found', 404);
   let vol = null;
   if (u.role === 'volunteer') vol = ((await sb('volunteers', { query: { select: '*', user_id: 'eq.' + u.id, limit: '1' } }).catch(function () { return []; })) || [])[0] || null;
   ok(res, { user: publicUser(u), volunteer: vol });
@@ -189,10 +204,10 @@ async function me(res, req) {
 // Guest who already sent requests → give their phone a password, link past requests
 async function promoteCitizen(res, b) {
   const phone = normPKPhone(b.phone);
-  if (!phone) return fail(res, 'Woh mobile number likhein jis par request bheji thi', 400);
-  if (String(b.password || '').length < 6) return fail(res, 'Password kam az kam 6 characters ka ho', 400);
+  if (!phone) return fail(res, 'Enter the mobile number you used to send the request', 400);
+  if (String(b.password || '').length < 6) return fail(res, 'Password must be at least 6 characters', 400);
   const rows = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '5' } }) || [];
-  if (rows.some(r => r.password_hash)) return fail(res, 'Yeh number pehle se account rakhta hai — sign in karein', 409);
+  if (rows.some(r => r.password_hash)) return fail(res, 'This number already has an account — please sign in', 409);
   const hash = hashPassword(b.password);
   let u = rows[0];
   if (u) {
@@ -204,7 +219,7 @@ async function promoteCitizen(res, b) {
     u = (out && out[0]) || { id: rid('usr'), full_name: name, phone, role: 'citizen' };
   }
   await sb('help_requests', { method: 'PATCH', query: { phone: 'eq.' + phone, user_id: 'is.null' }, body: { user_id: u.id } }).catch(function () {});
-  ok(res, { user: publicUser(u), token: makeToken(u) }, 'Account ban gaya — purani requests bhi link ho gayi');
+  ok(res, { user: publicUser(u), token: makeToken(u) }, 'Account created — your past requests are now linked');
 }
 
 // Back-compat: old landing used register-role — now it is register (password required)
