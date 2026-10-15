@@ -100,6 +100,8 @@ body::after{
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px;font-size:12px}
 .row label{display:flex;align-items:center;gap:8px;cursor:pointer;color:#4b564f}
 .row input{accent-color:var(--green);width:15px;height:15px}
+#urgentCheck,#mUrgentCheck{accent-color:#d64545;width:17px;height:17px;cursor:pointer}
+label.urgent-on{color:#d64545!important;font-weight:700}
 .f a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--gold);cursor:pointer}
 .btn{margin-top:24px;width:100%;border:0;border-radius:999px;background:var(--green);color:#fff;font:600 14px "Plus Jakarta Sans",sans-serif;padding:14px;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(15,61,46,.7);background:#134a38}
@@ -330,7 +332,7 @@ body::after{
   <header class="head">
     <small>ReliefLink · AI Disaster Response</small>
     <h1>When disaster strikes, we respond.<span>Choose your role.</span></h1>
-  <div style="margin-top:14px;display:flex;align-items:center;gap:6px;font-size:12px;opacity:.9">پریفتانی / Language <select class="rl-lang" aria-label="App language" onchange="RL.lang(this.value)" style="background:rgba(255,255,255,.12);color:inherit;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:4px 8px;font-family:inherit;cursor:pointer"><option value="en">English</option><option value="ur">اردو</option><option value="roman">Roman Urdu</option></select></div>
+  <div style="margin-top:14px"><a href="dashboards/settings.html?from=index" style="display:inline-flex;align-items:center;gap:7px;font-size:12px;opacity:.9;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 13px;color:inherit;text-decoration:none;font-weight:600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings · ترتیبات</a></div>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Choose your role">
@@ -380,7 +382,7 @@ body::after{
           <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📍 My location</button>
         </div>
       </div>
-      <div class="row" style="--i:5"><label data-rl="chkUrgent"><input type="checkbox" id="urgentCheck"> This is urgent</label></div>
+      <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
       <button class="btn" style="--i:6" data-rl="btnHelp">Request help</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
     </form>
@@ -396,7 +398,7 @@ body::after{
           <option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option>
         </select>
       </div>
-      <div class="row" style="--i:5"><label data-rl="chkWeekend"><input type="checkbox"> Weekends only</label></div>
+      <div class="row" style="--i:5"><label><input type="checkbox"> <span data-rl="chkWeekend">Weekends only</span></label></div>
       <button class="btn" style="--i:6" data-rl="btnVol">Join as volunteer</button>
       <p class="alt" style="--i:7">Need help? <a data-go="help" tabindex="0" role="button">Ask for help</a></p>
     </form>
@@ -664,6 +666,7 @@ function applyLang(lang){
  var cur="";try{cur=localStorage.getItem("rl_lang")||"en"}catch(e){cur="en"}
  if(cur!=="ur"&&cur!=="roman")cur="en";
  document.querySelectorAll("[data-rl]").forEach(function(el){var k=el.getAttribute("data-rl"),e=LANGD[k];if(!e)return;
+  if(el.querySelector("input,select,textarea"))return; /* never wipe form controls */
   if(cur==="en"){if(e.en!=null)el.textContent=e.en}
   else if(cur==="ur"){if(e.ur!=null)el.textContent=e.ur;el.setAttribute("dir","rtl")}
   else{if(e.roman!=null)el.textContent=e.roman}});
@@ -675,12 +678,12 @@ return {collect:collect,send:send,forgot:forgot,lang:applyLang,useGeo:useGeo,nor
 <script>
 (function(){
 
-/* ══ BACKGROUND SLIDESHOW ══ */
+/* ══ BACKGROUND SLIDESHOW — Pakistan: Attabad Lake (Hunza) · Faisal Mosque · Gilgit · Skardu ══ */
 var bgImages=[
-  "https://images.pexels.com/photos/1557547/pexels-photo-1557547.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  "https://images.pexels.com/photos/3876394/pexels-photo-3876394.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  "https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=1600",
-  "https://images.pexels.com/photos/1543772/pexels-photo-1543772.jpeg?auto=compress&cs=tinysrgb&w=1600"
+  "https://images.pexels.com/photos/13462643/pexels-photo-13462643.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/30665958/pexels-photo-30665958.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/35039523/pexels-photo-35039523.jpeg?auto=compress&cs=tinysrgb&w=1600",
+  "https://images.pexels.com/photos/19442076/pexels-photo-19442076.jpeg?auto=compress&cs=tinysrgb&w=1600"
 ];
 var slides=document.querySelectorAll('.bg-slide'),bgCur=0;
 bgImages.forEach(function(src,i){slides[i].style.backgroundImage='url("'+src+'")';});
@@ -728,7 +731,8 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
     RL.collect(f,f.dataset.role);
     // help form — open help dashboard
     if(f.dataset.role === 'help'){
-      showToast('Request sent! Opening your dashboard…');
+      var uq=document.getElementById('urgentCheck');
+      showToast(uq&&uq.checked?'Urgent request sent — volunteers alerted first! Opening your dashboard…':'Request sent! Opening your dashboard…');
       RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
       return;
     }
@@ -740,14 +744,13 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
   });
 });
 
-// urgent checkbox — desktop: open app immediately on tick
+// urgent checkbox — desktop: marks the request urgent (sent with the form; no redirect, keeps typed data)
 var urgentCheck = document.getElementById('urgentCheck');
 if(urgentCheck){
   urgentCheck.addEventListener('change', function(){
-    if(urgentCheck.checked){
-      showToast('Urgent! Opening your dashboard now…');
-      setTimeout(function(){ window.location.href = 'dashboards/help.html'; }, 900);
-    }
+    var lab=urgentCheck.closest('label');
+    if(lab)lab.classList.toggle('urgent-on',urgentCheck.checked);
+    if(urgentCheck.checked)showToast('Urgent marked — your request goes first in the queue');
   });
 }
 
@@ -836,7 +839,8 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     if(mrole==='volunteer'){var mve=RL.validate('volunteer',RL.P.volunteer);if(mve){showToast(mve);return;}}
     // help sheet — open help dashboard
     if(sheet && sheet.id === 'sheet-help'){
-      showToast('Request sent! Opening your dashboard…');
+      var muq=document.getElementById('mUrgentCheck');
+      showToast(muq&&muq.checked?'Urgent request sent — volunteers alerted first! Opening your dashboard…':'Request sent! Opening your dashboard…');
       closeSheet();
       RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
       return;
@@ -849,15 +853,13 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
   });
 });
 
-// urgent checkbox — mobile: open app immediately on tick
+// urgent checkbox — mobile: marks the request urgent (sent with the form; no redirect, keeps typed data)
 var mUrgentCheck = document.getElementById('mUrgentCheck');
 if(mUrgentCheck){
   mUrgentCheck.addEventListener('change', function(){
-    if(mUrgentCheck.checked){
-      showToast('Urgent! Opening your dashboard now…');
-      closeSheet();
-      setTimeout(function(){ window.location.href = 'dashboards/help.html'; }, 900);
-    }
+    var lab=mUrgentCheck.closest('label');
+    if(lab)lab.classList.toggle('urgent-on',mUrgentCheck.checked);
+    if(mUrgentCheck.checked)showToast('Urgent marked — your request goes first in the queue');
   });
 }
 

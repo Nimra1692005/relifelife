@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings · ReliefLink</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── SETTINGS SCREEN ── */
+body { background: var(--bg); }
+.set-wrap { max-width: 700px; margin: 0 auto; padding: 26px 20px 60px; }
+.set-top { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; }
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border-radius: 12px; background: var(--card); border: 1px solid var(--line);
+  font-weight: 700; font-size: 13px; color: var(--ink); transition: .2s;
+}
+.back-btn:hover { border-color: var(--gold); transform: translateX(-2px); }
+.set-top .logo { padding: 0; margin-left: auto; }
+.set-head { margin-bottom: 26px; }
+.set-head h1 { font-size: 28px; font-weight: 800; letter-spacing: -.03em; }
+.set-head p { color: var(--mute); font-size: 13.5px; margin-top: 4px; }
+
+.set-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  padding: 24px; box-shadow: var(--sh); margin-bottom: 18px;
+}
+.set-card > h2 {
+  display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800;
+  margin-bottom: 4px;
+}
+.set-card > h2 .ic-disc {
+  width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center;
+  background: rgba(27,58,42,.08); color: var(--g); flex: none;
+}
+.set-card > h2 .ic-disc svg.i { width: 18px; height: 18px; }
+.set-card > .sec-sub { color: var(--mute); font-size: 12.5px; margin: 0 0 18px 44px; }
+
+/* option cards (language / text size) */
+.opt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.opt {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 18px 12px; border-radius: 14px; border: 1.5px solid var(--line);
+  background: #fff; cursor: pointer; font-family: inherit; color: var(--ink);
+  transition: all .18s; text-align: center;
+}
+.opt:hover { border-color: var(--gold); transform: translateY(-2px); }
+.opt.on { border-color: var(--g); background: rgba(27,58,42,.06); box-shadow: 0 0 0 3px rgba(27,58,42,.08); }
+.opt .opt-glyph { font-weight: 800; color: var(--g); line-height: 1.1; }
+.opt .opt-name { font-size: 13px; font-weight: 700; }
+.opt .opt-desc { font-size: 11px; color: var(--mute); }
+.opt .opt-check {
+  width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line);
+  display: grid; place-items: center; transition: .15s; color: transparent;
+}
+.opt.on .opt-check { background: var(--g); border-color: var(--g); color: var(--gold); }
+.opt .opt-check svg { width: 11px; height: 11px; stroke-width: 3; }
+
+/* switch rows (notifications / accessibility) */
+.sw-row {
+  display: flex; align-items: center; gap: 14px; padding: 14px 4px;
+  border-top: 1px dashed var(--line);
+}
+.sw-row:first-of-type { border-top: none; }
+.sw-row .sw-ic {
+  width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center;
+  background: rgba(27,58,42,.08); color: var(--g); flex: none;
+}
+.sw-row .sw-t { flex: 1; min-width: 0; }
+.sw-row .sw-t b { font-size: 13.5px; display: block; }
+.sw-row .sw-t small { font-size: 11.5px; color: var(--mute); display: block; margin-top: 2px; line-height: 1.4; }
+.switch { position: relative; width: 46px; height: 27px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch i {
+  position: absolute; inset: 0; border-radius: 999px; background: var(--line);
+  cursor: pointer; transition: .2s;
+}
+.switch i::before {
+  content: ''; position: absolute; width: 21px; height: 21px; border-radius: 50%;
+  background: #fff; top: 3px; left: 3px; transition: .2s; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.switch input:checked + i { background: var(--g); }
+.switch input:checked + i::before { transform: translateX(19px); }
+.switch input:focus-visible + i { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.set-foot { text-align: center; font-size: 11.5px; color: var(--mute); margin-top: 26px; }
+.text-preview {
+  margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: var(--bg);
+  border: 1px dashed var(--line); font-size: 13px; line-height: 1.5;
+}
+@media (max-width: 520px) {
+  .set-card { padding: 18px; }
+  .set-card > .sec-sub { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="set-wrap">
+  <div class="set-top">
+    <a class="back-btn" id="backBtn" href="../index.html"><i data-i="arrowL"></i><span data-rl="back">Back</span></a>
+    <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
+  </div>
+
+  <div class="set-head">
+    <h1 data-rl="setTitle">Settings</h1>
+    <p data-rl="setSub">Language, text size, notifications and accessibility — saved on this device.</p>
+  </div>
+
+  <!-- ── LANGUAGE ── -->
+  <section class="set-card">
+    <h2><span class="ic-disc"><i data-i="globe"></i></span><span data-rl="langTitle">Language</span></h2>
+    <p class="sec-sub" data-rl="langSub">Change the app language everywhere — English, Urdu or Roman Urdu.</p>
+    <div class="opt-grid" id="langOpts">
+      <button type="button" class="opt rl-lang-btn" data-lang="en">
+        <span class="opt-glyph" style="font-size:20px">Aa</span>
+        <span class="opt-name">English</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+      <button type="button" class="opt rl-lang-btn" data-lang="ur">
+        <span class="opt-glyph" style="font-size:20px">اُردو</span>
+        <span class="opt-name">Urdu · اردو</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+      <button type="button" class="opt rl-lang-btn" data-lang="roman">
+        <span class="opt-glyph" style="font-size:18px">Aا</span>
+        <span class="opt-name">Roman Urdu</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── TEXT SIZE ── -->
+  <section class="set-card">
+    <h2><span class="ic-disc"><i data-i="type"></i></span><span data-rl="tsTitle">Text size</span></h2>
+    <p class="sec-sub" data-rl="tsSub">Choose small, medium or large text. It applies to the whole app.</p>
+    <div class="opt-grid" id="sizeOpts">
+      <button type="button" class="opt rl-size-btn" data-size="small">
+        <span class="opt-glyph" style="font-size:13px">Aa</span>
+        <span class="opt-name" data-rl="sizeS">Small</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+      <button type="button" class="opt rl-size-btn" data-size="medium">
+        <span class="opt-glyph" style="font-size:18px">Aa</span>
+        <span class="opt-name" data-rl="sizeM">Medium</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+      <button type="button" class="opt rl-size-btn" data-size="large">
+        <span class="opt-glyph" style="font-size:24px">Aa</span>
+        <span class="opt-name" data-rl="sizeL">Large</span>
+        <span class="opt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+    </div>
+    <div class="text-preview" data-rl="tsPreview">Sample: SOS bhejne ke liye sirf location aur category chahiye. · نمونہ: مدد کے لیے صرف مقام اور قسم درکار ہے۔</div>
+  </section>
+
+  <!-- ── NOTIFICATIONS ── -->
+  <section class="set-card">
+    <h2><span class="ic-disc"><i data-i="bell"></i></span><span data-rl="notifTitle">Notifications</span></h2>
+    <p class="sec-sub" data-rl="notifSub">Get alerted when help status changes or a disaster alert is issued.</p>
+    <div class="sw-row">
+      <span class="sw-ic"><i data-i="bell"></i></span>
+      <div class="sw-t">
+        <b data-rl="notifAlerts">Alert notifications</b>
+        <small data-rl="notifAlertsDesc">SOS updates, assigned volunteers and emergency alerts on this device.</small>
+      </div>
+      <label class="switch"><input type="checkbox" id="notifSw" aria-label="Alert notifications"><i></i></label>
+    </div>
+  </section>
+
+  <!-- ── ACCESSIBILITY ── -->
+  <section class="set-card">
+    <h2><span class="ic-disc"><i data-i="eye"></i></span><span data-rl="accTitle">Accessibility</span></h2>
+    <p class="sec-sub" data-rl="accSub">Make the app easier to see and use.</p>
+    <div class="sw-row">
+      <span class="sw-ic"><i data-i="eye"></i></span>
+      <div class="sw-t">
+        <b data-rl="hcOpt">High contrast</b>
+        <small data-rl="hcOptDesc">Stronger colours and borders for better readability.</small>
+      </div>
+      <label class="switch"><input type="checkbox" id="hcSw" aria-label="High contrast"><i></i></label>
+    </div>
+    <div class="sw-row">
+      <span class="sw-ic"><i data-i="zap"></i></span>
+      <div class="sw-t">
+        <b data-rl="rmOpt">Reduce motion</b>
+        <small data-rl="rmOptDesc">Turns off animations and transitions across the app.</small>
+      </div>
+      <label class="switch"><input type="checkbox" id="rmSw" aria-label="Reduce motion"><i></i></label>
+    </div>
+  </section>
+
+  <p class="set-foot" data-rl="footNote">All choices are saved on this device and apply automatically.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* Settings page dictionary (EN / Urdu / Roman Urdu) — consumed by RL_Lang in shared.js */
+window.RL_LANGDICT = {
+  back:            { en: 'Back', ur: 'واپس', roman: 'Wapas' },
+  setTitle:        { en: 'Settings', ur: 'ترتیبات', roman: 'Settings' },
+  setSub:          { en: 'Language, text size, notifications and accessibility — saved on this device.', ur: 'زبان، متن کا سائز، اطلاعات اور رسائی — اسی ڈیوائس پر محفوظ۔', roman: 'Zaban, text ka size, notifications aur accessibility — isi device par save hota hai.' },
+  langTitle:       { en: 'Language', ur: 'زبان', roman: 'Zaban (Language)' },
+  langSub:         { en: 'Change the app language everywhere — English, Urdu or Roman Urdu.', ur: 'پوری ایپ میں زبان بدلیں — انگریزی، اردو یا رومن اردو۔', roman: 'Poori app mein zaban badlein — English, Urdu ya Roman Urdu.' },
+  tsTitle:         { en: 'Text size', ur: 'متن کا سائز', roman: 'Text ka size' },
+  tsSub:           { en: 'Choose small, medium or large text. It applies to the whole app.', ur: 'چھوٹا، درمیانہ یا بڑا متن منتخب کریں۔ یہ پوری ایپ پر لاگو ہوتا ہے۔', roman: 'Chhota, darmiyana ya bara text select karein. Yeh poori app par lagta hai.' },
+  sizeS:           { en: 'Small', ur: 'چھوٹا', roman: 'Chhota' },
+  sizeM:           { en: 'Medium', ur: 'درمیانہ', roman: 'Darmiyana' },
+  sizeL:           { en: 'Large', ur: 'بڑا', roman: 'Bara' },
+  tsPreview:       { en: 'Sample: SOS bhejne ke liye sirf location aur category chahiye. · نمونہ: مدد کے لیے صرف مقام اور قسم درکار ہے۔', ur: 'نمونہ: مدد کے لیے صرف مقام اور قسم درکار ہے۔', roman: 'Misaal: SOS bhejne ke liye sirf location aur category chahiye.' },
+  notifTitle:      { en: 'Notifications', ur: 'اطلاعات', roman: 'Notifications' },
+  notifSub:        { en: 'Get alerted when help status changes or a disaster alert is issued.', ur: 'مدد کی حالت بدلنے یا آفات کے الرٹ پر خبریں حاصل کریں۔', roman: 'Madad ki halat badle ya disaster alert ho to fori khabar mile.' },
+  notifAlerts:     { en: 'Alert notifications', ur: 'الرت اطلاعات', roman: 'Alert notifications' },
+  notifAlertsDesc: { en: 'SOS updates, assigned volunteers and emergency alerts on this device.', ur: 'اس ڈیوائس پر ایس او ایس اپڈیٹس، رضاکار اور ہنگامی الرٹس۔', roman: 'Is device par SOS updates, volunteer assignment aur emergency alerts.' },
+  accTitle:        { en: 'Accessibility', ur: 'رسائی', roman: 'Accessibility' },
+  accSub:          { en: 'Make the app easier to see and use.', ur: 'ایپ کو دیکھنا اور استعمال آسان بنائیں۔', roman: 'App ko dekhna aur istemal aasan banaein.' },
+  hcOpt:           { en: 'High contrast', ur: 'ہائی کنٹراسٹ', roman: 'High contrast' },
+  hcOptDesc:       { en: 'Stronger colours and borders for better readability.', ur: 'بہتر پڑھائی کے لیے گہرے رنگ اور borders۔', roman: 'Behtar parhai ke liye gehre colours aur borders.' },
+  rmOpt:           { en: 'Reduce motion', ur: 'کم اینیمیشن', roman: 'Reduce motion (kam animations)' },
+  rmOptDesc:       { en: 'Turns off animations and transitions across the app.', ur: 'پوری ایپ میں اینیمیشنز بند کر دیتا ہے۔', roman: 'Poori app mein animations aur transitions band ho jaate hain.' },
+  footNote:        { en: 'All choices are saved on this device and apply automatically.', ur: 'تمام انتخاب اسی ڈیوائس پر محفوظ ہوتے اور خودکار طور پر لاگو ہوتے ہیں۔', roman: 'Saare choices isi device par save hote hain aur automatic lag jaate hain.' }
+};
+</script>
+<script src="shared.js"></script>
+<script>
+RL_Icons();
+
+/* ── back link (dashboard that opened settings) ── */
+(function () {
+  var from = new URLSearchParams(location.search).get('from') || '';
+  var map = { help: 'help.html', volunteer: 'volunteer.html', admin: 'admin.html', index: '../index.html' };
+  document.getElementById('backBtn').href = map[from] || '../index.html';
+})();
+
+/* ── LANGUAGE options ── */
+document.querySelectorAll('.rl-lang-btn').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var v = b.getAttribute('data-lang');
+    RL_Lang(v);                       // persists + re-translates this page + syncs .on
+    RL_Toast(v === 'ur' ? 'زبان: اردو' : v === 'roman' ? 'Zaban: Roman Urdu' : 'Language: English');
+  });
+});
+
+/* ── TEXT SIZE options ── */
+document.querySelectorAll('.rl-size-btn').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var v = b.getAttribute('data-size');
+    RL_TextSize(v);
+    RL_Toast(v === 'small' ? 'Chhota text' : v === 'large' ? 'Bara text' : 'Darmiyana text');
+  });
+});
+
+/* ── SWITCHES (notifications + accessibility) ── */
+var nSw = document.getElementById('notifSw'),
+    hSw = document.getElementById('hcSw'),
+    rSw = document.getElementById('rmSw');
+nSw.checked = RL_Notifs();
+hSw.checked = RL_HighContrast();
+rSw.checked = RL_ReduceMotion();
+nSw.addEventListener('change', function () {
+  RL_Notifs(nSw.checked);
+  RL_Toast(nSw.checked ? 'Notifications ON' : 'Notifications OFF');
+});
+hSw.addEventListener('change', function () {
+  RL_HighContrast(hSw.checked);
+  RL_Toast(hSw.checked ? 'High contrast ON' : 'High contrast OFF');
+});
+rSw.addEventListener('change', function () {
+  RL_ReduceMotion(rSw.checked);
+  RL_Toast(rSw.checked ? 'Motion reduced' : 'Motion restored');
+});
+
+/* sync UI with saved prefs (shared.js applies on its own DOMContentLoaded) */
+RL_TextSize(RL_TextSize());
+RL_Lang();
+</script>
+</body>
+</html>

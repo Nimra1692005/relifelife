@@ -35,7 +35,12 @@ var P = {
   mega:    'M3 11v2a1 1 0 0 0 1 1h3l8 4V6L7 10H4a1 1 0 0 0-1 1z M19 8a5 5 0 0 1 0 8',
   x:       'M18 6 6 18 M6 6l12 12',
   logout:  'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
-  leaf:    'M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z M4 20c3-6 6-9 10-11'
+  leaf:    'M11 20A7 7 0 0 1 4 13c0-6 6-9 16-9 0 10-3 16-9 16z M4 20c3-6 6-9 10-11',
+  globe:   'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M3 12h18 M12 3c2.5 2.6 3.9 5.7 3.9 9s-1.4 6.4-3.9 9c-2.5-2.6-3.9-5.7-3.9-9s1.4-6.4 3.9-9z',
+  type:    'M4 7V5h16v2 M12 5v14 M9 19h6',
+  eye:     'M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z',
+  zap:     'M13 2 3 14h7l-1 8 11-14h-7z',
+  arrowL:  'M19 12H5 M12 19l-7-7 7-7'
 };
 
 /** Build an SVG icon by name */
@@ -160,6 +165,7 @@ window.RL_Navigate = function(page, pages, onAfter) {
 /* ── WIRE NAV ITEMS ── */
 window.RL_WireNav = function(pages, onAfter) {
   document.querySelectorAll('.nav-item').forEach(function(b) {
+    if (b.tagName === 'A') return; // plain links (e.g. Settings page) navigate normally
     b.addEventListener('click', function() {
       window.RL_Navigate(b.dataset.page, pages, onAfter);
       if (window.innerWidth <= 900) window.RL_ToggleMenu();
@@ -320,24 +326,67 @@ window.RL_MyId = function(key) {
   return id;
 };
 
-/* ── BARA TEXT MODE (accessibility — user preference, saved locally) ── */
-window.RL_BigMode = function (on) {
-  document.body.classList.toggle('big-mode', on);
-  try { localStorage.setItem('rl_big', on ? '1' : '0'); } catch (e) {}
-  var b = document.getElementById('rlBigBtn');
-  if (b) { b.classList.toggle('on', on); b.textContent = on ? 'Aa− Normal Text' : 'Aa+ Bara Text'; }
-  window.RL_Toast(on ? '🔠 Bara text mode ON' : '🔡 Normal text mode');
+/* ── DEVICE PREFERENCES (saved locally, applied on every page — no floating widget) ── */
+window.RL_Prefs = {
+  get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 };
+
+/* ── TEXT SIZE (small / medium / large — applied everywhere, remembered on device) ── */
+window.RL_TextSize = function (size) {
+  if (size === undefined) {                       // getter
+    var s = window.RL_Prefs.get('rl_text', null);
+    if (s === null) {                             // migrate legacy rl_big (0 normal · 1/2 bara)
+      var old = window.RL_Prefs.get('rl_big', '0');
+      s = (old === '1' || old === '2') ? 'large' : 'medium';
+      window.RL_Prefs.set('rl_text', s);
+    }
+    return s === 'small' || s === 'large' ? s : 'medium';
+  }
+  if (size === true) size = 'large'; else if (size === false) size = 'medium';
+  if (size === '0') size = 'medium'; else if (size === '1' || size === '2') size = 'large';
+  if (size !== 'small' && size !== 'large') size = 'medium';
+  window.RL_Prefs.set('rl_text', size);
+  document.body.classList.toggle('text-small', size === 'small');
+  document.body.classList.toggle('text-large', size === 'large');
+  var bs = document.querySelectorAll('.rl-size-btn');
+  for (var i = 0; i < bs.length; i++) bs[i].classList.toggle('on', bs[i].getAttribute('data-size') === size);
+  return size;
+};
+
+/* ── ACCESSIBILITY: high contrast + reduce motion ── */
+window.RL_HighContrast = function (on) {
+  if (on === undefined) return window.RL_Prefs.get('rl_hc', '0') === '1';
+  on = !!on;
+  window.RL_Prefs.set('rl_hc', on ? '1' : '0');
+  document.body.classList.toggle('hc', on);
+  return on;
+};
+window.RL_ReduceMotion = function (on) {
+  if (on === undefined) return window.RL_Prefs.get('rl_motion', '0') === '1';
+  on = !!on;
+  window.RL_Prefs.set('rl_motion', on ? '1' : '0');
+  document.body.classList.toggle('rm', on);
+  return on;
+};
+
+/* ── NOTIFICATIONS preference (asks the browser for permission when turned on) ── */
+window.RL_Notifs = function (on) {
+  if (on === undefined) return window.RL_Prefs.get('rl_notif', '0') === '1';
+  on = !!on;
+  window.RL_Prefs.set('rl_notif', on ? '1' : '0');
+  if (on && ('Notification' in window) && Notification.permission === 'default') {
+    try { Notification.requestPermission(); } catch (e) {}
+  }
+  return on;
+};
+
+/* ── APPLY SAVED PREFERS on every page load ── */
 document.addEventListener('DOMContentLoaded', function () {
-  var on = false;
-  try { on = localStorage.getItem('rl_big') === '1'; } catch (e) {}
-  if (on) document.body.classList.add('big-mode');
-  var b = document.createElement('button');
-  b.id = 'rlBigBtn'; b.className = 'big-toggle' + (on ? ' on' : ''); b.type = 'button';
-  b.textContent = on ? 'Aa− Normal Text' : 'Aa+ Bara Text';
-  b.setAttribute('aria-label', 'Toggle larger text for low vision');
-  b.addEventListener('click', function () { window.RL_BigMode(!document.body.classList.contains('big-mode')); });
-  document.body.appendChild(b);
+  window.RL_TextSize(window.RL_TextSize());          // apply saved size + sync any UI
+  window.RL_HighContrast(window.RL_HighContrast());  // apply saved a11y modes
+  window.RL_ReduceMotion(window.RL_ReduceMotion());
+  window.RL_Lang();                                  // apply saved language
 });
 
 /* ── APP LANGUAGE (English / Urdu / Roman Urdu) ──
@@ -352,6 +401,7 @@ window.RL_Lang = function (lang) {
   document.querySelectorAll('[data-rl]').forEach(function (el) {
     var k = el.getAttribute('data-rl'), e = D[k];
     if (!e) return;
+    if (el.querySelector('input,select,textarea')) return; // never wipe form controls
     if (cur === 'en') { if (e.en != null) el.textContent = e.en; }
     else if (cur === 'ur') { if (e.ur != null) el.textContent = e.ur; el.setAttribute('dir', 'rtl'); }
     else { if (e.roman != null) el.textContent = e.roman; }
@@ -364,18 +414,11 @@ window.RL_Lang = function (lang) {
   });
   var sel = document.getElementById('rlLangSel');
   if (sel) sel.value = cur;
+  var lb = document.querySelectorAll('.rl-lang-btn');
+  for (var j = 0; j < lb.length; j++) lb[j].classList.toggle('on', lb[j].getAttribute('data-lang') === cur);
   document.documentElement.setAttribute('lang', cur === 'ur' ? 'ur' : 'en');
   return cur;
 };
-document.addEventListener('DOMContentLoaded', function () {
-  var wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;left:14px;bottom:52px;z-index:999;background:#fff;border:1.5px solid rgba(22,35,28,.2);border-radius:10px;padding:4px 6px;font-size:11px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.12)';
-  wrap.innerHTML = '\u067e\u0631\u06cc\u0641\u062a\u0627\u0646\u06cc <select id="rlLangSel" aria-label="App language" style="border:none;background:transparent;font-weight:700;font-family:inherit;cursor:pointer"><option value="en">English</option><option value="ur">\u0627\u0631\u062f\u0648</option><option value="roman">Roman Urdu</option></select>';
-  document.body.appendChild(wrap);
-  var sel = document.getElementById('rlLangSel');
-  sel.addEventListener('change', function () { window.RL_Lang(sel.value); window.RL_Toast && window.RL_Toast('\u0628\u0627\u0634\u0627 \u0628\u062f\u0644 \u06af\u0626\u06cc'); });
-  window.RL_Lang();
-});
 
 })();
 
