@@ -128,6 +128,7 @@ function normPKPhone(raw) {
 }
 const PK_CITIES = ['karachi','lahore','islamabad','rawalpindi','multan','faisalabad','peshawar','quetta','hyderabad','sukkur','larkana','gujranwala','gujrat','sargodha','bahawalpur','abbottabad','mardan','dera ismail khan','sahiwal','jhang','rajanpur','muzaffargarh','layyah','khairpur','navabshah','tangowal','sheikhupura','attock','thatta','gwadar','gilgit','skardu','chitral','dir','swat','bannu','dera ghazi khan','kohat','nowshera','charsadda','murree','kahuta','wah','sialkot','narowal','okara','bhakkar','jahram','gojra','kamalia','muridke','pakpattan','ararian','veri'];
 const NAME_RE = /^[A-Za-z؀-ۿ][A-Za-z؀-ۿ '-]{1,39}$/;
+function cleanCity(v) { v = String(v || '').trim().slice(0, 80); return /^[A-Za-z؀-ۿ0-9 ,.\/'-]+$/.test(v) ? v : ''; } // same rigor as names: allow-listed charset + max length
 function validName(n) {
   n = String(n || '').trim();
   if (n.length < 2 || !NAME_RE.test(n)) return false;
@@ -142,7 +143,7 @@ async function register(res, b) {
   if (!phone) return fail(res, 'Invalid mobile number — use a real Pakistani number like 03001234567', 400);
   if (!validName(b.full_name)) return fail(res, 'Invalid name — please write your real name (2-40 letters)', 400);
   if (String(b.password || '').length < 6) return fail(res, 'Password must be at least 6 characters', 400);
-  const city = String(b.city || '').trim();
+  const city = cleanCity(b.city);
   if (!city) return fail(res, 'City is required — type your area or city', 400);
   let skills = [];
   if (role === 'volunteer') {
@@ -211,7 +212,7 @@ async function promoteCitizen(res, b) {
   const hash = hashPassword(b.password);
   // Real world: the dashboard already knows this person — name/city come from the request they sent, never re-asked
   const dName = validName(b.full_name) ? String(b.full_name).trim() : '';
-  const dCity = String(b.city || '').trim();
+  const dCity = cleanCity(b.city);
   let u = rows[0];
   if (u) {
     const patch = { password_hash: hash, updated_at: nowIso() };

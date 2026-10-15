@@ -386,6 +386,7 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <button class="btn" style="--i:6" data-rl="btnHelp">Request help</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hsOpen"><span data-rl="lnkAccSign">Have an account? Sign in</span></a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
       <div id="helpSign" style="display:none;width:100%">
+        <h3 data-rl="hAccSign">Sign in to your account</h3>
         <div class="field"><input type="tel" id="hsPhone" aria-label="Phone" placeholder="Phone: 03001234567" maxlength="17"></div>
         <div class="field"><input type="password" id="hsPass" aria-label="Password" placeholder="Password" autocomplete="current-password"></div>
         <button class="btn" type="button" id="hsGo" data-rl="btnSignin">Sign in</button>
@@ -719,6 +720,7 @@ var LANGD={
  chkWeekend:{en:"Weekends only",ur:"\u0633\u0631\u0641 \u0648\u06cc\u06a9 \u0627\u06cc\u0646\u0688",roman:"Sirf weekends"},
  mobVol:{en:"Register as Volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0631\u062c\u0633\u0679\u0631",roman:"Volunteer register karein"},
  hSign:{en:"Volunteer sign in",ur:"\u0648\u0644\u0646\u0679\u0631 \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Volunteer sign in"},
+ hAccSign:{en:"Sign in to your account",ur:"\u0627\u067e\u0646\u06d2 \u0627\u06a9\u0627\u0624\u0646\u0679 \u0645\u0627 \u0633\u0627\u0626\u0646 \u0627\u0646 \u06a9\u0631\u06cc\u06ba",roman:"Apne account mein sign in karein"},
  btnSignin:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646 \u06a9\u0631\u06cc\u06ba",roman:"Sign in karein"},
  btnSigninMob:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646 \u06a9\u0631\u06cc\u06ba",roman:"Sign in karein"},
  lnkHaveAcc:{en:"Already have an account? Sign in",ur:"\u067e\u06c1\u0644\u06d2 \u0633\u06d2 \u0627\u06a9\u0627\u0624\u0646\u0679 \u06c1\u06d2\u061f \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Account hai? Sign in"},
@@ -834,10 +836,12 @@ wireLink('toVolSign',function(){dstop();setRole('volunteer',true);volMode(true);
 wireLink('toVolReg',function(){volMode(false);});
 if(location.hash==='#signin'){dstop();setRole('volunteer',true);volMode(true);}
 
-/* citizen sign-in panel inside the help form (desktop) — account itself is created after the first request */
+/* citizen sign-in panel inside the help form (desktop) — replaces the request form, never stacks under it */
 function helpPanel(m){
-  var s=document.getElementById('helpSign');
-  if(s)s.style.display=(m==='sign')?'':'none';
+  var s=document.getElementById('helpSign'),f=document.querySelector('form[data-role="help"]');
+  var sign=m==='sign';
+  if(s)s.style.display=sign?'':'none';
+  if(f)for(var i=0;i<f.children.length;i++){var c=f.children[i];if(c!==s)c.style.display=sign?'none':'';}
 }
 function $v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():''}
 wireLink('hsOpen',function(){helpPanel('sign');var e=document.getElementById('hsPhone');if(e)e.focus();});
