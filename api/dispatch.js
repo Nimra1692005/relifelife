@@ -7,6 +7,8 @@
  *   SUPABASE_URL, SUPABASE_SERVICE_KEY, ADMIN_EMAIL, ADMIN_PASSWORD
  */
 
+const crypto = require('crypto');
+
 const SB_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SB_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
@@ -59,6 +61,38 @@ async function sbCount(table, filter) {
 function ok(res, data, message) { res.status(200).json({ success: true, data: data == null ? null : data, message: message || '' }); }
 function fail(res, message, status) { res.status(status || 400).json({ success: false, data: null, message: message || 'error' }); }
 
+/* ── Auth: scrypt password hashing + HMAC session tokens (zero deps) ── */
+const AUTH_SECRET = process.env.AUTH_SECRET || 'relieflink-dev-secret-set-AUTH_SECRET-in-vercel';
+function hashPassword(pw) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  return 'scrypt$' + salt + '$' + crypto.scryptSync(String(pw), salt, 32).toString('hex');
+}
+function verifyPassword(pw, stored) {
+  try {
+    const p = String(stored || '').split('$');
+    if (p.length !== 3 || p[0] !== 'scrypt') return false;
+    const calc = crypto.scryptSync(String(pw), p[1], 32).toString('hex');
+    return crypto.timingSafeEqual(Buffer.from(calc, 'hex'), Buffer.from(p[2], 'hex'));
+  } catch (e) { return false; }
+}
+function b64url(s) { return Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function makeToken(user) {
+  const payload = b64url(JSON.stringify({ uid: user.id, role: user.role || 'citizen', name: user.full_name || '', phone: user.phone || '', exp: Date.now() + 30 * 864e5 }));
+  return payload + '.' + crypto.createHmac('sha256', AUTH_SECRET).update(payload).digest('hex');
+}
+function readToken(req) {
+  try {
+    const h = String(req.headers.authorization || '');
+    const parts = (h.startsWith('Bearer ') ? h.slice(7) : '').split('.');
+    if (parts.length !== 2) return null;
+    const expect = crypto.createHmac('sha256', AUTH_SECRET).update(parts[0]).digest('hex');
+    if (!crypto.timingSafeEqual(Buffer.from(parts[1], 'hex'), Buffer.from(expect, 'hex'))) return null;
+    const t = JSON.parse(Buffer.from(parts[0].replace(/-/g, '+').replace(/_/g, '/'), 'base64').toString());
+    return t.exp && t.exp > Date.now() ? t : null;
+  } catch (e) { return null; }
+}
+function publicUser(u) { return { id: u.id, full_name: u.full_name, phone: u.phone, email: u.email || null, role: u.role, city: u.city }; }
+
 /* ── Endpoint handlers ─────────────────────────────────── */
 async function createHelpRequest(res, b) {
   const p = normPKPhone(b.phone); // never reject an emergency request, just clean the number
@@ -101,40 +135,92 @@ function validName(n) {
   return true;
 }
 
-async function registerRole(res, b) {
-  const role = b.role || 'citizen';
+/* ── Accounts: register / sign in / session / promote citizen ── */
+async function register(res, b) {
+  const role = b.role === 'volunteer' ? 'volunteer' : 'citizen';
   const phone = normPKPhone(b.phone);
   if (!phone) return fail(res, 'Invalid mobile number — use a real Pakistani number like 03001234567', 400);
   if (!validName(b.full_name)) return fail(res, 'Invalid name — please write your real name (2-40 letters)', 400);
+  if (String(b.password || '').length < 6) return fail(res, 'Password kam az kam 6 characters ka ho', 400);
   const city = String(b.city || '').trim();
   if (!city) return fail(res, 'City is required — type your area or city', 400);
+  let skills = [];
   if (role === 'volunteer') {
+    skills = (Array.isArray(b.skills) ? b.skills : []).filter(Boolean).slice(0, 3);
+    if (!skills.length) return fail(res, 'Select at least one skill — tell us how you can help', 400);
     const known = PK_CITIES.some(k => city.toLowerCase().indexOf(k) > -1);
     if (!known && city.length < 3) return fail(res, 'Please write your city name properly', 400);
-    const skills = (Array.isArray(b.skills) ? b.skills : []).filter(Boolean).slice(0, 3);
-    if (!skills.length) return fail(res, 'Select at least one skill — tell us how you can help', 400);
-    const dup = await sb('volunteers', { query: { select: 'id', phone: 'eq.' + phone, limit: '1' } });
-    if (dup && dup.length) return fail(res, 'This number is already registered as a volunteer — sign in instead', 409);
-    const uid = rid('usr');
-    await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name, phone, email: b.email || null, role, city, created_at: nowIso(), updated_at: nowIso() } });
-    await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name, phone, city, skills, availability: b.availability || 'available', registered_at: nowIso() } });
-    return ok(res, { user: { id: uid, full_name: b.full_name } }, 'Registered');
   }
+  const dup = await sb('users', { query: { select: 'id', phone: 'eq.' + phone, limit: '1' } });
+  if (dup && dup.length) return fail(res, 'Yeh number pehle se registered hai — sign in karein', 409);
   const uid = rid('usr');
-  await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name, phone, email: b.email || null, role, city, created_at: nowIso(), updated_at: nowIso() } });
-  ok(res, { user: { id: uid, full_name: b.full_name } }, 'Registered');
+  const out = await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: uid, full_name: b.full_name, phone, email: b.email || null, role, city, password_hash: hashPassword(b.password), created_at: nowIso(), updated_at: nowIso() } });
+  const user = (out && out[0]) || { id: uid, full_name: b.full_name, phone, role, city };
+  let vol = null;
+  if (role === 'volunteer') {
+    const v = await sb('volunteers', { method: 'POST', prefer: 'return=representation', body: { id: rid('vol'), user_id: uid, full_name: b.full_name, phone, city, skills, availability: b.availability || 'available', registered_at: nowIso() } });
+    vol = (v && v[0]) || null;
+  }
+  ok(res, { user: publicUser(user), volunteer: vol, token: makeToken(user) }, role === 'volunteer' ? 'Volunteer account ban gaya' : 'Account ban gaya');
 }
+
+async function signin(res, b) {
+  const phone = normPKPhone(b.phone);
+  if (!phone || !b.password) return fail(res, 'Mobile number aur password likhein', 400);
+  const rows = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '5' } });
+  const u = (rows || []).find(r => verifyPassword(b.password, r.password_hash));
+  if (!u) return fail(res, 'Mobile number ya password ghalat hai', 401);
+  let vol = null;
+  if (u.role === 'volunteer') vol = ((await sb('volunteers', { query: { select: '*', user_id: 'eq.' + u.id, limit: '1' } }).catch(function () { return []; })) || [])[0] || null;
+  ok(res, { user: publicUser(u), volunteer: vol, token: makeToken(u) }, 'Welcome back!');
+}
+
+async function me(res, req) {
+  const t = readToken(req);
+  if (!t) return fail(res, 'Session khatam — dobara sign in karein', 401);
+  const rows = await sb('users', { query: { select: '*', id: 'eq.' + t.uid, limit: '1' } });
+  const u = (rows || [])[0];
+  if (!u) return fail(res, 'Account nahi mila', 404);
+  let vol = null;
+  if (u.role === 'volunteer') vol = ((await sb('volunteers', { query: { select: '*', user_id: 'eq.' + u.id, limit: '1' } }).catch(function () { return []; })) || [])[0] || null;
+  ok(res, { user: publicUser(u), volunteer: vol });
+}
+
+// Guest who already sent requests → give their phone a password, link past requests
+async function promoteCitizen(res, b) {
+  const phone = normPKPhone(b.phone);
+  if (!phone) return fail(res, 'Woh mobile number likhein jis par request bheji thi', 400);
+  if (String(b.password || '').length < 6) return fail(res, 'Password kam az kam 6 characters ka ho', 400);
+  const rows = await sb('users', { query: { select: '*', phone: 'eq.' + phone, limit: '5' } }) || [];
+  if (rows.some(r => r.password_hash)) return fail(res, 'Yeh number pehle se account rakhta hai — sign in karein', 409);
+  const hash = hashPassword(b.password);
+  let u = rows[0];
+  if (u) {
+    const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: { password_hash: hash, updated_at: nowIso() }, prefer: 'return=representation' });
+    u = (out && out[0]) || u;
+  } else {
+    const name = validName(b.full_name) ? String(b.full_name).trim() : 'Citizen';
+    const out = await sb('users', { method: 'POST', prefer: 'return=representation', body: { id: rid('usr'), full_name: name, phone, role: 'citizen', city: b.city || '', password_hash: hash, created_at: nowIso(), updated_at: nowIso() } });
+    u = (out && out[0]) || { id: rid('usr'), full_name: name, phone, role: 'citizen' };
+  }
+  await sb('help_requests', { method: 'PATCH', query: { phone: 'eq.' + phone, user_id: 'is.null' }, body: { user_id: u.id } }).catch(function () {});
+  ok(res, { user: publicUser(u), token: makeToken(u) }, 'Account ban gaya — purani requests bhi link ho gayi');
+}
+
+// Back-compat: old landing used register-role — now it is register (password required)
+async function registerRole(res, b) { return register(res, b); }
 
 async function adminSignin(res, b) {
   const wantEmail = (process.env.ADMIN_EMAIL || '').toLowerCase();
   const wantPw = process.env.ADMIN_PASSWORD || '';
   const email = (b.email || '').toLowerCase();
+  const mk = function (e) { return makeToken({ id: 'admin', role: 'admin', full_name: e.split('@')[0], phone: '' }); };
   if (wantEmail && wantPw) {
-    if (email === wantEmail && b.password === wantPw) return ok(res, { user: { id: 'admin', email }, token: 'session-' + rid('tok') }, 'Signed in');
+    if (email === wantEmail && b.password === wantPw) return ok(res, { user: { id: 'admin', email, role: 'admin' }, token: mk(email) }, 'Signed in');
     return fail(res, 'Invalid admin email or password', 401);
   }
   // No admin credentials configured yet — demo sign-in so the dashboard is reachable.
-  if (email && b.password) return ok(res, { user: { id: 'admin', email }, token: 'demo' }, 'Signed in (demo)');
+  if (email && b.password) return ok(res, { user: { id: 'admin', email, role: 'admin' }, token: mk(email) }, 'Signed in (demo)');
   return fail(res, 'Enter your admin email and password', 400);
 }
 
@@ -218,7 +304,8 @@ async function adminOverview(res) {
 }
 
 /* ── Alerts (admin broadcast → volunteer notifications) ── */
-async function createAlert(res, b) {
+async function createAlert(res, req, b) {
+  if (!readToken(req)) return fail(res, 'Sign in zaroori hai — alerts sirf authorized team bhej sakti hai', 401);
   const title = (b.title || '').trim();
   if (!title) return fail(res, 'Alert title is required', 400);
   const row = {
@@ -247,7 +334,8 @@ async function listVolunteers(res, q) {
   if (q.availability) query.availability = 'eq.' + q.availability;
   ok(res, (await sb('volunteers', { query })) || []);
 }
-async function verifyVolunteer(res, id) {
+async function verifyVolunteer(res, req, id) {
+  if (!readToken(req)) return fail(res, 'Sign in zaroori hai', 401);
   const out = await sb('volunteers', { method: 'PATCH', query: { id: 'eq.' + id, select: 'id,verified' }, body: { verified: true }, prefer: 'return=representation' });
   ok(res, (out && out[0]) || { id: id, verified: true }, 'Volunteer verified');
 }
@@ -266,7 +354,13 @@ function readBody(req) {
   return {};
 }
 
-async function updateVolunteer(res, id, b) {
+async function updateVolunteer(res, req, id, b) {
+  const t = readToken(req);
+  if (!t) return fail(res, 'Sign in zaroori hai — profile sirf account owner update kar sakta hai', 401);
+  if (t.role !== 'admin') {
+    const v = ((await sb('volunteers', { query: { select: 'id,user_id', id: 'eq.' + id, limit: '1' } }).catch(function () { return []; })) || [])[0];
+    if (v && v.user_id && v.user_id !== t.uid) return fail(res, 'Is profile ko update karne ki ijazat nahi', 403);
+  }
   const patch = {};
   if (Array.isArray(b.skills)) patch.skills = b.skills.slice(0, 12);
   if (b.availability) patch.availability = String(b.availability);
@@ -426,6 +520,10 @@ module.exports = async function handler(req, res) {
     const r0 = seg[0];
     if (r0 === 'help-requests') return method === 'POST' ? await createHelpRequest(res, b) : await listHelpRequests(res, q);
     if (r0 === 'auth') {
+      if (seg[1] === 'register' && method === 'POST') return await register(res, b);
+      if (seg[1] === 'signin' && method === 'POST') return await signin(res, b);
+      if (seg[1] === 'me' && method === 'GET') return await me(res, req);
+      if (seg[1] === 'promote-citizen' && method === 'POST') return await promoteCitizen(res, b);
       if (seg[1] === 'register-role' && method === 'POST') return await registerRole(res, b);
       return fail(res, 'Unknown auth endpoint', 404);
     }
@@ -438,10 +536,10 @@ module.exports = async function handler(req, res) {
       return fail(res, 'Unknown tasks endpoint', 404);
     }
     if (r0 === 'analytics' && seg[1] === 'admin-overview') return await adminOverview(res);
-    if (r0 === 'alerts') return method === 'POST' ? await createAlert(res, b) : await listAlerts(res, q);
+    if (r0 === 'alerts') return method === 'POST' ? await createAlert(res, req, b) : await listAlerts(res, q);
     if (r0 === 'volunteers') {
-      if (seg[1] && seg[2] === 'verify' && method === 'POST') return await verifyVolunteer(res, seg[1]);
-      if (seg[1] && method === 'PATCH') return await updateVolunteer(res, seg[1], b);
+      if (seg[1] && seg[2] === 'verify' && method === 'POST') return await verifyVolunteer(res, req, seg[1]);
+      if (seg[1] && method === 'PATCH') return await updateVolunteer(res, req, seg[1], b);
       if (!seg[1]) return await listVolunteers(res, q);
       return fail(res, 'Unknown volunteers endpoint', 404);
     }

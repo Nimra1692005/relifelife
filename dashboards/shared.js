@@ -107,10 +107,81 @@ window.RL_ToggleMenu = function() {
   if (ov) ov.classList.toggle('open');
 };
 
+/* ── SESSION STORE (token + user set by the landing page sign-in) ── */
+window.RL_Auth = {
+  sess: function() {
+    try {
+      var s = localStorage.getItem('rl_session') || sessionStorage.getItem('rl_session');
+      return s ? JSON.parse(s) : null;
+    } catch (e) { return null; }
+  },
+  token: function() { var s = window.RL_Auth.sess(); return (s && s.token) || ''; },
+  user:  function() { var s = window.RL_Auth.sess(); return (s && s.user) || null; },
+  set: function(d, remember) {
+    try {
+      if (!d || !d.token) return;
+      var s = JSON.stringify({ token: d.token, user: d.user || {} });
+      if (remember) { localStorage.setItem('rl_session', s); sessionStorage.removeItem('rl_session'); }
+      else { sessionStorage.setItem('rl_session', s); localStorage.removeItem('rl_session'); }
+      var u = d.user || {}, cur = {};
+      if (u.full_name || u.phone) {
+        try { cur = JSON.parse(localStorage.getItem('rl_user') || '{}') || {}; } catch (e) {}
+        if (u.full_name) cur.name = u.full_name;
+        if (u.phone) cur.phone = u.phone;
+        if (u.city) cur.area = u.city;
+        localStorage.setItem('rl_user', JSON.stringify(cur));
+        sessionStorage.setItem('rl_user', JSON.stringify(cur));
+      }
+      if (d.volunteer && d.volunteer.id) localStorage.setItem('rl_vol_id', d.volunteer.id);
+    } catch (e) {}
+  },
+  clear: function() { try { localStorage.removeItem('rl_session'); sessionStorage.removeItem('rl_session'); localStorage.removeItem('rl_vol_id'); } catch (e) {} }
+};
+
 /* ── LOGOUT ── */
 window.RL_Logout = function() {
   try { sessionStorage.removeItem('rl_user'); localStorage.removeItem('rl_user'); } catch(e) {}
+  window.RL_Auth.clear();
   window.location.href = '../index.html';
+};
+
+/* ── AUTH GATE — dashboards need a signed-in session when the API is live.
+   Without a configured API the dashboards keep working in demo mode. ── */
+window.RL_RequireAuth = function(role) {
+  if (!window.RL_API) return true;                 // demo/static preview — no server to authenticate against
+  var s = window.RL_Auth.sess();
+  if (s && s.token) return true;
+  var back = role === 'volunteer' ? '../index.html#signin' : '../index.html#help';
+  try {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16231c;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+    t.textContent = 'Session khatam — dobara sign in karein';
+    document.body.appendChild(t);
+  } catch (e) {}
+  setTimeout(function() { window.location.href = back; }, 900);
+  return false;
+};
+
+/* ── /auth/me refresh — keeps name/phone/volunteer id current ── */
+window.RL_RefreshMe = function() {
+  if (!window.RL_API || !window.RL_Auth.token()) return Promise.resolve(null);
+  return window.RL_Get('/auth/me').then(function(d) {
+    if (!d || !d.user) return null;
+    try {
+      var cur = {};
+      try { cur = JSON.parse(localStorage.getItem('rl_user') || '{}') || {}; } catch (e) {}
+      if (d.user.full_name) cur.name = d.user.full_name;
+      if (d.user.phone) cur.phone = d.user.phone;
+      if (d.user.city) cur.area = d.user.city;
+      localStorage.setItem('rl_user', JSON.stringify(cur));
+      sessionStorage.setItem('rl_user', JSON.stringify(cur));
+      if (d.volunteer && d.volunteer.id) localStorage.setItem('rl_vol_id', d.volunteer.id);
+      // refresh stored session user too
+      var s = window.RL_Auth.sess();
+      if (s) { s.user = d.user; (localStorage.getItem('rl_session') ? localStorage : sessionStorage).setItem('rl_session', JSON.stringify(s)); }
+    } catch (e) {}
+    return d;
+  });
 };
 
 /* ── USER BOOT ── */
@@ -257,11 +328,16 @@ function _withTimeout(p, ms) {
   ]);
 }
 
+function _rlAuthHeader() {
+  var tk = window.RL_Auth ? window.RL_Auth.token() : '';
+  return tk ? { 'Authorization': 'Bearer ' + tk } : {};
+}
+
 /* GET → resolves to response .data (or null when unavailable) */
 window.RL_Get = function(path) {
   if (!window.RL_API) return Promise.resolve(null);
   return _withTimeout(
-    fetch(window.RL_API + path).then(function(r) {
+    fetch(window.RL_API + path, { headers: _rlAuthHeader() }).then(function(r) {
       if (!r.ok) throw new Error('http' + r.status);
       return r.json();
     })
@@ -272,10 +348,12 @@ window.RL_Get = function(path) {
 /* POST / PATCH → resolves to response .data (or null) */
 window.RL_Send = function(method, path, body) {
   if (!window.RL_API) return Promise.resolve(null);
+  var hd = { 'Content-Type': 'application/json' };
+  var ah = _rlAuthHeader(); for (var k in ah) hd[k] = ah[k];
   return _withTimeout(
     fetch(window.RL_API + path, {
       method: method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: hd,
       body: JSON.stringify(body || {})
     }).then(function(r) {
       return r.json().catch(function() { return {}; }).then(function(j) {
@@ -387,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
   window.RL_HighContrast(window.RL_HighContrast());  // apply saved a11y modes
   window.RL_ReduceMotion(window.RL_ReduceMotion());
   window.RL_Lang();                                  // apply saved language
+  try { window.RL_RefreshMe(); } catch (e) {}        // silent session refresh (name/phone/vol id)
 });
 
 /* ── APP LANGUAGE (English / Urdu / Roman Urdu) ──

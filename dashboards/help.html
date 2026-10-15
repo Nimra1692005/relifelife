@@ -412,6 +412,25 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Account offer — shown once to guests after their first request (skippable, never blocks the emergency flow) -->
+<div id="accOffer" style="display:none;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:min(430px,92vw);z-index:999;background:var(--card,#fff);border:1px solid var(--line,#d9d1c4);border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.22);padding:16px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+    <div>
+      <h4 style="margin:0 0 4px;font-size:14px" data-rl="accOfferTitle">Account bana lein — status har device par track karein</h4>
+      <p class="mute" style="margin:0;font-size:12px" data-rl="accOfferSub">Apna mobile number aur password set karein — aap ki purani requests bhi link ho jayengi.</p>
+    </div>
+    <button type="button" onclick="dismissAccOffer()" aria-label="Close" style="border:none;background:none;font-size:18px;cursor:pointer;color:inherit;line-height:1">×</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+    <input id="aoPhone" type="tel" placeholder="03001234567" maxlength="17" style="flex:1;min-width:130px;padding:10px 12px;border:1px solid var(--line,#d9d1c4);border-radius:10px;background:var(--inp,#fff);color:inherit;font-size:13px">
+    <input id="aoPass" type="password" placeholder="Password (6+)" minlength="6" style="flex:1;min-width:130px;padding:10px 12px;border:1px solid var(--line,#d9d1c4);border-radius:10px;background:var(--inp,#fff);color:inherit;font-size:13px">
+  </div>
+  <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+    <button type="button" class="btn ghost" onclick="dismissAccOffer()" style="padding:9px 14px;border-radius:10px;border:1px solid var(--line,#d9d1c4);background:none;cursor:pointer;font-size:13px;color:inherit"><span data-rl="accOfferSkip">Baad me</span></button>
+    <button type="button" onclick="aoSubmit()" style="padding:9px 16px;border-radius:10px;border:none;background:var(--g,#0f3d2e);color:#fff;cursor:pointer;font-size:13px;font-weight:700"><span data-rl="accOfferBtn">Account banayein</span></button>
+  </div>
+</div>
+
 <script src="../config.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="live.js"></script>
@@ -437,7 +456,11 @@ window.RL_LANGDICT = {
   lblLoc:      { en: '\U0001F4CD Your Location', ur: '\U0001F4CD \u0622\u067e \u06a9\u0627 \u0645\u0642\u0627\u0645', roman: '\U0001F4CD Aap ka thikana' },
   btnSend:     { en: 'Request Help', ur: '\u0645\u062f\u062f \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Madad bhejein' },
   lblUrgent:   { en: '\U0001F6A8 Mark as URGENT', ur: '\U0001F6A8 \u0627\u0633\u06cc\u0644 \u0637\u06c1\u0631\u06cc\u06ba', roman: '\U0001F6A8 Urgent mark karein' },
-  reqLocPh:    { en: 'Exact address, ya map par pin rakhein', ur: '\u062d\u0642\u06cc\u0642\u06cc \u067e\u062a\u06c1 \u06cc\u0627 \u0646\u0642\u0634\u06c1 \u067e\u0631 \u067e\u0646 \u0631\u06a9\u06be\u06cc\u06ba', roman: 'Exact address, ya map par pin rakhein' }
+  reqLocPh:    { en: 'Exact address, ya map par pin rakhein', ur: '\u062d\u0642\u06cc\u0642\u06cc \u067e\u062a\u06c1 \u06cc\u0627 \u0646\u0642\u0634\u06c1 \u067e\u0631 \u067e\u0646 \u0631\u06a9\u06be\u06cc\u06ba', roman: 'Exact address, ya map par pin rakhein' },
+  accOfferTitle: { en: 'Create an account — track status on any device', ur: '\u0627\u06a9\u0627\u0624\u0646\u0679 \u0628\u0646\u0627 \u0644\u06cc\u06ba \u2014 \u0627\u0633\u0679\u06cc\u0679\u0633 \u06c1\u0631 \u0688\u0648\u0627\u0626\u0633 \u067e\u0631 \u062f\u06cc\u06a9\u06be\u06cc\u06ba', roman: 'Account bana lein \u2014 status har device par track karein' },
+  accOfferSub: { en: 'Set your mobile number and password — your past requests will be linked too.', ur: '\u0627\u067e\u0646\u0627 \u0645\u0628\u0627\u0626\u0644 \u0646\u0645\u0628\u0631 \u0627\u0648\u0631 \u0644\u06af\u06cc\u062c\u06cc\u0646 \u0633\u06cc\u0679 \u06a9\u0631\u06cc\u06ba \u2014 \u067e\u06c1\u0644\u06cc \u0628\u0646\u06cc\u0627\u062f\u06cc\u06ba \u0628\u06cc \u0644\u0646\u06a9 \u06c1\u0648 \u062c\u0627 \u0626\u06cc\u06ba \u06af\u06cc\u06d2\u06d2', roman: 'Apna mobile number aur password set karein \u2014 aap ki purani requests bhi link ho jayengi.' },
+  accOfferBtn: { en: 'Create account', ur: '\u0627\u06a9\u0627\u0624\u0646\u0679 \u0628\u0646\u0627 \u062f\u06cc\u06ba', roman: 'Account banayein' },
+  accOfferSkip: { en: 'Later', ur: '\u0628\u0639\u062f \u0645\u06cc\u06ba', roman: 'Baad me' }
 };
 </script>
 <script src="shared.js"></script>
@@ -513,6 +536,8 @@ function submitReq() {
     description: catLabel + (r.desc ? ' — ' + r.desc : '') + (r.people ? ' (' + r.people + ' people)' : ''),
     urgent: r.urgent
   };
+  var sUid = (window.RL_Auth && window.RL_Auth.user() || {}).id;
+  if (sUid) body.user_id = sUid; // signed-in citizen — link the request to the account
   if (GCO) { body.latitude = GCO.lat; body.longitude = GCO.lng; }
   else { var g = window.RL_LIVE ? RL_LIVE.geo(loc) : null; if (g) { body.latitude = g.lat; body.longitude = g.lng; } }
   ['reqLoc','reqDesc','reqPeople'].forEach(function(id){ var el=RL_$(id); if(el) el.value=''; });
@@ -526,9 +551,39 @@ function submitReq() {
       r.id = res.data.id; r._live = true;
       try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
       renderActive();
+      if (!sUid) showAccOffer(); // guest just sent their request — offer an account (skippable)
     }
   });
   setTimeout(function(){ navigate('myrequests'); }, 1200);
+}
+
+/* ── Account offer card (guests only, shown at most once — never blocks the emergency flow) ── */
+function showAccOffer() {
+  if (!window.RL_API || (window.RL_Auth && window.RL_Auth.token())) return;
+  try { if (localStorage.getItem('rl_acc_offer') === 'done') return; } catch (e) {}
+  var el = RL_$('accOffer'); if (!el || el.style.display !== 'none') return;
+  var u = {}; try { u = JSON.parse(localStorage.getItem('rl_user') || '{}') || {}; } catch (e) {}
+  var ph = RL_$('aoPhone'); if (ph && u.phone) ph.value = u.phone;
+  el.style.display = '';
+}
+function dismissAccOffer() {
+  var el = RL_$('accOffer'); if (el) el.style.display = 'none';
+  try { localStorage.setItem('rl_acc_offer', 'done'); } catch (e) {}
+}
+function aoSubmit() {
+  var ph = (RL_$('aoPhone') || {}).value || '', pw = (RL_$('aoPass') || {}).value || '';
+  if (!ph || pw.length < 6) { RL_Toast('Mobile number aur 6+ character password likhein'); return; }
+  RL_Send('POST', '/auth/promote-citizen', { phone: ph, password: pw }).then(function(res) {
+    if (res && res.ok && res.data && res.data.token) {
+      window.RL_Auth.set(res.data, true);
+      var el = RL_$('accOffer'); if (el) el.style.display = 'none';
+      try { localStorage.setItem('rl_acc_offer', 'done'); } catch (e) {}
+      RL_Toast(res.message || 'Account ban gaya — purani requests bhi link ho gayi');
+      loadMyReqs();
+    } else {
+      RL_Toast((res && res.message) || 'Account nahi ban saka — internet check karke dobara koshish karein');
+    }
+  });
 }
 
 function renderActive() {
@@ -583,8 +638,10 @@ function distLabel(from, p) {
   return d < 1 ? '<1 km' : d.toFixed(d < 10 ? 1 : 0) + ' km';
 }
 function loadMyReqs() {
-  RL_Get('/help-requests').then(function(rows){
+  var sUid = (window.RL_Auth && window.RL_Auth.user() || {}).id;
+  RL_Get('/help-requests' + (sUid ? '?user_id=' + encodeURIComponent(sUid) : '')).then(function(rows){
     if (!Array.isArray(rows) || !rows.length) return;
+    if (sUid) rows = rows.filter(function(r){ return String(r.user_id) === String(sUid); }); // defense in depth if server filter is ignored
     myReqs = rows.map(function(row){ return {
       id: row.id, cat: (window.RL_CAT_KEY2LABEL[row.category] || row.category || 'Help Request'),
       name: row.full_name, phone: row.phone, loc: row.city || '', desc: row.description || '',
@@ -593,6 +650,11 @@ function loadMyReqs() {
     }; });
     try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
     updateBadges(); renderActive(); renderMyReqs();
+    if (!sUid && myReqs.length) { // guest: if a request with their saved phone exists, offer the account once
+      var uu = {}; try { uu = JSON.parse(localStorage.getItem('rl_user') || '{}') || {}; } catch (e) {}
+      var dp = String(uu.phone || '').replace(/\D/g, '');
+      if (dp && myReqs.some(function(r){ return String(r.phone || '').replace(/\D/g, '') === dp; })) showAccOffer();
+    }
   });
 }
 function loadNearbyLive() {

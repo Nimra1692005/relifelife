@@ -384,23 +384,34 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       </div>
       <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
       <button class="btn" style="--i:6" data-rl="btnHelp">Request help</button>
-      <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
+      <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="toAccSign" data-rl-target="vol"><span data-rl="lnkAccSign">Account hai? Sign in</span></a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
     </form>
 
     <form class="form f" data-role="volunteer" data-pos="right" data-msg="Thank you! We will message you with your first task.">
+      <div id="volReg" style="display:contents">
       <h3 style="--i:0" data-rl="hVol">Join as volunteer</h3>
       <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required minlength="2" maxlength="40" pattern="[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}" title="Apna poora naam likhein (e.g. Ali Raza)"></div>
       <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone: 03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17" title="Pakistani mobile number — 03XXXXXXXXX"></div>
       <div class="field" style="--i:3"><input aria-label="Area" placeholder="Area / city" required minlength="2" maxlength="40"></div>
-      <div class="field" style="--i:4">
+      <div class="field" style="--i:4"><input type="password" name="pass" aria-label="Password" placeholder="Password (6+ characters)" required minlength="6" autocomplete="new-password"></div>
+      <div class="field" style="--i:5"><input type="password" name="pass2" aria-label="Confirm password" placeholder="Confirm password" required minlength="6" autocomplete="new-password"></div>
+      <div class="field" style="--i:6">
         <select aria-label="Skill" required>
           <option value="" disabled selected>How can you help?</option>
           <option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option>
         </select>
       </div>
-      <div class="row" style="--i:5"><label><input type="checkbox"> <span data-rl="chkWeekend">Weekends only</span></label></div>
-      <button class="btn" style="--i:6" data-rl="btnVol">Join as volunteer</button>
-      <p class="alt" style="--i:7">Need help? <a data-go="help" tabindex="0" role="button">Ask for help</a></p>
+      <div class="row" style="--i:7"><label><input type="checkbox"> <span data-rl="chkWeekend">Weekends only</span></label></div>
+      <button class="btn" style="--i:8" data-rl="btnVol">Join as volunteer</button>
+      <p class="alt" style="--i:9"><a tabindex="0" role="button" id="toVolSign"><span data-rl="lnkHaveAcc">Account hai? Sign in</span></a> &nbsp;·&nbsp; Need help? <a data-go="help" tabindex="0" role="button">Ask for help</a></p>
+      </div>
+      <div id="volSign" style="display:none">
+      <h3 style="--i:0" data-rl="hSign">Volunteer sign in</h3>
+      <div class="field" style="--i:1"><input type="tel" id="vsPhone" aria-label="Phone" placeholder="Phone: 03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17"></div>
+      <div class="field" style="--i:2"><input type="password" id="vsPass" aria-label="Password" placeholder="Password" required autocomplete="current-password"></div>
+      <button class="btn" style="--i:3" type="submit" data-rl="btnSignin">Sign in</button>
+      <p class="alt" style="--i:4"><a tabindex="0" role="button" id="toVolReg"><span data-rl="lnkNoAcc">Naya account? Register</span></a></p>
+      </div>
     </form>
 
     <form class="form f" data-role="admin" data-pos="left" data-msg="Signed in (demo). Connect your backend here.">
@@ -534,7 +545,34 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <div class="m-field"><label>Area / City</label><input type="text" placeholder="Your location" required></div>
       <label class="m-check"><input type="checkbox" id="mUrgentCheck"> Mark as urgent</label>
       <button type="submit" class="m-btn" data-rl="btnHelp">Send Request for Help</button>
-      <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a></p>
+      <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a> &nbsp;·&nbsp; <a data-mopen="signin"><span data-rl="lnkAccSign">Account hai? Sign in</span></a></p>
+    </form>
+  </div>
+
+  <!-- bottom sheet: Sign in (citizen / volunteer) -->
+  <div class="m-sheet" id="sheet-signin" role="dialog" aria-label="Sign in">
+    <div class="m-sheet-handle"></div>
+    <div class="m-sheet-head">
+      <div class="m-sheet-head-text">
+        <div class="m-sheet-badge">ReliefLink Account</div>
+        <div class="m-sheet-title">Sign In</div>
+      </div>
+      <button class="m-sheet-close" data-close aria-label="Close">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="m-quote">
+      <div class="m-quote-brand">RELIEFLINK</div>
+      <h3>Welcome <em>back.</em></h3>
+      <p>Apna mobile number aur password se sign in ho kar status track karein.</p>
+    </div>
+    <form class="m-sheet-form" id="mSignForm">
+      <div class="m-field"><label>Mobile Number</label><input type="tel" id="mSignPhone" placeholder="03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17"></div>
+      <div class="m-field"><label>Password</label><input type="password" id="mSignPass" placeholder="••••••••" required autocomplete="current-password"></div>
+      <button type="submit" class="m-btn" data-rl="btnSigninMob">Sign in</button>
+      <p class="m-alt">Naya account? <a data-mopen="volunteer"><span data-rl="lnkNoAccMob">Volunteer register karein</span></a></p>
     </form>
   </div>
 
@@ -561,13 +599,15 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required minlength="2" maxlength="40" pattern="[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}" title="Apna poora naam likhein (e.g. Ali Raza)"></div>
       <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="03001234567" required pattern="03\d{9}|\+?92\s?0?3\d[\s\d-]{7,11}" maxlength="17" title="Pakistani mobile number — 03XXXXXXXXX"></div>
       <div class="m-field"><label>Area / City</label><input type="text" placeholder="Where are you based?" required minlength="2" maxlength="40"></div>
+      <div class="m-field"><label>Password</label><input type="password" name="pass" placeholder="6+ characters" required minlength="6" autocomplete="new-password"></div>
+      <div class="m-field"><label>Confirm Password</label><input type="password" name="pass2" placeholder="Dobara likhein" required minlength="6" autocomplete="new-password"></div>
       <div class="m-field">
         <label>How can you help?</label>
         <select required><option value="" disabled selected>Choose skill…</option><option>Medical / First aid</option><option>Search &amp; rescue</option><option>Delivery &amp; logistics</option><option>Teaching / counselling</option><option>Other</option></select>
       </div>
       <label class="m-check"><input type="checkbox"> Available weekends only</label>
       <button type="submit" class="m-btn" data-rl="mobVol">Register as Volunteer</button>
-      <p class="m-alt">Need help yourself? <a data-mopen="help">Ask for help</a></p>
+      <p class="m-alt"><a data-mopen="signin"><span data-rl="lnkHaveAccMob">Account hai? Sign in</span></a> &nbsp;·&nbsp; Need help yourself? <a data-mopen="help">Ask for help</a></p>
     </form>
   </div>
 
@@ -614,21 +654,33 @@ window.RL=(function(){
 var API=(window.RELIEF_API||'').replace(/\/$/,''),PK=[30.3753,69.3451],P={},GPS=null,
 CITY={lahore:[31.5204,74.3587],karachi:[24.8607,67.0011],islamabad:[33.6844,73.0479],rawalpindi:[33.5651,73.0169],multan:[30.1575,71.5249],faisalabad:[31.4504,73.135],peshawar:[34.0151,71.5249],quetta:[30.1798,66.975],rajanpur:[29.1044,70.3302],muzaffargarh:[30.0703,71.1933],layyah:[30.9693,70.9428],jhang:[31.2681,72.3181],sukkur:[27.7052,68.8574],charsadda:[34.1453,71.7308],hyderabad:[25.396,68.3578],larkana:[27.5598,68.2264],nowshera:[34.0153,71.9747]};
 function geo(t){t=(t||'').toLowerCase();for(var k in CITY)if(t.indexOf(k)>-1)return CITY[k];return null}
-function post(path,body){var t=new Promise(function(_,r){setTimeout(function(){r(new Error('timeout'))},45000)});
- return Promise.race([fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),t]).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,status:r.status,data:j}})})}
+function sess(){try{var s=localStorage.getItem('rl_session');if(!s)s=sessionStorage.getItem('rl_session');return s?JSON.parse(s):null}catch(e){return null}}
+function token(){var s=sess();return (s&&s.token)||''}
+function setSession(d,remember){try{if(!d||!d.token)return;var s=JSON.stringify({token:d.token,user:d.user||{}});if(remember){localStorage.setItem('rl_session',s);sessionStorage.removeItem('rl_session')}else{sessionStorage.setItem('rl_session',s);localStorage.removeItem('rl_session')}
+var u=d.user||{};if(u.full_name||u.phone){var cur={};try{cur=JSON.parse(localStorage.getItem('rl_user')||'{}')||{}}catch(e){}if(u.full_name)cur.name=u.full_name;if(u.phone)cur.phone=u.phone;try{sessionStorage.setItem('rl_user',JSON.stringify(cur));localStorage.setItem('rl_user',JSON.stringify(cur))}catch(e){}}
+if(d.volunteer&&d.volunteer.id){try{localStorage.setItem('rl_vol_id',d.volunteer.id)}catch(e){}}}catch(e){}}
+function clearSession(){try{localStorage.removeItem('rl_session');sessionStorage.removeItem('rl_session')}catch(e){}}
+function post(path,body,m){var t=new Promise(function(_,r){setTimeout(function(){r(new Error('timeout'))},45000)});
+var tk=token(),hd={'Content-Type':'application/json'};if(tk)hd.Authorization='Bearer '+tk;
+return Promise.race([fetch(API+path,{method:m||'POST',headers:hd,body:body==null?undefined:JSON.stringify(body)}),t]).then(function(r){return r.json().catch(function(){return {}}).then(function(j){return {ok:r.ok,status:r.status,data:j}})})}
+function doSignin(phone,password){if(!API)return Promise.resolve({blocked:true,msg:'Server configured nahi — demo mode me sign-in nahi hota'});
+return post('/auth/signin',{phone:phone,password:password}).then(function(r){
+if(r.ok&&r.data&&r.data.data){setSession(r.data.data,true);return {ok:true,user:r.data.data.user||{}}}
+if(r.status===401)return {blocked:true,msg:'Mobile number ya password ghalat hai'};
+return {blocked:true,msg:(r.data&&r.data.message)||'Sign in nahi ho saka — dobara koshish karein'};}).catch(function(){return {blocked:true,msg:'Server not reachable'}})}
 function normPK(raw){var d=String(raw||'').replace(/\D/g,'');if(d.indexOf('0092')===0)d=d.slice(4);else if(d.indexOf('92')===0)d=d.slice(2);if(d.indexOf('0')===0)d=d.slice(1);if(!/^3\d{9}$/.test(d))return null;return '03'+d.slice(1);}
-function validateClient(role,o){o=o||{};var RE=/^[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}$/;if(!o.name||o.name.length<2||!RE.test(o.name))return 'Please write your real full name (e.g. Ali Raza)';if(!normPK(o.phone))return 'Mobile number theek nahi — 03XXXXXXXXX likhein (jaise 03001234567)';if(role==='volunteer'&&(!o.area||String(o.area).trim().length<2))return 'City likhein — aap kis shehar mein hain?';return '';}
-function collect(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]),select')).filter(function(e){return e.tagName!=='SELECT'}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel?sel.value:'',cb=f.querySelector('input[type=checkbox]'),o={role:role,ts:Date.now()};
-if(role==='admin'){o.email=tx[0];P.pw=tx[1];o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
-else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{o.skill=sv;o.weekend=!!(cb&&cb.checked)}}
+function validateClient(role,o){o=o||{};var RE=/^[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}$/;if(!o.name||o.name.length<2||!RE.test(o.name))return 'Please write your real full name (e.g. Ali Raza)';if(!normPK(o.phone))return 'Mobile number theek nahi — 03XXXXXXXXX likhein (jaise 03001234567)';if(role==='volunteer'&&(!o.area||String(o.area).trim().length<2))return 'City likhein — aap kis shehar mein hain?';if(role==='volunteer'){if(!o.password||o.password.length<6)return 'Password kam az kam 6 characters ka ho';if(o.password!==o.pass2)return 'Dono passwords match nahi kar rahe — dobara likhein';}return '';}
+function collect(f,role){try{var tx=[].slice.call(f.querySelectorAll('input:not([type=checkbox]):not([type=password]):not([name=pass2]),select')).filter(function(e){return e.tagName!=='SELECT'&&e.offsetParent!==null}).map(function(e){return e.value.trim()}),sel=f.querySelector('select'),sv=sel&&!sel.closest('[style*="none"]')?sel.value:'',cb=f.querySelector('input[type=checkbox]'),pwE=f.querySelector('input[type=password]'),o={role:role,ts:Date.now()};
+if(role==='admin'){o.email=tx[0];P.pw=pwE?pwE.value:'';o.name=(tx[0]||'admin').split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase()})}
+else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgent=!!(cb&&cb.checked)}else{var p1=f.querySelector('input[name=pass]'),p2=f.querySelector('input[name=pass2]');o.skill=sv;o.weekend=!!(cb&&cb.checked);o.password=p1?p1.value:'';o.pass2=p2?p2.value:''}}
 P[role]=o;sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o))}catch(e){}}
 function queue(role,o){try{var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
 function send(role){var o=P[role];if(!o||!API)return Promise.resolve({offline:true});var c=geo(o.area),req;
 if(role==='help'){var HC={'Flood rescue':'rescue','Medical help':'medical','Shelter':'shelter','Food or water':'food','Other':'special'};
  req=post('/help-requests',{category:HC[o.type]||'special',full_name:o.name,phone:o.phone,city:o.area,description:o.type+(o.urgent?' (urgent)':''),urgent:!!o.urgent,latitude:(GPS?GPS.lat:(c||PK)[0]),longitude:(GPS?GPS.lng:(c||PK)[1])})}
-else if(role==='volunteer'){var b={role:'volunteer',full_name:o.name,phone:o.phone,city:o.area,skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};req=post('/auth/register-role',b)}
+else if(role==='volunteer'){var b={role:'volunteer',full_name:o.name,phone:o.phone,city:o.area,password:o.password||'',skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};req=post('/auth/register',b)}
 else req=post('/auth/admin-signin',{email:o.email,password:P.pw||''});
-return req.then(function(r){if(r.ok){if(role==='volunteer'&&r.data&&r.data.data&&r.data.data.user){try{localStorage.setItem('rl_vol_id',r.data.data.user.id)}catch(e){}}return {ok:true,data:r.data};}
+return req.then(function(r){if(r.ok){var d=(r.data&&r.data.data)||{};if((role==='volunteer'||role==='admin')&&d.token){setSession(d,role==='volunteer');if(role==='admin'&&d.user&&d.user.id)try{localStorage.setItem('rl_admin',JSON.stringify(d.user))}catch(e){}}return {ok:true,data:r.data};}
  if(r.status>=400&&r.status<500){if(role==='admin')return {blocked:true,msg:'Invalid admin email or password'};var em=(r.data&&r.data.message)||'';if(em)return {blocked:true,msg:em};}
  if(role!=='admin')queue(role,o);return {offline:true}}).catch(function(){if(role!=='admin')queue(role,o);return {offline:true}})}
 function _msg(t){var el=document.getElementById('toast');if(el){el.textContent=t;el.classList.add('show');clearTimeout(el._mt);el._mt=setTimeout(function(){el.classList.remove('show');},2800);}}
@@ -659,7 +711,15 @@ var LANGD={
  btnAdmin:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Sign in"},
  chkUrgent:{en:"This is urgent",ur:"\u06cc\u06c1 \u0641\u0648\u0631\u06cc \u06c1\u06d2",roman:"Yeh fori hai"},
  chkWeekend:{en:"Weekends only",ur:"\u0633\u0631\u0641 \u0648\u06cc\u06a9 \u0627\u06cc\u0646\u0688",roman:"Sirf weekends"},
- mobVol:{en:"Register as Volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0631\u062c\u0633\u0679\u0631",roman:"Volunteer register karein"}
+ mobVol:{en:"Register as Volunteer",ur:"\u0648\u0644\u0646\u0679\u0631 \u0631\u062c\u0633\u0679\u0631",roman:"Volunteer register karein"},
+ hSign:{en:"Volunteer sign in",ur:"\u0648\u0644\u0646\u0679\u0631 \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Volunteer sign in"},
+ btnSignin:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646 \u06a9\u0631\u06cc\u06ba",roman:"Sign in karein"},
+ btnSigninMob:{en:"Sign in",ur:"\u0633\u0627\u0626\u0646 \u0627\u0646 \u06a9\u0631\u06cc\u06ba",roman:"Sign in karein"},
+ lnkHaveAcc:{en:"Account hai? Sign in",ur:"\u0627\u06a9\u0627\u0624\u0646\u0679 \u06c1\u06d2\u061f \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Account hai? Sign in"},
+ lnkHaveAccMob:{en:"Account hai? Sign in",ur:"\u0627\u06a9\u0627\u0624\u0646\u0679 \u06c1\u06d2\u061f \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Account hai? Sign in"},
+ lnkAccSign:{en:"Account hai? Sign in",ur:"\u0627\u06a9\u0627\u0624\u0646\u0679 \u06c1\u06d2\u061f \u0633\u0627\u0626\u0646 \u0627\u0646",roman:"Account hai? Sign in"},
+ lnkNoAcc:{en:"Naya account? Register",ur:"\u0646\u06cc\u0627 \u0627\u06a9\u0627\u0624\u0646\u0679\u061f \u0631\u062c\u0633\u0679\u0631",roman:"Naya account? Register"},
+ lnkNoAccMob:{en:"Volunteer register karein",ur:"\u0648\u0644\u0646\u0679\u0631 \u0631\u062c\u0633\u0679\u0631 \u06a9\u0631\u06cc\u06ba",roman:"Volunteer register karein"}
 };
 function applyLang(lang){
  if(lang){try{localStorage.setItem("rl_lang",lang)}catch(e){}}
@@ -673,7 +733,7 @@ function applyLang(lang){
  var selc=document.querySelectorAll(".rl-lang");for(var i=0;i<selc.length;i++)selc[i].value=cur;return cur;}
 window.RL_LangApp=applyLang;
 function forgot(){var t=document.getElementById('toast');if(t){t.textContent='Password reset is handled by your ReliefLink administrator.';t.classList.add('show');clearTimeout(t._ft);t._ft=setTimeout(function(){t.classList.remove('show');},3400);}return false;}
-return {collect:collect,send:send,forgot:forgot,lang:applyLang,useGeo:useGeo,normPK:normPK,validate:validateClient,P:P,dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
+return {collect:collect,send:send,forgot:forgot,lang:applyLang,useGeo:useGeo,normPK:normPK,validate:validateClient,P:P,signin:doSignin,auth:{set:setSession,clear:clearSession,token:token,sess:sess},dest:function(r){return r==='volunteer'?'dashboards/volunteer.html':r==='admin'?'dashboards/admin.html':r==='help'?'dashboards/help.html':null}}})();
 </script>
 <script>
 (function(){
@@ -728,6 +788,15 @@ document.querySelectorAll('[data-go]').forEach(function(a){
 document.querySelectorAll('.desktop-wrap form').forEach(function(f){
   f.addEventListener('submit',function(e){
     e.preventDefault();
+    // volunteer sign-in mode — authenticate instead of registering
+    if(f.dataset.role==='volunteer'&&document.getElementById('volSign').style.display!=='none'){
+      var sp=document.getElementById('vsPhone'),spp=document.getElementById('vsPass');
+      showToast('Signing in…');
+      RL.signin(sp.value,spp.value).then(function(r){
+        if(r.ok){window.location.href=(r.user&&r.user.role==='volunteer')?'dashboards/volunteer.html':'dashboards/help.html';}
+        else showToast(r.msg||'Sign in nahi ho saka');});
+      return;
+    }
     RL.collect(f,f.dataset.role);
     // help form — open help dashboard
     if(f.dataset.role === 'help'){
@@ -738,11 +807,26 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
     }
     if(f.dataset.role==='volunteer'){var ve=RL.validate('volunteer',RL.P.volunteer);if(ve){showToast(ve);return;}}
     var d=RL.dest(f.dataset.role);
-    if(d){showToast('Connecting to server… (first request can take a few seconds)');RL.send(f.dataset.role).then(function(r){if(r.blocked){showToast(r.msg);return;}showToast(r.offline?'Server not reachable. Opening in demo mode…':'Done! Opening your dashboard…');setTimeout(function(){window.location.href=d;},700);});return;}
+    if(d){showToast('Connecting to server… (first request can take a few seconds)');RL.send(f.dataset.role).then(function(r){if(r.blocked){showToast(r.msg);if(f.dataset.role==='volunteer'&&/sign in/i.test(r.msg)){volMode(true);var pv=document.getElementById('vsPhone');if(pv&&RL.P.volunteer)pv.value=RL.P.volunteer.phone||'';}return;}showToast(r.offline?'Server not reachable. Opening in demo mode…':'Done! Opening your dashboard…');setTimeout(function(){window.location.href=d;},700);});return;}
     showToast(f.dataset.msg);
     f.reset();
   });
 });
+
+/* volunteer register ⇄ sign-in mode toggle (desktop) */
+function volMode(sign){
+  var reg=document.getElementById('volReg'),sgn=document.getElementById('volSign');
+  if(!reg||!sgn)return;
+  reg.style.display=sign?'none':'contents';
+  sgn.style.display=sign?'':'none';
+}
+function wireLink(id,fn){var el=document.getElementById(id);if(!el)return;
+  el.addEventListener('click',function(e){e.preventDefault();fn();});
+  el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();}});}
+wireLink('toVolSign',function(){dstop();setRole('volunteer',true);volMode(true);});
+wireLink('toAccSign',function(){dstop();setRole('volunteer',true);volMode(true);var pv=document.getElementById('vsPhone');if(pv)pv.focus();});
+wireLink('toVolReg',function(){volMode(false);});
+if(location.hash==='#signin'){dstop();setRole('volunteer',true);volMode(true);}
 
 // urgent checkbox — desktop: marks the request urgent (sent with the form; no redirect, keeps typed data)
 var urgentCheck = document.getElementById('urgentCheck');
@@ -835,6 +919,16 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     e.preventDefault();
     var sheet = f.closest('.m-sheet');
     var mrole = sheet ? sheet.id.replace('sheet-','') : '';
+    // sign-in sheet — authenticate and route by role
+    if(mrole==='signin'){
+      var mp=document.getElementById('mSignPhone'),mpa=document.getElementById('mSignPass');
+      showToast('Signing in…');
+      RL.signin(mp.value,mpa.value).then(function(r){
+        closeSheet();
+        if(r.ok){setTimeout(function(){window.location.href=(r.user&&r.user.role==='volunteer')?'dashboards/volunteer.html':'dashboards/help.html';},300);}
+        else showToast(r.msg||'Sign in nahi ho saka');});
+      return;
+    }
     RL.collect(f,mrole);
     if(mrole==='volunteer'){var mve=RL.validate('volunteer',RL.P.volunteer);if(mve){showToast(mve);return;}}
     // help sheet — open help dashboard

@@ -255,7 +255,16 @@ var PT = {critical:'tag-red',high:'tag-orange',medium:'tag-yellow',low:'tag-gree
 var PL = {critical:'Critical',high:'High Priority',medium:'Medium',low:'Low'};
 
 /* ── LIVE wiring ── */
-var VOL = (window.RL_MyId ? window.RL_MyId('rl_vol_id') : 'vol-demo');
+/* Auth gate: with a live API the volunteer must be signed in; demo mode (no API) still works. */
+if (window.RL_API && !window.RL_RequireAuth('volunteer')) { /* redirect pending — skip live calls */ }
+var VOL = (function() {
+  var s = window.RL_Auth ? window.RL_Auth.sess() : null;
+  if (s && s.user) { // signed-in: use the real volunteer row id saved at sign-in (/auth/me refresh)
+    try { var rid = localStorage.getItem('rl_vol_id'); if (rid && rid.indexOf('rl_vol_id-') !== 0) return rid; } catch (e) {}
+    if (s.user.id) return String(s.user.id);
+  }
+  return window.RL_MyId ? window.RL_MyId('rl_vol_id') : 'vol-demo';
+})();
 function _normTask(x) {
   return {
     id: String(x.id), title: x.title || 'Relief Task',
@@ -556,6 +565,15 @@ RL_BootUser({ defaultName: 'Volunteer', defaultRole: 'volunteer' });
 renderNotifs(false);
 renderHome();
 RL_Icons();
-loadVolunteerLive();
+if (!window.RL_API || window.RL_Auth.token()) {
+  loadVolunteerLive();
+  // once /auth/me lands, switch to the real volunteer row id and reload scoped data
+  if (window.RL_API && window.RL_Auth.token()) window.RL_RefreshMe().then(function(d) {
+    if (d && d.volunteer && d.volunteer.id && String(VOL) !== String(d.volunteer.id)) {
+      VOL = String(d.volunteer.id);
+      loadMyAssignments(); loadStats(); loadProfile();
+    }
+  });
+}
 </script>
 </body></html>
