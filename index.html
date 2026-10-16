@@ -371,19 +371,15 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <div class="field" style="--i:1"><input aria-label="Full name" placeholder="Full name" required></div>
       <div class="field" style="--i:2"><input type="tel" aria-label="Phone" placeholder="Phone / WhatsApp" required></div>
       <div class="field" style="--i:3">
-        <select aria-label="What do you need?" required>
-          <option value="" disabled selected>What do you need?</option>
-          <option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option>
-        </select>
-      </div>
-      <div class="field" style="--i:4">
         <div style="display:flex;gap:8px">
           <input id="helpArea" aria-label="Area" placeholder="Area / city" required style="flex:1">
           <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">My location</button>
         </div>
       </div>
-      <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
-      <button class="btn" style="--i:6" data-rl="btnHelp">Request help</button>
+      <div class="field" style="--i:4"><input type="password" name="hpass" aria-label="Password" placeholder="Password (6+ characters)" required minlength="6" autocomplete="new-password"></div>
+      <div class="field" style="--i:5"><input type="password" name="hpass2" aria-label="Confirm password" placeholder="Confirm password" required minlength="6" autocomplete="new-password"></div>
+      <div class="row" style="--i:6"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
+      <button class="btn" style="--i:7" data-rl="btnCreate">Create account</button>
       <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hsOpen"><span data-rl="lnkAccSign">Have an account? Sign in</span></a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hrOpen"><span data-rl="lnkCreate">Create account</span></a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
       <div id="helpSign" style="display:none;width:100%">
         <h3 data-rl="hAccSign">Sign in to your account</h3>
@@ -550,16 +546,14 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <h3>Tell us what <em>you need.</em></h3>
       <p>A trained volunteer near you will be in touch within minutes.</p>
     </div>
-    <form class="m-sheet-form" data-mmsg="Request sent! A volunteer will contact you soon.">
+    <form class="m-sheet-form" data-mmsg="Account created! A volunteer will contact you soon.">
       <div class="m-field"><label>Full Name</label><input type="text" placeholder="Your full name" required></div>
       <div class="m-field"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92 3xx-xxxxxxx" required></div>
-      <div class="m-field">
-        <label>What do you need?</label>
-        <select required><option value="" disabled selected>Choose type…</option><option>Flood rescue</option><option>Medical help</option><option>Shelter</option><option>Food or water</option><option>Other</option></select>
-      </div>
       <div class="m-field"><label>Area / City</label><input type="text" placeholder="Your location" required></div>
+      <div class="m-field"><label>Password</label><input type="password" name="hpass" placeholder="Password (6+ characters)" required minlength="6" autocomplete="new-password"></div>
+      <div class="m-field"><label>Confirm Password</label><input type="password" name="hpass2" placeholder="Re-enter password" required minlength="6" autocomplete="new-password"></div>
       <label class="m-check"><input type="checkbox" id="mUrgentCheck"> Mark as urgent</label>
-      <button type="submit" class="m-btn" data-rl="btnHelp">Send Request for Help</button>
+      <button type="submit" class="m-btn" data-rl="btnCreate">Create account</button>
       <p class="m-alt">Want to help others? <a data-mopen="volunteer">Volunteer</a> &nbsp;·&nbsp; <a data-mopen="signin"><span data-rl="lnkAccSign">Have an account? Sign in</span></a></p>
     </form>
   </div>
@@ -690,7 +684,7 @@ var ph=normPK(phone);if(!ph)return Promise.resolve({blocked:true,msg:'Please ent
 if(String(password||'').length<6)return Promise.resolve({blocked:true,msg:'Password must be at least 6 characters'});
 return post('/auth/register',{role:'citizen',full_name:nm,phone:ph,password:password}).then(function(r){
 if(r.ok&&r.data&&r.data.data){setSession(r.data.data,true);return {ok:true,user:r.data.data.user||{}}}
-if(r.status===409)return {blocked:true,msg:(r.data&&r.data.message)||'This number already has an account — please sign in'};
+if(r.status===409)return {blocked:true,code:'exists',msg:(r.data&&r.data.message)||'This number already has an account — please sign in'};
 return {blocked:true,msg:(r.data&&r.data.message)||'Could not create the account — please try again'};}).catch(function(){return {blocked:true,msg:'Server not reachable'}})}
 function normPK(raw){var d=String(raw||'').replace(/\D/g,'');if(d.indexOf('0092')===0)d=d.slice(4);else if(d.indexOf('92')===0)d=d.slice(2);if(d.indexOf('0')===0)d=d.slice(1);if(!/^3\d{9}$/.test(d))return null;return '03'+d.slice(1);}
 function validateClient(role,o){o=o||{};var RE=/^[A-Za-z\u0600-\u06FF][A-Za-z\u0600-\u06FF ']{1,39}$/;if(!o.name||o.name.length<2||!RE.test(o.name))return 'Please write your real full name (e.g. Ali Raza)';if(!normPK(o.phone))return 'Please enter a valid mobile number (e.g. 03001234567)';if(role==='volunteer'&&(!o.area||String(o.area).trim().length<2))return 'Please enter your city';if(role==='volunteer'){if(!o.password||o.password.length<6)return 'Password must be at least 6 characters';if(o.password!==o.pass2)return 'The two passwords do not match — please retype';}return '';}
@@ -700,8 +694,8 @@ else{o.name=tx[0];o.phone=tx[1];o.area=tx[2];if(role==='help'){o.type=sv;o.urgen
 P[role]=o;sessionStorage.setItem('rl_user',JSON.stringify(o));localStorage.setItem('rl_user',JSON.stringify(o))}catch(e){}}
 function queue(role,o){try{var k=role==='help'?'rl_help':'rl_vols',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(o);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
 function send(role){var o=P[role];if(!o||!API)return Promise.resolve({offline:true});var c=geo(o.area),req;
-if(role==='help'){var HC={'Flood rescue':'rescue','Medical help':'medical','Shelter':'shelter','Food or water':'food','Other':'special'};
- req=post('/help-requests',{category:HC[o.type]||'special',full_name:o.name,phone:o.phone,city:o.area,description:o.type+(o.urgent?' (urgent)':''),urgent:!!o.urgent,latitude:(GPS?GPS.lat:(c||PK)[0]),longitude:(GPS?GPS.lng:(c||PK)[1])})}
+if(role==='help'){var HC={'Flood rescue':'rescue','Medical help':'medical','Shelter':'shelter','Food or water':'food','Other':'special'};var _us=sess();
+ req=post('/help-requests',{category:HC[o.type]||'special',user_id:(_us&&_us.user&&_us.user.id)||null,full_name:o.name,phone:o.phone,city:o.area,description:(o.urgent?'Urgent help needed':'Help needed'),urgent:!!o.urgent,latitude:(GPS?GPS.lat:(c||PK)[0]),longitude:(GPS?GPS.lng:(c||PK)[1])})}
 else if(role==='volunteer'){var b={role:'volunteer',full_name:o.name,phone:o.phone,city:o.area,password:o.password||'',skills:o.skill?[o.skill]:[],availability:o.weekend?'weekends':'available'};req=post('/auth/register',b)}
 else req=post('/auth/admin-signin',{email:o.email,password:P.pw||''});
 return req.then(function(r){if(r.ok){var d=(r.data&&r.data.data)||{};if((role==='volunteer'||role==='admin')&&d.token){setSession(d,role==='volunteer');if(role==='admin'&&d.user&&d.user.id)try{localStorage.setItem('rl_admin',JSON.stringify(d.user))}catch(e){}}return {ok:true,data:r.data};}
@@ -827,11 +821,18 @@ document.querySelectorAll('.desktop-wrap form').forEach(function(f){
       return;
     }
     RL.collect(f,f.dataset.role);
-    // help form — open help dashboard
+    // help form — create a citizen account and send the first request, then open the dashboard
     if(f.dataset.role === 'help'){
-      var uq=document.getElementById('urgentCheck');
-      showToast(uq&&uq.checked?'Urgent request sent — volunteers alerted first! Opening your dashboard…':'Request sent! Opening your dashboard…');
-      RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
+      var ho=RL.P.help||{};
+      var hpw=f.querySelector('input[name="hpass"]'),hpw2=f.querySelector('input[name="hpass2"]');
+      var hpvv=hpw?hpw.value:'',hpv2=hpw2?hpw2.value:'';
+      if(hpvv.length<6){showToast('Password must be at least 6 characters');return;}
+      if(hpvv!==hpv2){showToast('The two passwords do not match — please retype');return;}
+      showToast('Creating your account\u2026');
+      RL.signup(ho.name,ho.phone,hpvv).then(function(r){
+        if(r.ok){return RL.send('help').then(function(){window.location.href='dashboards/help.html';});}
+        if(r.code==='exists'){return RL.signin(ho.phone,hpvv).then(function(s){if(s.ok){return RL.send('help').then(function(){window.location.href='dashboards/help.html';});}showToast('This number already has an account \u2014 please sign in to continue');helpPanel('sign');var he=document.getElementById('hsPhone');if(he)he.value=ho.phone;});}
+        showToast(r.msg||'Could not create the account');});
       return;
     }
     if(f.dataset.role==='volunteer'){var ve=RL.validate('volunteer',RL.P.volunteer);if(ve){showToast(ve);return;}}
@@ -1005,12 +1006,18 @@ document.querySelectorAll('.m-sheet-form').forEach(function(f){
     }
     RL.collect(f,mrole);
     if(mrole==='volunteer'){var mve=RL.validate('volunteer',RL.P.volunteer);if(mve){showToast(mve);return;}}
-    // help sheet — open help dashboard
+    // help sheet — create a citizen account and send the first request, then open the dashboard
     if(sheet && sheet.id === 'sheet-help'){
-      var muq=document.getElementById('mUrgentCheck');
-      showToast(muq&&muq.checked?'Urgent request sent — volunteers alerted first! Opening your dashboard…':'Request sent! Opening your dashboard…');
-      closeSheet();
-      RL.send('help').then(function(){ window.location.href = 'dashboards/help.html'; });
+      var mo=RL.P.help||{};
+      var mpw=f.querySelector('input[name="hpass"]'),mpw2=f.querySelector('input[name="hpass2"]');
+      var mpvv=mpw?mpw.value:'',mpv2=mpw2?mpw2.value:'';
+      if(mpvv.length<6){showToast('Password must be at least 6 characters');return;}
+      if(mpvv!==mpv2){showToast('The two passwords do not match — please retype');return;}
+      showToast('Creating your account\u2026');
+      RL.signup(mo.name,mo.phone,mpvv).then(function(r){
+        if(r.ok){return RL.send('help').then(function(){closeSheet();setTimeout(function(){window.location.href='dashboards/help.html';},300);});}
+        if(r.code==='exists'){return RL.signin(mo.phone,mpvv).then(function(s){if(s.ok){return RL.send('help').then(function(){closeSheet();setTimeout(function(){window.location.href='dashboards/help.html';},300);});}showToast('This number already has an account \u2014 please sign in to continue');});}
+        showToast(r.msg||'Could not create the account');});
       return;
     }
     var md=RL.dest(mrole);
