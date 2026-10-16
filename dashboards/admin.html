@@ -237,6 +237,24 @@
 <script src="live.js"></script>
 <script src="shared.js"></script>
 <script>
+/* ── ADMIN AUTH GATE ── requires a signed-in admin session when the API is live.
+   Matches the live token model (RL_Auth session, not the legacy rl_token/is_admin).
+   With no API configured the dashboard still opens in demo/static mode. ── */
+(function () {
+  if (!window.RL_API) return;                    // demo / static preview
+  var s = window.RL_Auth && window.RL_Auth.sess ? window.RL_Auth.sess() : null;
+  var role = s && s.user && s.user.role;
+  if (s && s.token && role === 'admin') return;  // authorized admin
+  try {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16231c;color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+    t.textContent = s && s.token ? 'Not an admin account — please sign in as admin' : 'Please sign in as admin';
+    document.body.appendChild(t);
+  } catch (e) {}
+  setTimeout(function () { window.location.replace('../index.html#admin'); }, 900);
+})();
+</script>
+<script>
 /* ── DATA ── */
 var C = ['#7C6CF0','#4C8DF6','#3CC08E','#F5B83D','#F58A3D','#EF5B5B'];
 var FL = [['Rajanpur','Punjab','Critical',4200],['Muzaffargarh','Punjab','Critical',3800],['Layyah','Punjab','High',2600],['Jhang','Punjab','High',2100],['Sukkur','Sindh','Moderate',1500],['Charsadda','KP','Moderate',900]];

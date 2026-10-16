@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>ReliefLink — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dk:#0b3b2c;--dk2:#12503c;--dk3:#1b6a4f;
+  --cream:#fbf3de;--cream2:#f3e6c4;--cream3:#e8d9a8;
+  --gold:#d9b567;--gold2:#f0d894;--gold3:#c9893a;
+  --white:#fffaf0;--ink:#0b3b2c;--mut:#6b7c6b;
+  --red:#c4443a;--sh:0 4px 20px rgba(11,59,44,.12);
+  --sh2:0 8px 32px rgba(11,59,44,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:var(--cream);color:var(--ink);overflow:hidden;height:100vh;}
+.app{display:flex;height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:234px;flex-shrink:0;
+  background:linear-gradient(180deg,#0a3528 0%,#082b20 100%);
+  display:flex;flex-direction:column;
+  border-right:1px solid rgba(217,181,103,.15);overflow-y:auto;
+}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:20px 16px 16px;border-bottom:1px solid rgba(217,181,103,.12);}
+.sb-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--dk3),var(--gold));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 0 14px rgba(217,181,103,.3);}
+.sb-name{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;color:var(--cream);}
+.sb-sub{font-size:9px;color:rgba(217,181,103,.55);text-transform:uppercase;letter-spacing:1px;}
+.sb-nav{padding:12px 10px;flex:1;}
+.sb-lbl{font-size:9px;font-weight:700;color:rgba(217,181,103,.35);text-transform:uppercase;letter-spacing:1.5px;padding:0 8px;margin:14px 0 6px;}
+.sbi{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:12px;font-weight:500;color:rgba(255,245,220,.6);cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:2px;position:relative;}
+.sbi:hover{background:rgba(217,181,103,.07);color:var(--cream);}
+.sbi.on{background:linear-gradient(90deg,rgba(217,181,103,.14),rgba(217,181,103,.04));color:var(--gold2);border-color:rgba(217,181,103,.18);}
+.sbi.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--gold);border-radius:0 2px 2px 0;}
+.sbi-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,.06);}
+.sbi.on .sbi-ic{background:rgba(217,181,103,.14);}
+.sbadge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;}
+.sbadge.alert{background:rgba(196,68,58,.18);color:#f08080;}
+.sbadge.new{background:rgba(217,181,103,.18);color:var(--gold2);}
+.sbadge.mesh{background:rgba(46,230,166,.15);color:#2ee6a6;}
+.sb-bottom{padding:12px 10px;border-top:1px solid rgba(217,181,103,.1);}
+.sb-user{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;cursor:pointer;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--dk3),var(--gold3));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0;border:1.5px solid rgba(217,181,103,.3);}
+.sb-uname{font-size:12px;font-weight:600;color:var(--cream);}
+.sb-urole{font-size:10px;color:rgba(217,181,103,.5);}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--cream);}
+.topbar{height:56px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:1.5px solid var(--cream3);flex-shrink:0;}
+.tb-title{font-family:"Space Grotesk",sans-serif;font-size:17px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:9px;}
+.tb-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:99px;background:rgba(11,59,44,.07);color:var(--dk2);border:1px solid rgba(11,59,44,.1);}
+.tb-right{display:flex;align-items:center;gap:9px;}
+.live-pill{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;background:rgba(196,68,58,.08);border:1px solid rgba(196,68,58,.18);font-size:10px;font-weight:700;color:var(--red);letter-spacing:.4px;}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.tb-btn{width:36px;height:36px;border-radius:10px;background:var(--cream);border:1.5px solid var(--cream3);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .2s;position:relative;}
+.tb-btn:hover{border-color:var(--gold3);background:var(--cream2);}
+.ndot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--white);}
+.content{flex:1;overflow-y:auto;padding:22px;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--cream3);border-radius:99px;}
+
+/* ── MESH NETWORK BANNER (shows first when offline) ── */
+.mesh-banner{
+  border-radius:16px;padding:16px 18px;
+  background:linear-gradient(135deg,rgba(11,59,44,.08),rgba(46,230,166,.06));
+  border:1.5px solid rgba(46,230,166,.25);
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:16px;cursor:pointer;transition:all .2s;
+  position:relative;overflow:hidden;
+}
+.mesh-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(46,230,166,.03),transparent);animation:sweep 3s ease-in-out infinite;}
+@keyframes sweep{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+.mesh-banner:hover{border-color:rgba(46,230,166,.4);transform:translateY(-1px);box-shadow:0 6px 24px rgba(46,230,166,.1);}
+.mesh-ic{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#0d5c40,#2ee6a6);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 0 16px rgba(46,230,166,.25);}
+.mesh-text{flex:1;}
+.mesh-title{font-family:"Space Grotesk",sans-serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.mesh-sub{font-size:11px;color:var(--mut);line-height:1.5;}
+.mesh-status{display:flex;align-items:center;gap:6px;margin-top:6px;}
+.mesh-dot{width:7px;height:7px;border-radius:50%;animation:blink 2s infinite;}
+.mesh-dot.on{background:#2ee6a6;}
+.mesh-dot.off{background:var(--red);}
+.mesh-status-txt{font-size:10px;font-weight:700;letter-spacing:.5px;}
+.mesh-btn{padding:8px 16px;border-radius:99px;background:linear-gradient(135deg,var(--dk2),var(--dk));color:var(--gold2);font-size:11px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.mesh-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;border-radius:99px;font-size:9px;font-weight:700;
+  background:rgba(46,230,166,.12);color:#2ee6a6;
+  border:1px solid rgba(46,230,166,.2);margin-left:auto;
+  letter-spacing:.5px;
+}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat{padding:16px;border-radius:14px;background:var(--white);border:1.5px solid var(--cream3);box-shadow:var(--sh);transition:all .2s;cursor:default;}
+.stat:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--sh2);}
+.stat-n{font-family:"Space Grotesk",sans-serif;font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:3px;}
+.stat-l{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;}
+.stat-c{font-size:11px;margin-top:4px;font-weight:600;}
+.cr{color:var(--red);}
+.cg{color:#2a8a4a;}
+.co{color:var(--gold3);}
+.cd{color:var(--dk2);}
+
+/* ── FEATURE GRID ── */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+.sec-title{font-family:"Space Grotesk",sans-serif;font-size:16px;font-weight:700;color:var(--ink);}
+.sec-sub{font-size:12px;color:var(--mut);margin-bottom:16px;}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px;}
+.feat{
+  padding:18px 12px;border-radius:16px;
+  background:var(--white);border:1.5px solid var(--cream3);
+  text-align:center;cursor:pointer;
+  transition:all .25s cubic-bezier(.16,1,.3,1);
+  box-shadow:var(--sh);position:relative;overflow:hidden;
+}
+.feat::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .25s;border-radius:inherit;pointer-events:none;}
+.feat:hover{transform:translateY(-4px);box-shadow:var(--sh2);border-color:var(--gold);}
+.feat:hover::after{opacity:1;background:radial-gradient(circle at 50% 0%,rgba(217,181,103,.06),transparent 70%);}
+.feat-icon{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 11px;font-size:22px;
+}
+.feat-name{font-size:12px;font-weight:700;color:var(--ink);line-height:1.35;}
+.feat-badge{
+  position:absolute;top:7px;right:7px;
+  font-size:8px;font-weight:700;padding:2px 6px;border-radius:99px;
+  background:rgba(217,181,103,.2);color:var(--gold3);
+  border:1px solid rgba(217,181,103,.3);letter-spacing:.5px;
+}
+.feat-badge.mesh{background:rgba(46,230,166,.12);color:#2ee6a6;border-color:rgba(46,230,166,.25);}
+
+/* Icon colours */
+.ic-dk{background:linear-gradient(135deg,#1b6a4f,#0b3b2c);}
+.ic-red{background:linear-gradient(135deg,#e05a50,#c4443a);}
+.ic-gold{background:linear-gradient(135deg,#d9b567,#c9893a);}
+.ic-teal{background:linear-gradient(135deg,#2ee6a6,#0d9c70);}
+.ic-blue{background:linear-gradient(135deg,#60a5fa,#2563eb);}
+.ic-purple{background:linear-gradient(135deg,#a78bfa,#7c3aed);}
+.ic-sky{background:linear-gradient(135deg,#38bdf8,#0284c7);}
+.ic-amber{background:linear-gradient(135deg,#fbbf24,#d97706);}
+.ic-mesh{background:linear-gradient(135deg,#2ee6a6,#0b3b2c);}
+
+/* ── EMERGENCY BANNER ── */
+.em-bar{display:flex;align-items:center;gap:13px;padding:13px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(11,59,44,.06),rgba(11,59,44,.03));border:1.5px solid rgba(11,59,44,.1);cursor:pointer;transition:all .2s;}
+.em-bar:hover{border-color:var(--gold);background:linear-gradient(135deg,rgba(217,181,103,.07),rgba(217,181,103,.03));}
+.em-ic{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--dk3),var(--dk));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 0 12px rgba(11,59,44,.2);}
+.em-title{font-size:11px;font-weight:600;color:var(--mut);margin-bottom:2px;}
+.em-contacts{font-size:13px;font-weight:700;color:var(--ink);}
+.em-contacts span{color:var(--dk2);}
+.em-arrow{font-size:18px;color:var(--gold3);margin-left:auto;}
+
+/* ── MODAL ── */
+.mov{position:fixed;inset:0;background:rgba(11,59,44,.45);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.mov.open{display:flex;}
+.mo{width:100%;max-width:460px;background:var(--white);border-radius:20px;border:1.5px solid var(--cream3);box-shadow:0 24px 60px rgba(11,59,44,.25);overflow:hidden;animation:mo-in .35s cubic-bezier(.16,1,.3,1);}
+@keyframes mo-in{from{opacity:0;transform:scale(.94)translateY(14px);}to{opacity:1;transform:none;}}
+.mo-head{padding:18px 20px 14px;background:linear-gradient(135deg,var(--dk),var(--dk2));display:flex;align-items:center;gap:11px;}
+.mo-hic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.1);border:1px solid rgba(217,181,103,.2);}
+.mo-htitle{font-family:"Space Grotesk",sans-serif;font-size:15px;font-weight:700;color:var(--cream);}
+.mo-hsub{font-size:11px;color:rgba(217,181,103,.55);margin-top:2px;}
+.mo-x{margin-left:auto;width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.08);color:rgba(255,245,220,.6);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:none;}
+.mo-body{padding:18px 20px 22px;}
+.mo-field{margin-bottom:14px;}
+.mo-label{font-size:11px;font-weight:600;color:var(--mut);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px;}
+.mo-input{width:100%;padding:10px 13px;border-radius:10px;border:1.5px solid var(--cream3);background:var(--cream);font:inherit;font-size:13px;color:var(--ink);transition:all .2s;}
+.mo-input:focus{outline:none;border-color:var(--gold3);background:var(--white);box-shadow:0 0 0 3px rgba(217,181,103,.1);}
+.mo-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,var(--dk2),var(--dk));color:var(--gold2);font:inherit;font-size:13px;font-weight:700;border:none;cursor:pointer;margin-top:4px;transition:all .2s;letter-spacing:.2px;}
+.mo-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(11,59,44,.3);}
+.mo-mesh-info{padding:12px;border-radius:10px;background:rgba(46,230,166,.06);border:1px solid rgba(46,230,166,.2);font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:14px;}
+.mo-mesh-info b{color:var(--dk2);}
+
+/* Mesh scan animation */
+.scan-ring{width:80px;height:80px;border-radius:50%;border:2px solid rgba(46,230,166,.3);position:relative;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;}
+.scan-ring::before,.scan-ring::after{content:'';position:absolute;border-radius:50%;border:1.5px solid rgba(46,230,166,.2);animation:scan-pulse 2s ease-out infinite;}
+.scan-ring::before{inset:-12px;animation-delay:0s;}
+.scan-ring::after{inset:-24px;animation-delay:.5s;}
+@keyframes scan-pulse{0%{transform:scale(.8);opacity:.8;}100%{transform:scale(1.4);opacity:0;}}
+.scan-icon{font-size:32px;position:relative;z-index:1;}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--dk);color:var(--gold2);padding:10px 22px;border-radius:99px;font-size:13px;font-weight:600;border:1px solid rgba(217,181,103,.25);box-shadow:0 8px 24px rgba(0,0,0,.3);display:none;z-index:999;white-space:nowrap;}
+.toast.show{display:block;animation:t-in .3s ease;}
+@keyframes t-in{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{width:62px;}
+  .sbi span,.sb-name,.sb-sub,.sb-uname,.sb-urole,.sbadge,.sb-lbl{display:none;}
+  .sbi{justify-content:center;padding:10px;}
+  .sb-logo{justify-content:center;padding:14px 10px;}
+  .sb-user{justify-content:center;}
+  .feat-grid{grid-template-columns:repeat(3,1fr);}
+  .stats{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .feat-grid{grid-template-columns:repeat(2,1fr);}
+  .tb-badge{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-mark">🌐</div>
+    <div><div class="sb-name">ReliefLink</div><div class="sb-sub">Pakistan Relief</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-lbl">Main</div>
+    <div class="sbi on" onclick="nav(this,'Dashboard')"><div class="sbi-ic">🏠</div><span>Dashboard</span></div>
+    <div class="sbi" onclick="nav(this,'Live Map')"><div class="sbi-ic">🗺️</div><span>Live Map</span></div>
+    <div class="sbi" onclick="nav(this,'River Monitor')"><div class="sbi-ic">🌊</div><span>River Monitor</span></div>
+    <div class="sb-lbl">Safety</div>
+    <div class="sbi" onclick="nav(this,'Weather')"><div class="sbi-ic">⛅</div><span>Weather</span></div>
+    <div class="sbi" onclick="nav(this,'Alerts')"><div class="sbi-ic">🚨</div><span>Alerts</span><span class="sbadge alert">5</span></div>
+    <div class="sbi" onclick="nav(this,'Nearby')"><div class="sbi-ic">📍</div><span>Nearby</span></div>
+    <div class="sbi" onclick="nav(this,'Safe Places')"><div class="sbi-ic">🏕️</div><span>Safe Places</span></div>
+    <div class="sbi" onclick="nav(this,'Route Planner')"><div class="sbi-ic">🛣️</div><span>Route Planner</span></div>
+    <div class="sb-lbl">Tools</div>
+    <div class="sbi" onclick="openMeshModal()"><div class="sbi-ic">📡</div><span>Mesh Network</span><span class="sbadge mesh">OFFLINE</span></div>
+    <div class="sbi" onclick="nav(this,'AI Predictor')"><div class="sbi-ic">🧠</div><span>AI Predictor</span><span class="sbadge new">NEW</span></div>
+    <div class="sbi" onclick="nav(this,'AI Assistant')"><div class="sbi-ic">🤖</div><span>AI Assistant</span></div>
+    <div class="sbi" onclick="nav(this,'Emergency Nos')"><div class="sbi-ic">📞</div><span>Emergency Nos</span></div>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sbi" style="margin-bottom:8px" onclick="toast('Logged out')"><div class="sbi-ic">🔒</div><span>Logout</span></div>
+    <div class="sb-user"><div class="sb-avatar">AK</div><div><div class="sb-uname">Ahmed Khan</div><div class="sb-urole">Citizen</div></div></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-title">HELP DASHBOARD <span class="tb-badge">Affected Person</span></div>
+    <div class="tb-right">
+      <div class="live-pill"><div class="ldot"></div>LIVE</div>
+      <div class="tb-btn" onclick="toast('Notifications: 5 unread')">🔔<div class="ndot"></div></div>
+      <div class="tb-btn" onclick="toast('Profile')">👤</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ═══ MESH NETWORK BANNER (shows first) ═══ -->
+    <div class="mesh-banner" onclick="openMeshModal()">
+      <div class="mesh-ic">📡</div>
+      <div class="mesh-text">
+        <div class="mesh-title">Mesh Network — Communicate Without Internet</div>
+        <div class="mesh-sub">Connect with nearby volunteers via Bluetooth/WiFi Direct when internet is unavailable. Auto-activates when offline.</div>
+        <div class="mesh-status">
+          <div class="mesh-dot" id="meshDot"></div>
+          <span class="mesh-status-txt" id="meshTxt" style="color:var(--mut)">Checking network...</span>
+        </div>
+      </div>
+      <span class="mesh-pill" id="meshPill">● STANDBY</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="stat-n cr">3</div><div class="stat-l">Active SOS</div><div class="stat-c cr">↑ 1 new</div></div>
+      <div class="stat"><div class="stat-n cg">12</div><div class="stat-l">Volunteers Near</div><div class="stat-c cg">● Available</div></div>
+      <div class="stat"><div class="stat-n co">5</div><div class="stat-l">Shelters Open</div><div class="stat-c cg">↑ 2 opened</div></div>
+      <div class="stat"><div class="stat-n cd">4.2m</div><div class="stat-l">Avg Response</div><div class="stat-c cg">↓ Faster</div></div>
+    </div>
+
+    <!-- Feature Grid -->
+    <div class="sec-head"><div class="sec-title">All Features</div></div>
+    <div class="sec-sub">Tap any feature to use it</div>
+
+    <div class="feat-grid">
+
+      <div class="feat" onclick="openFeat('Live Map','🗺️','View hospitals, shelters, flood zones and SOS pins on a live Pakistan map.')">
+        <div class="feat-icon ic-dk">🗺️</div>
+        <div class="feat-name">Live Map</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('River Monitor','🌊','PMD-style live river levels — Normal, Medium, High, Exceptional status at 8 major stations.')">
+        <div class="feat-icon ic-blue">🌊</div>
+        <div class="feat-name">River Monitor</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Weather','⛅','Live weather, 24h forecast and severe warnings for all major Pakistani cities.')">
+        <div class="feat-icon ic-sky">⛅</div>
+        <div class="feat-name">Weather</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Disaster Alerts','🚨','Real-time earthquake, flood and storm alerts from USGS, GDACS and OpenWeatherMap.')">
+        <span class="feat-badge alert">5</span>
+        <div class="feat-icon ic-red">🚨</div>
+        <div class="feat-name">Disaster Alerts</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Nearby Hospitals & Shelters','🏥','Find verified hospitals, shelters and pharmacies near you from OpenStreetMap.')">
+        <div class="feat-icon ic-gold">🏥</div>
+        <div class="feat-name">Nearby Hospitals & Shelters</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Safe Places','🏕️','Verified shelters, mosques, schools and relief camps near you during emergencies.')">
+        <div class="feat-icon ic-teal">🏕️</div>
+        <div class="feat-name">Safe Places</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Route Planner','🛣️','Plan safe routes avoiding flood zones and blocked roads with weather along the way.')">
+        <div class="feat-icon ic-amber">🛣️</div>
+        <div class="feat-name">Route Planner</div>
+      </div>
+
+      <div class="feat" onclick="openMeshModal()">
+        <span class="feat-badge mesh">OFFLINE</span>
+        <div class="feat-icon ic-mesh">📡</div>
+        <div class="feat-name">Mesh Network</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('AI Flood Predictor','🧠','ML model predicts flood risk using live PMD/FFD rainfall data — hours before it happens.')">
+        <span class="feat-badge new">NEW</span>
+        <div class="feat-icon ic-purple">🧠</div>
+        <div class="feat-name">AI Flood Predictor</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('AI Assistant','🤖','Ask anything in English or Roman Urdu — flood safety, hospitals, emergency help.')">
+        <div class="feat-icon ic-dk">🤖</div>
+        <div class="feat-name">AI Assistant</div>
+      </div>
+
+      <div class="feat" onclick="openFeat('Emergency Numbers','📞','All verified Pakistan emergency contacts — 1122, 115, 1700, NDMA, Police, Fire.')">
+        <div class="feat-icon ic-red">📞</div>
+        <div class="feat-name">Emergency Numbers</div>
+      </div>
+
+    </div>
+
+    <!-- Emergency Banner -->
+    <div class="em-bar" onclick="window.open('tel:1122')">
+      <div class="em-ic">📞</div>
+      <div style="flex:1">
+        <div class="em-title">Need immediate help? Contact emergency services</div>
+        <div class="em-contacts">Call <span>1122</span> &nbsp;|&nbsp; Rescue &nbsp;|&nbsp; Medical &nbsp;|&nbsp; Police</div>
+      </div>
+      <div class="em-arrow">›</div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+</div>
+</div>
+
+<!-- Feature Modal -->
+<div class="mov" id="featModal" onclick="if(event.target===this)closeModal('featModal')">
+  <div class="mo">
+    <div class="mo-head">
+      <div class="mo-hic" id="fmIcon">🗺️</div>
+      <div><div class="mo-htitle" id="fmTitle">Feature</div><div class="mo-hsub">ReliefLink · Pakistan</div></div>
+      <button class="mo-x" onclick="closeModal('featModal')">✕</button>
+    </div>
+    <div class="mo-body">
+      <p style="font-size:13px;color:var(--mut);line-height:1.65;margin-bottom:16px" id="fmDesc"></p>
+      <button class="mo-btn" onclick="closeModal('featModal');toast('Opening feature...')">Open Feature →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Mesh Network Modal -->
+<div class="mov" id="meshModal" onclick="if(event.target===this)closeModal('meshModal')">
+  <div class="mo">
+    <div class="mo-head">
+      <div class="mo-hic">📡</div>
+      <div><div class="mo-htitle">Mesh Network</div><div class="mo-hsub">Communicate without internet</div></div>
+      <button class="mo-x" onclick="closeModal('meshModal')">✕</button>
+    </div>
+    <div class="mo-body">
+      <div style="text-align:center;margin-bottom:16px">
+        <div class="scan-ring"><div class="scan-icon">📡</div></div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px" id="meshModalStatus">Scanning for nearby devices...</div>
+        <div style="font-size:12px;color:var(--mut)" id="meshModalSub">Bluetooth + WiFi Direct enabled</div>
+      </div>
+      <div class="mo-mesh-info">
+        <b>How it works:</b> When internet is unavailable, ReliefLink automatically activates Mesh Networking using Bluetooth and WiFi Direct. Your device becomes a node — you can send SOS, receive alerts, and communicate with nearby volunteers even with <b>zero internet</b>.
+      </div>
+      <div class="mo-field">
+        <label class="mo-label">Your Message</label>
+        <input class="mo-input" placeholder="e.g. Need help at F-11/2, Islamabad...">
+      </div>
+      <button class="mo-btn" onclick="meshSend()" style="background:linear-gradient(135deg,#0d5c40,#2ee6a6);color:#0b3b2c">📡 Broadcast via Mesh Network</button>
+      <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--mut)">Reaches devices within ~100m via Bluetooth</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// Network detection → update mesh status
+function checkNetwork(){
+  const online=navigator.onLine;
+  const dot=document.getElementById('meshDot');
+  const txt=document.getElementById('meshTxt');
+  const pill=document.getElementById('meshPill');
+  if(online){
+    dot.className='mesh-dot on';
+    txt.textContent='Internet available — Mesh on standby';
+    txt.style.color='#2ee6a6';
+    pill.innerHTML='● STANDBY';
+    pill.style.background='rgba(46,230,166,.12)';
+    pill.style.color='#2ee6a6';
+  } else {
+    dot.className='mesh-dot off';
+    txt.textContent='⚡ OFFLINE — Mesh Network AUTO-ACTIVATED';
+    txt.style.color='var(--red)';
+    pill.innerHTML='⚡ ACTIVE';
+    pill.style.background='rgba(196,68,58,.12)';
+    pill.style.color='var(--red)';
+  }
+}
+checkNetwork();
+window.addEventListener('online',checkNetwork);
+window.addEventListener('offline',checkNetwork);
+setInterval(checkNetwork,3000);
+
+// Sidebar navigation
+function nav(el, name){
+  document.querySelectorAll('.sbi').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  toast('Opening: '+name);
+}
+
+// Feature modal
+function openFeat(name,icon,desc){
+  document.getElementById('fmTitle').textContent=name;
+  document.getElementById('fmIcon').textContent=icon;
+  document.getElementById('fmDesc').textContent=desc;
+  document.getElementById('featModal').classList.add('open');
+}
+function openMeshModal(){
+  document.getElementById('meshModal').classList.add('open');
+  // Simulate scan
+  let count=0;
+  const status=document.getElementById('meshModalStatus');
+  const sub=document.getElementById('meshModalSub');
+  const interval=setInterval(()=>{
+    count++;
+    if(count===1){status.textContent='Scanning...';sub.textContent='Activating Bluetooth + WiFi Direct';}
+    else if(count===2){status.textContent='2 devices found nearby';sub.textContent='Volunteer_01 · Rescue_Team_3';}
+    else if(count===3){status.textContent='✅ Mesh Network Ready';sub.textContent='You can now send messages without internet';clearInterval(interval);}
+  },1200);
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+function meshSend(){
+  closeModal('meshModal');
+  toast('📡 Message broadcast via Mesh Network to 2 nearby devices!');
+}
+
+// Toast
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toastEl');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
