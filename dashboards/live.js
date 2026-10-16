@@ -162,6 +162,51 @@ window.RL_LIVE = (function () {
     return { pct: pct, riverNow: +now.toFixed(2), riverMax: +maxFc.toFixed(2), precip48: +precip48.toFixed(1), status: status, trend: trend, rise: +rise.toFixed(2), confidence: confidence };
   }
 
+  /* ── Pakistan-wide live earthquake feed — USGS M4.5+ past week (compact, keyless) filtered to Pakistan + Hindu Kush ── */
+  function quakesPK() {
+    var u = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson';
+    return fetchJSON(u).then(function (j) {
+      return ((j && j.features) || []).map(function (f) {
+        return { mag: +f.properties.mag, place: f.properties.place, time: f.properties.time,
+          lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
+      }).filter(function (q) { return q.lat >= 23 && q.lat <= 38 && q.lng >= 58 && q.lng <= 78; })
+        .sort(function (a, b) { return b.time - a.time; }).slice(0, 40);
+    });
+  }
+
+  /* ── Real nearby Points-of-Interest from OpenStreetMap (Overpass, keyless, mirror fallback) ── */
+  var OPASS_MIRRORS = ['https://overpass-api.de/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  function opBody(kind, ar) {
+    var specs = {
+      hospital: [['node', '["amenity"="hospital"]'], ['way', '["amenity"="hospital"]']],
+      clinic:   [['node', '["amenity"="clinic"]'], ['way', '["amenity"="clinic"]']],
+      pharmacy: [['node', '["amenity"="pharmacy"]'], ['way', '["amenity"="pharmacy"]']],
+      shelter:  [['node', '["amenity"="shelter"]'], ['node', '["emergency"="shelter"]'], ['way', '["amenity"="shelter"]'], ['node', '["amenity"="community_centre"]']]
+    }[kind] || [];
+    return specs.map(function (s) { return s[0] + s[1] + ar + ';'; }).join('');
+  }
+  function overpassPOI(lat, lng, radiusM, kind) {
+    var ar = '(around:' + (radiusM || 12000) + ',' + lat + ',' + lng + ')';
+    var data = '[out:json][timeout:20];(' + opBody(kind, ar) + ');out center 25;';
+    var i = 0;
+    function tryOne() {
+      if (i >= OPASS_MIRRORS.length) return Promise.resolve([]);
+      return fetch(OPASS_MIRRORS[i++], { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'data=' + encodeURIComponent(data) })
+        .then(function (r) { if (!r.ok) throw new Error('http' + r.status); return r.json(); })
+        .then(function (j) {
+          return ((j && j.elements) || []).map(function (el) {
+            var t = el.tags || {};
+            var la = el.lat != null ? el.lat : (el.center && el.center.lat);
+            var lo = el.lon != null ? el.lon : (el.center && el.center.lon);
+            return { kind: kind, name: t.name || (kind.charAt(0).toUpperCase() + kind.slice(1)),
+              lat: la, lng: lo, addr: t['addr:street'] || t['addr:city'] || '', phone: t.phone || t['contact:phone'] || '' };
+          }).filter(function (x) { return x.lat != null && x.lng != null; });
+        })
+        .catch(tryOne);
+    }
+    return tryOne();
+  }
+
   /* ── Leaflet map helpers ─────────────────────────────── */
   function map(id, lat, lng, zoom) {
     if (!window.L) return null;
@@ -182,5 +227,5 @@ window.RL_LIVE = (function () {
     return mk;
   }
 
-  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
+  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, quakesPK: quakesPK, overpassPOI: overpassPOI, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
 })();

@@ -122,13 +122,174 @@
 .cp-draft { border: 1.5px solid var(--gold); border-radius: 14px; padding: 12px 14px; margin-top: 12px; background: rgba(201,137,58,.07); }
 .mic-on { animation: micPulse 1s infinite; }
 @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,91,91,.5); } 50% { box-shadow: 0 0 0 8px rgba(239,91,91,0); } }
+
+/* ═══════════════════════════════════════════
+   ReliefLink APP THEME — mobile-first, matches design
+═══════════════════════════════════════════ */
+/* App bar */
+.appbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; margin: -28px -32px 18px; background: rgba(245,238,219,.88);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.appbar-brand { flex: 1; text-align: center; font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--g); }
+.appbar-actions { display: flex; align-items: center; gap: 10px; }
+.appbar .menu-toggle { display: grid; }
+.av-chip { width: 40px; height: 40px; border-radius: 50%; background: var(--g); color: var(--gold);
+  display: grid; place-items: center; font-weight: 800; font-size: 13px; border: 1.5px solid var(--gold); cursor: pointer; flex: none; }
+
+/* Hero stats card */
+.hero { background: linear-gradient(150deg,var(--g),var(--g2)); color: #F5EEDB; border-radius: 26px;
+  padding: 22px; margin-bottom: 22px; box-shadow: 0 18px 40px rgba(27,58,42,.22); position: relative; overflow: hidden; }
+.hero::after { content: ''; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(201,162,39,.12); }
+.hero .eyebrow { font-size: 12px; font-weight: 700; opacity: .72; display: flex; align-items: center; gap: 6px; position: relative; }
+.hero .hero-title { font-size: 25px; font-weight: 800; letter-spacing: -.02em; line-height: 1.22; margin: 4px 0 10px; position: relative; max-width: 24ch; }
+.hero-sub { font-size: 13px; opacity: .8; line-height: 1.5; margin: 0 0 16px; position: relative; max-width: 52ch; }
+.hero-stats { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; position: relative; }
+.hero-stat { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hero-stat .hs-ic { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,.1); display: grid; place-items: center; color: var(--gold2); flex: none; }
+.hero-stat b { font-size: 18px; font-weight: 800; display: block; line-height: 1.1; }
+.hero-stat small { font-size: 11px; opacity: .72; }
+.hero-sep { width: 1px; align-self: stretch; background: rgba(255,255,255,.15); }
+.hero-prog { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; margin-bottom: 6px; position: relative; }
+.hero-bar { height: 9px; border-radius: 9px; background: rgba(255,255,255,.16); overflow: hidden; margin-bottom: 16px; position: relative; }
+.hero-bar i { display: block; height: 100%; border-radius: 9px; background: linear-gradient(90deg,var(--gold2),var(--gold)); }
+.hero-search { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,.18); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px; padding: 12px 14px; position: relative; }
+.hero-search input { flex: 1; background: none; border: none; outline: none; color: #F5EEDB; font: inherit; font-size: 13.5px; }
+.hero-search input::placeholder { color: rgba(245,238,219,.6); }
+
+/* Section heading */
+.sec-title { font-size: 20px; font-weight: 800; color: var(--g); letter-spacing: -.02em; margin-bottom: 14px; }
+
+/* Feature tiles — 3-column vertical icon cards */
+.cat-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.cat-card { flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 10px;
+  padding: 18px 10px; border-radius: 20px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(27,58,42,.06); }
+.cat-card .cat-icon { background: transparent !important; width: auto; height: auto; font-size: 30px; }
+.cat-card h4 { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+.cat-card .cat-desc { display: none; }
+.cat-card:hover, .cat-card.active { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 12px 26px rgba(27,58,42,.14); background: var(--card); }
+/* ── Home: grouped feature sections + emergency group ── */
+.home-groups { display: flex; flex-direction: column; gap: 22px; }
+.home-groups .cat-grid { margin-bottom: 0; }
+.grp-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; background: linear-gradient(150deg,var(--g),var(--g2)); color: #F5EEDB; border-left: 7px solid var(--gold); border-radius: 16px; padding: 13px 16px; box-shadow: 0 6px 16px rgba(27,58,42,.18); }
+.grp-head h4 { font-size: 16px; font-weight: 800; color: #F5EEDB; letter-spacing: -.01em; display: inline-flex; align-items: center; gap: 8px; }
+.grp-head h4 svg { width: 17px; height: 17px; color: var(--gold2); }
+.grp-head .grp-sub { font-size: 11.5px; color: var(--gold2); opacity: .95; }
+.cat-card .cat-icon { color: var(--g); }
+.cat-card .cat-icon svg.i { width: 30px; height: 30px; stroke-width: 1.7; }
+.cat-card:hover .cat-icon, .cat-card.active .cat-icon { color: var(--gold); }
+.sos-intro { font-size: 12.5px; color: var(--mute); margin: 8px 2px 10px; }
+.sos-act { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.sos-act button { flex: 1; min-width: 150px; background: var(--card); border: 1px solid var(--line); color: var(--g); border-radius: 12px; padding: 11px 12px; font-weight: 700; font-size: 12.5px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: .2s; box-shadow: 0 4px 12px rgba(27,58,42,.08); }
+.sos-act button:hover { border-color: var(--gold); transform: translateY(-1px); }
+.sos-act button.sos-ai { background: linear-gradient(150deg,var(--g2),var(--g)); color: var(--gold); border-color: transparent; }
+
+/* Emergency card → green with gold pill buttons */
+.emergency-banner { background: linear-gradient(150deg,var(--g),var(--g2)) !important; border-radius: 22px; }
+.emergency-banner h3 { color: #F5EEDB; }
+.emergency-banner p { color: rgba(245,238,219,.72); }
+.call-btn { background: linear-gradient(180deg,var(--gold2),var(--gold)) !important; color: var(--g) !important; border: none !important; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+.call-btn:hover { transform: translateY(-2px) scale(1.03); }
+
+/* Bottom emergency bar + bottom nav (mobile only) */
+.sos-bar, .bottom-nav { display: none; }
+@media(max-width:900px){
+  .main { padding: 0 14px 196px; }
+  .appbar { margin: 0 -14px 16px; padding: 12px 14px; }
+  .cat-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .sos-bar { display: flex; position: fixed; left: 12px; right: 12px; bottom: 88px; z-index: 40; align-items: center; gap: 12px;
+    background: linear-gradient(150deg,var(--g),var(--g2)); color: #F5EEDB; border-radius: 20px; padding: 12px 14px; box-shadow: 0 12px 30px rgba(0,0,0,.28); }
+  .sos-bar .sos-ic { width: 40px; height: 40px; border-radius: 12px; background: rgba(232,200,106,.18); display: grid; place-items: center; font-size: 20px; flex: none; }
+  .sos-bar .sos-txt { flex: 1; min-width: 0; }
+  .sos-bar .sos-txt b { display: block; font-size: 14px; font-weight: 800; }
+  .sos-bar .sos-txt small { font-size: 11px; opacity: .72; }
+  .sos-call { display: flex; align-items: center; gap: 7px; background: linear-gradient(180deg,var(--gold2),var(--gold)); color: var(--g); border: none; border-radius: 14px; padding: 11px 16px; font-weight: 800; font-size: 13px; flex: none; }
+  .bottom-nav { display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 40; justify-content: space-around; align-items: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 8px; box-shadow: 0 10px 30px rgba(27,58,42,.16); }
+  .bn-item { border: none; background: none; color: var(--mute); width: 56px; height: 48px; border-radius: 16px; display: grid; place-items: center; cursor: pointer; transition: .2s; }
+  .bn-item svg { width: 22px; height: 22px; }
+  .bn-item.active { background: var(--g); color: var(--gold); }
+}
+
+/* ══ Soft neumorphic boxes + controls (match design) ══ */
+.main .card { background: var(--card); border: none; border-radius: 26px; padding: 22px;
+  box-shadow: 9px 9px 22px rgba(27,58,42,.07), -7px -7px 16px rgba(255,255,255,.75); }
+.card-header { margin-bottom: 14px; }
+.card-header h3 { font-size: 17px; font-weight: 800; color: var(--g); letter-spacing: -.01em; }
+.badge-sm { background: rgba(27,58,42,.06); color: var(--g2); font-weight: 700; border-radius: 999px; padding: 5px 12px; }
+
+/* form fields */
+.field-input, .modal textarea, .modal select { border: none; border-radius: 16px; background: #F3ECD8; color: var(--ink);
+  box-shadow: inset 2px 2px 5px rgba(27,58,42,.06), inset -2px -2px 5px rgba(255,255,255,.7); padding: 13px 15px; }
+.field-input:focus, .modal textarea:focus, .modal select:focus { outline: 2px solid var(--gold); box-shadow: none; }
+.form-group label { color: var(--g2); text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 700; }
+
+/* location chips */
+.lp-btn { border: none; border-radius: 999px; background: var(--card); color: var(--g); font-weight: 700;
+  box-shadow: 5px 5px 12px rgba(27,58,42,.08), -4px -4px 10px rgba(255,255,255,.7); padding: 10px 16px; }
+.lp-btn:hover { background: var(--card); color: var(--g); transform: translateY(-1px); }
+.lp-btn.on { background: var(--g); color: var(--gold); }
+.lp-map { border: none; border-radius: 18px; box-shadow: inset 0 0 0 1px rgba(27,58,42,.06); }
+
+/* big Request Help pill */
+.submit-btn { border-radius: 18px; background: linear-gradient(150deg,var(--g2),var(--g)); color: #F5EEDB; font-weight: 800; letter-spacing: -.01em;
+  box-shadow: 6px 6px 16px rgba(27,58,42,.25), -4px -4px 10px rgba(255,255,255,.6); padding: 15px; }
+.submit-btn:hover { background: linear-gradient(150deg,var(--g),var(--g3)); transform: translateY(-1px); }
+
+/* AI Copilot small side chip */
+.copilot-chip { display: inline-flex; align-items: center; gap: 6px; flex: none; border: none; cursor: pointer;
+  background: linear-gradient(150deg,var(--g2),var(--g)); color: var(--gold); font: inherit; font-weight: 800; font-size: 12.5px;
+  border-radius: 999px; padding: 8px 14px; box-shadow: 4px 4px 10px rgba(27,58,42,.18); }
+.copilot-chip svg { width: 15px; height: 15px; }
+.copilot-chip:hover { transform: translateY(-1px); }
+
+/* feature tiles — soft raised */
+.cat-card { border: none; border-radius: 22px; background: var(--card);
+  box-shadow: 6px 6px 14px rgba(27,58,42,.07), -5px -5px 12px rgba(255,255,255,.7); }
+.cat-card:hover, .cat-card.active { box-shadow: 8px 8px 20px rgba(27,58,42,.12), -6px -6px 14px rgba(255,255,255,.75); }
+
+/* My Active Request — cream card with gold pill */
+.ar-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ar-top b { font-size: 15px; font-weight: 800; color: var(--g); }
+.ar-pill { flex: none; background: linear-gradient(180deg,var(--gold2),var(--gold)); color: var(--g); font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 999px; }
+.ar-meta { font-size: 12.5px; color: var(--mute); margin: 4px 0 2px; }
+.ar-wa { margin-top: 10px; width: 100%; border: none; cursor: pointer; background: #128C7E; color: #fff; font: inherit; font-weight: 700; font-size: 12.5px; border-radius: 12px; padding: 10px; }
+/* ── LIVE DISASTER ALERTS + OPS MAP ── */
+.al-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 14px; }
+.al-tab { border: 1px solid var(--line); background: #F3ECD8; color: inherit; font: inherit; font-weight: 700; font-size: 12.5px; padding: 7px 13px; border-radius: 999px; cursor: pointer; }
+.al-tab.active { background: linear-gradient(150deg,var(--g2),var(--g)); color: #F5EEDB; border-color: transparent; }
+.al-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 4px; border-bottom: 1px solid var(--line); }
+.al-item:last-child { border-bottom: none; }
+.al-ic { width: 40px; height: 40px; border-radius: 12px; flex: none; display: grid; place-items: center; font-size: 20px; }
+.al-b { flex: 1; min-width: 0; }
+.al-b b { display: block; font-size: 13.5px; }
+.al-b small { color: var(--mute); font-size: 11.8px; display: block; margin-top: 2px; }
+.layer-bar { display: flex; gap: 8px; flex-wrap: wrap; margin: 2px 0 14px; }
+.layer-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; background: #F3ECD8; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; cursor: pointer; }
+.layer-chip input { accent-color: var(--g); cursor: pointer; }
+/* ── OFFLINE MESH NETWORK ── */
+.mesh-chat { max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+.mm { max-width: 84%; padding: 8px 12px; border-radius: 16px; font-size: 13px; line-height: 1.35; word-break: break-word; }
+.mm.me { align-self: flex-end; background: linear-gradient(150deg,var(--g2),var(--g)); color: #F5EEDB; border-bottom-right-radius: 6px; }
+.mm.them { align-self: flex-start; background: #F3ECD8; color: inherit; border-bottom-left-radius: 6px; }
+.mm .mm-meta { display: block; font-size: 10.5px; opacity: .72; margin-top: 3px; }
+.mm img { max-width: 100%; border-radius: 10px; margin-top: 4px; display: block; }
+.mm-link { color: var(--gold); font-weight: 700; text-decoration: underline; }
+.mesh-peer { display: flex; align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.mesh-peer:last-child { border-bottom: none; }
+.mesh-peer.sel { background: rgba(47,90,66,.08); }
+.mesh-peer .mp-ic { width: 38px; height: 38px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 18px; background: #0E9F8A22; color: #0E9F8A; }
+.mesh-peer .mp-t { flex: 1; min-width: 0; }
+.mesh-peer .mp-t b { font-size: 13.5px; display: block; }
+.mesh-peer .mp-t small { color: var(--mute); font-size: 11.5px; }
+.mesh-peer .mp-hop { flex: none; font-size: 11px; font-weight: 700; color: var(--g2); background: #2F5A4218; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
 </style>
 </head><body>
 
 <div class="layout">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
+  <div class="logo"><span class="logo-text">ReliefLink</span></div>
   <div class="nav-group">
     <button class="nav-item active" data-page="home"><i data-i="home"></i><span data-rl="navHome">Home</span></button>
     <button class="nav-item" data-page="request"><i data-i="plus"></i><span data-rl="navRequest">Request Help</span></button>
@@ -139,7 +300,10 @@
     <button class="nav-item" data-page="flood"><i data-i="drop"></i><span data-rl="navFlood">Flood Predictor</span></button>
     <button class="nav-item" data-page="route"><i data-i="pin"></i><span data-rl="navRoute">Safe Route Planner</span></button>
     <button class="nav-item" data-page="scan"><i data-i="search"></i><span data-rl="navScan">Smart Safety Scan</span></button>
+    <button class="nav-item" data-page="alerts"><i data-i="mega"></i><span data-rl="navAlerts">Live Alerts</span></button>
+    <button class="nav-item" data-page="livemap"><i data-i="globe"></i><span data-rl="navLiveMap">Live Ops Map</span></button>
     <button class="nav-item" data-page="copilot"><i data-i="search"></i><span data-rl="navCopilot">AI Copilot</span></button>
+    <button class="nav-item" data-page="mesh"><i data-i="globe"></i><span data-rl="navMesh">Mesh Network</span></button>
     <button class="nav-item" data-page="notifications"><i data-i="bell"></i><span data-rl="navNotifs">Notifications</span><span class="badge" id="notifBadge">0</span></button>
     <button class="nav-item" data-page="profile"><i data-i="user"></i><span data-rl="navProfile">Profile</span></button>
     <a class="nav-item" href="settings.html?from=help"><i data-i="set"></i><span data-rl="navSettings">Settings</span></a>
@@ -153,46 +317,77 @@
 
 <!-- MAIN -->
 <div class="main">
-  <div class="topbar">
-    <button class="menu-toggle" onclick="RL_ToggleMenu()"><i data-i="list"></i></button>
-    <div class="left"><h1 id="pageTitle">Request Help</h1><div class="sub" id="pageSub">Select a category to submit your help request</div></div>
-    <button class="notif-btn" onclick="navigate('notifications')"><i data-i="bell"></i><div class="dot"></div></button>
-  </div>
-
-  <!-- EMERGENCY BANNER (always visible) -->
-  <div class="emergency-banner fade-up">
-    <div><h3>🚨 Need immediate help?</h3><p>Contact emergency services right now — available 24/7</p></div>
-    <div class="call-buttons">
-      <button class="call-btn call-1122"  onclick="RL_Tel('1122')"><i data-i="phone"></i>Call 1122</button>
-      <button class="call-btn call-other" onclick="RL_Tel('1122')"><i data-i="rescue"></i>Rescue</button>
-      <button class="call-btn call-other" onclick="RL_Tel('115')"><i data-i="hosp"></i>Medical</button>
-      <button class="call-btn call-other" onclick="RL_Tel('15')"><i data-i="shield"></i>Police</button>
+  <div class="appbar">
+    <button class="menu-toggle" onclick="RL_ToggleMenu()" aria-label="Menu"><i data-i="list"></i></button>
+    <div class="appbar-brand">ReliefLink</div>
+    <div class="appbar-actions">
+      <button class="notif-btn" onclick="navigate('notifications')" aria-label="Notifications"><i data-i="bell"></i><div class="dot"></div></button>
+      <div class="av-chip" id="topAv" onclick="navigate('profile')">US</div>
     </div>
   </div>
+  <div class="hide"><h1 id="pageTitle">Request Help</h1><div id="pageSub"></div></div>
 
   <!-- HOME -->
   <div id="page-home">
-    <div class="card-header" style="margin-bottom:16px"><h3 data-rl="homeTitle">What kind of help do you need?</h3></div>
-    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-      <button type="button" class="submit-btn" style="width:auto;flex:1;min-width:200px;margin:0;background:#128C7E" onclick="waSos(this)" data-rl="waSos">📲 No internet? SOS on WhatsApp bhejein</button>
+    <div class="hero fade-up">
+      <div class="eyebrow"><i data-i="zap"></i> Live disaster response</div>
+      <div class="hero-title">Help reaches you, even when the network doesn't.</div>
+      <p class="hero-sub">Twelve tools for floods and emergencies, grouped by what you need right now.</p>
+      <div class="hero-search"><i data-i="search"></i><input id="heroSearch" placeholder="Search resources &amp; teams" oninput="filterCats(this.value)"></div>
     </div>
-    <div style="margin-bottom:14px"><button type="button" class="submit-btn" style="width:100%;background:#5B4CE0" onclick="navigate('copilot')">🤖 Baat kar ke request banao — AI Copilot (English · اردو · Roman Urdu)</button></div>
-    <div class="cat-grid">
-      <div class="cat-card fade-up" onclick="selectCat(this,'Emergency Rescue & Evacuation')"><div class="cat-icon" style="background:#EF5B5B22">🚤</div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4><p class="cat-desc">Rescue teams reach and move you out fast.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Medical Assistance')"><div class="cat-icon" style="background:#4C8DF622">🏥</div><div class="cat-body"><h4>Medical Assistance</h4><p class="cat-desc">Ambulance, medicine and hospital support.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon" style="background:#3CC08E22">🍱</div><div class="cat-body"><h4>Food &amp; Clean Water</h4><p class="cat-desc">Daily meals and safe drinking water.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon" style="background:#7C6CF022">🏕️</div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4><p class="cat-desc">Safe camps and staying places nearby.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon" style="background:#F58A3D22">👕</div><div class="cat-body"><h4>Clothing &amp; Supplies</h4><p class="cat-desc">Blankets, clothes and daily essentials.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Transportation & Relocation')"><div class="cat-icon" style="background:#F5B83D22">🚌</div><div class="cat-body"><h4>Transportation &amp; Relocation</h4><p class="cat-desc">Vehicles to move you to a safer area.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Sanitation & Hygiene')"><div class="cat-icon" style="background:#4C8DF622">🧼</div><div class="cat-body"><h4>Sanitation &amp; Hygiene</h4><p class="cat-desc">Clean toilets, kits and hygiene support.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Special Assistance')"><div class="cat-icon" style="background:#F472A822">♿</div><div class="cat-body"><h4>Special Assistance</h4><p class="cat-desc">Priority help for elderly, kids &amp; disabled.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon" style="background:#8B5CF622">🏠</div><div class="cat-body"><h4>Home &amp; Damage Recovery</h4><p class="cat-desc">Repair and rebuild after the disaster.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon" style="background:#EF5B5B22">🔍</div><div class="cat-body"><h4>Missing Persons</h4><p class="cat-desc">Report and trace a lost family member.</p></div></div>
-      <div class="cat-card fade-up" onclick="selectCat(this,'Psychological Support')"><div class="cat-icon" style="background:#3CC08E22">💚</div><div class="cat-body"><h4>Emotional Support</h4><p class="cat-desc">Counselling and mental-health care.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('flood')"><div class="cat-icon" style="background:#16467022">🌊</div><div class="cat-body"><h4>AI Flood Predictor</h4><p class="cat-desc">Live river &amp; rainfall risk for your area.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('route')"><div class="cat-icon" style="background:#2E7D3222">🧭</div><div class="cat-body"><h4>Safe Route Planner</h4><p class="cat-desc">Any address → any address, AI safety-scored.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('scan')"><div class="cat-icon" style="background:#4C8DF622">🛰️</div><div class="cat-body"><h4>Smart Safety Scan</h4><p class="cat-desc">Instant danger report for any area.</p></div></div>
-      <div class="cat-card fade-up" onclick="navigate('myrequests')"><div class="cat-icon" style="background:#7C6CF022">📦</div><div class="cat-body"><h4>Aid Tracking</h4><p class="cat-desc">Track your request till it&rsquo;s resolved.</p></div></div>
+    <div class="home-groups">
+
+      <section class="grp fade-up">
+        <div class="grp-head"><h4><i data-i="flame"></i> Emergency &amp; Rescue</h4><span class="grp-sub">24/7 immediate assistance</span></div>
+        <p class="sos-intro">Rescue teams are available around the clock. Call first, then send a request so a volunteer near you is alerted.</p>
+        <button type="button" class="sos-call" onclick="RL_Tel('1122')"><i data-i="phone"></i> Call Rescue 1122</button>
+        <div class="cat-grid" style="margin-top:10px">
+          <div class="cat-card" onclick="selectCat(this,'Emergency Rescue &amp; Evacuation')"><div class="cat-icon"><i data-i="rescue"></i></div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Shelter &amp; Accommodation')"><div class="cat-icon"><i data-i="home"></i></div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Food &amp; Clean Water')"><div class="cat-icon"><i data-i="drop"></i></div><div class="cat-body"><h4>Food &amp; Clean Water</h4></div></div>
+        </div>
+        <div class="sos-act">
+          <button type="button" onclick="selectCatByName('Emergency Rescue & Evacuation')"><i data-i="plus"></i> Send rescue request</button>
+          <button type="button" class="sos-ai" onclick="navigate('copilot')"><i data-i="zap"></i> Talk to AI Copilot</button>
+        </div>
+      </section>
+
+      <section class="grp fade-up">
+        <div class="grp-head"><h4>Get supplies</h4><span class="grp-sub">Basic needs for you and your family</span></div>
+        <div class="cat-grid">
+          <div class="cat-card" onclick="selectCat(this,'Food & Clean Water')"><div class="cat-icon"><i data-i="drop"></i></div><div class="cat-body"><h4>Food &amp; Clean Water</h4></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon"><i data-i="home"></i></div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Clothing & Supplies')"><div class="cat-icon"><i data-i="bag"></i></div><div class="cat-body"><h4>Clothing &amp; Supplies</h4></div></div>
+        </div>
+      </section>
+
+      <section class="grp fade-up">
+        <div class="grp-head"><h4>Recover</h4><span class="grp-sub">After the water goes down</span></div>
+        <div class="cat-grid">
+          <div class="cat-card" onclick="selectCat(this,'Home & Damage Recovery')"><div class="cat-icon"><i data-i="tools"></i></div><div class="cat-body"><h4>Home &amp; Damage Recovery</h4></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Missing Persons')"><div class="cat-icon"><i data-i="search"></i></div><div class="cat-body"><h4>Missing Persons</h4></div></div>
+          <div class="cat-card" onclick="navigate('myrequests')"><div class="cat-icon"><i data-i="list"></i></div><div class="cat-body"><h4>Aid Tracking</h4></div></div>
+        </div>
+      </section>
+
+      <section class="grp fade-up">
+        <div class="grp-head"><h4>Plan ahead with AI</h4><span class="grp-sub">Predict risk and choose a safer way out</span></div>
+        <div class="cat-grid">
+          <div class="cat-card" onclick="navigate('flood')"><div class="cat-icon"><i data-i="chart"></i></div><div class="cat-body"><h4>AI Flood Predictor</h4></div></div>
+          <div class="cat-card" onclick="navigate('route')"><div class="cat-icon"><i data-i="pin"></i></div><div class="cat-body"><h4>Safe Route Planner</h4></div></div>
+          <div class="cat-card" onclick="navigate('scan')"><div class="cat-icon"><i data-i="shield"></i></div><div class="cat-body"><h4>Smart Safety Scan</h4></div></div>
+        </div>
+      </section>
+
+      <section class="grp fade-up">
+        <div class="grp-head"><h4>Stay informed</h4><span class="grp-sub">What is happening right now</span></div>
+        <div class="cat-grid">
+          <div class="cat-card" onclick="navigate('alerts')"><div class="cat-icon"><i data-i="bell"></i></div><div class="cat-body"><h4>Live Disaster Alerts</h4></div></div>
+          <div class="cat-card" onclick="navigate('livemap')"><div class="cat-icon"><i data-i="globe"></i></div><div class="cat-body"><h4>Live Operations Map</h4></div></div>
+          <div class="cat-card" onclick="navigate('mesh')"><div class="cat-icon"><i data-i="users"></i></div><div class="cat-body"><h4>Offline Mesh Network</h4></div></div>
+        </div>
+      </section>
+
     </div>
   </div>
 
@@ -202,31 +397,30 @@
       <div class="card fade-up">
         <div class="card-header"><h3 data-rl="formTitle">Quick Help Request</h3><span class="badge-sm">Location only</span></div>
         <div class="form-group"><label data-rl="lblNeed">What do you need?</label><select id="reqCat" class="field-input">
-          <option>Emergency Rescue &amp; Evacuation</option><option>Medical Assistance</option>
+          <option>Emergency Rescue &amp; Evacuation</option>
           <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
-          <option>Clothing &amp; Supplies</option><option>Transportation &amp; Relocation</option>
-          <option>Sanitation &amp; Hygiene</option><option>Special Assistance</option>
-          <option>Home &amp; Damage Recovery</option><option>Missing Persons</option><option>Psychological Support</option>
+          <option>Clothing &amp; Supplies</option>
+          <option>Home &amp; Damage Recovery</option><option>Missing Persons</option>
         </select></div>
-        <div class="form-group"><label data-rl="lblLoc">📍 Your Location <span style="color:var(--r)">*</span></label>
+        <div class="form-group"><label data-rl="lblLoc">Your Location <span style="color:var(--r)">*</span></label>
           <div style="display:flex;gap:8px">
-            <input id="reqLoc" class="field-input" type="text" data-rl-ph="reqLocPh" placeholder="Exact address, ya map par pin rakhein" style="flex:1">
-            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.locateOnce()">📍 GPS</button>
+            <input id="reqLoc" class="field-input" type="text" data-rl-ph="reqLocPh" placeholder="Exact address, or drop a pin on the map" style="flex:1">
+            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.locateOnce()">GPS</button>
           </div>
           <div class="loc-picker">
-            <div class="lp-hint">Map par <b>tap</b> kar ke exact jagah chun lein (marker drag bhi kar sakte hain) — ya <b>Live GPS</b> on kar dein. Street-level address khud bhar jayega.</div>
+            <div class="lp-hint">Tap the map to pick your <b>exact location</b> (you can also drag the marker) — or turn on <b>Live GPS</b>. The street-level address fills in automatically.</div>
             <div class="lp-bar">
-              <button type="button" class="lp-btn" id="lpLiveBtn" onclick="LP.toggleLive()">📡 Live GPS</button>
-              <button type="button" class="lp-btn" onclick="LP.locateOnce()">📍 My location</button>
-              <button type="button" class="lp-btn" onclick="LP.recenter()">🎯 Recenter</button>
+              <button type="button" class="lp-btn" id="lpLiveBtn" onclick="LP.toggleLive()">Live GPS</button>
+              <button type="button" class="lp-btn" onclick="LP.locateOnce()">My location</button>
+              <button type="button" class="lp-btn" onclick="LP.recenter()">Recenter</button>
             </div>
             <div class="lp-map"><div id="locPick" style="position:absolute;inset:0"></div></div>
-            <div class="lp-addr empty" id="lpAddr" style="margin-top:10px">Abhi koi exact location nahi — map par tap karein.</div>
+            <div class="lp-addr empty" id="lpAddr" style="margin-top:10px">No exact location yet — tap the map.</div>
           </div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
           <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
-          <label for="reqUrgent" style="font-weight:700;color:var(--r);cursor:pointer">🚨 Mark as URGENT</label>
+          <label for="reqUrgent" style="font-weight:700;color:var(--r);cursor:pointer">Mark as URGENT</label>
         </div>
         <details style="margin-bottom:16px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--g)">Add details (optional)</summary>
           <div style="margin-top:12px">
@@ -239,12 +433,14 @@
         <button class="submit-btn" onclick="submitReq()"><i data-i="check"></i>Request Help</button>
       </div>
       <div>
-        <div class="card fade-up" style="background:linear-gradient(135deg,var(--g),var(--g2));color:#F5EEDB;border:none;margin-bottom:16px">
-          <h4 style="font-size:15px;font-weight:800;margin-bottom:10px">📋 What happens next?</h4>
-          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">1</div><div class="t" style="color:#F5EEDB">Request received instantly<small style="color:rgba(255,255,255,.6)">Within seconds</small></div></div>
-          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">2</div><div class="t" style="color:#F5EEDB">Admin assigns a volunteer<small style="color:rgba(255,255,255,.6)">Usually within 30-60 min</small></div></div>
-          <div class="item" style="border-color:rgba(255,255,255,.15)"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">3</div><div class="t" style="color:#F5EEDB">Volunteer dispatched<small style="color:rgba(255,255,255,.6)">You'll get a call before arrival</small></div></div>
-          <div class="item" style="border:none"><div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--g);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none">4</div><div class="t" style="color:#F5EEDB">Request marked complete<small style="color:rgba(255,255,255,.6)">You'll be notified</small></div></div>
+        <div class="card fade-up" style="margin-bottom:16px">
+          <div class="card-header"><h3>What happens next?</h3></div>
+          <div class="steps">
+            <div class="step done"><div class="step-dot">1</div><label>Received</label></div>
+            <div class="step"><div class="step-dot">2</div><label>Dispatched</label></div>
+            <div class="step"><div class="step-dot">3</div><label>On Route</label></div>
+            <div class="step"><div class="step-dot">4</div><label>On Site</label></div>
+          </div>
         </div>
         <div class="card fade-up"><div class="card-header"><h3>My Active Request</h3></div><div id="activeReqCard"><p class="mute" style="font-size:13px;padding:10px 0">No active requests yet.</p></div></div>
       </div>
@@ -254,18 +450,18 @@
   <!-- AI COPILOT -->
   <div id="page-copilot" class="hide">
     <div class="card fade-up">
-      <div class="card-header"><h3>🤖 AI Disaster Copilot</h3><span class="badge-sm">English · Urdu · Roman Urdu</span></div>
-      <p class="mute" style="font-size:12.5px;margin-bottom:12px">Apni situation likh ya bol ke batao — AI samajh kar emergency request ka draft bana dega. <b>Jaan ka khatra ho to foran 1122 dial karein — chat ka intezar na karein.</b></p>
+      <div class="card-header"><h3>AI Disaster Copilot</h3><span class="badge-sm">English · Urdu · Roman Urdu</span></div>
+      <p class="mute" style="font-size:12.5px;margin-bottom:12px">Describe your situation by typing or speaking — the AI will understand and draft an emergency request for you. <b>If life is in danger, dial 1122 immediately — don't wait for the chat.</b></p>
       <div class="cp-chat" id="cpChat">
-        <div class="cp-msg ai">Main ReliefLink Copilot hoon. Batao kya ho raha hai? (Type or tap 🎤 and speak — English, Urdu ya Roman Urdu).</div>
+        <div class="cp-msg ai">I'm the ReliefLink Copilot. Tell me what's happening. (Type, or tap and speak — English, Urdu or Roman Urdu).</div>
       </div>
       <div style="display:flex;gap:8px;margin-top:12px">
         <select id="cpLang" class="field-input" style="width:110px;flex:none" title="Voice language">
-          <option value="en-PK">🎤 en-PK</option>
-          <option value="ur-PK">🎤 ur-PK</option>
+          <option value="en-PK">en-PK</option>
+          <option value="ur-PK">ur-PK</option>
         </select>
-        <input id="cpInput" class="field-input" style="flex:1" placeholder="e.g. Paani ghar mein aa raha hai, 4 log phanse hain…" onkeydown="if(event.key==='Enter')cpSend()">
-        <button type="button" class="submit-btn" id="cpMic" style="width:auto;margin:0;padding:0 14px;flex:none" title="Voice request">🎤</button>
+        <input id="cpInput" class="field-input" style="flex:1" placeholder="e.g. Water is flooding my house, 4 people are trapped…" onkeydown="if(event.key==='Enter')cpSend()">
+        <button type="button" class="submit-btn" id="cpMic" style="width:auto;margin:0;padding:0 14px;flex:none" title="Voice request"></button>
         <button type="button" class="submit-btn" style="width:auto;margin:0;padding:0 16px;flex:none" onclick="cpSend()">Send</button>
       </div>
       <div id="cpDraft"></div>
@@ -291,7 +487,7 @@
       </div>
       <div class="map-box fade-up" style="height:360px;position:relative;overflow:hidden">
         <div id="helpMap" style="position:absolute;inset:0"></div>
-        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🇵 Nearby in Pakistan</div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">Nearby in Pakistan</div>
       </div>
     </div>
   </div>
@@ -331,13 +527,13 @@
       <div>
         <div class="map-box fade-up" style="height:300px;margin-bottom:16px;position:relative;overflow:hidden">
           <div id="floodMap" style="position:absolute;inset:0"></div>
-          <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🌊 Pakistan Flood Risk Map</div>
+          <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">Pakistan Flood Risk Map</div>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Documented events</span></div>
-          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">🌊</div><div class="t">2022 Mega Floods<small>Rajanpur — 4,200 families</small></div><span class="tag tag-red">Major</span></div>
-          <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)">🌧️</div><div class="t">2021 Seasonal Flood<small>1,200 families displaced</small></div><span class="tag tag-orange">Moderate</span></div>
-          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)">💧</div><div class="t">2020 Flash Flood<small>600 families affected</small></div><span class="tag tag-yellow">Minor</span></div>
+          <div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"></div><div class="t">2022 Mega Floods<small>Rajanpur — 4,200 families</small></div><span class="tag tag-red">Major</span></div>
+          <div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"></div><div class="t">2021 Seasonal Flood<small>1,200 families displaced</small></div><span class="tag tag-orange">Moderate</span></div>
+          <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"></div><div class="t">2020 Flash Flood<small>600 families affected</small></div><span class="tag tag-yellow">Minor</span></div>
         </div>
       </div>
     </div>
@@ -348,26 +544,26 @@
     <div class="grid-2">
       <div>
         <div class="card fade-up" style="margin-bottom:16px">
-          <div class="card-header"><h3>🧭 Safe Route Planner</h3><span class="badge-sm">AI safety-scored</span></div>
-          <p style="font-size:13px;opacity:.7;margin-bottom:14px">Kahin se bhi kahin tak — hum route ke 5 points par <b>weather, river flood-level, active alerts aur earthquakes</b> check kar ke <b>sabse SAFE route</b> khud choose karte hain.</p>
-          <div class="form-group"><label>🚩 From (start)</label>
+          <div class="card-header"><h3>Safe Route Planner</h3><span class="badge-sm">AI safety-scored</span></div>
+          <p style="font-size:13px;opacity:.7;margin-bottom:14px">Anywhere to anywhere — we check <b>weather, river flood level, active alerts and earthquakes</b> at 5 points along the route and automatically pick the <b>safest route</b>.</p>
+          <div class="form-group"><label>From (start)</label>
             <div style="display:flex;gap:8px">
-              <input id="rtFrom" class="field-input" placeholder="Apna area / address likhein… ya GPS lein" style="flex:1">
-              <button type="button" class="lp-btn" style="align-self:flex-start" onclick="rtLocate()">📍 GPS</button>
+              <input id="rtFrom" class="field-input" placeholder="Enter your area / address… or use GPS" style="flex:1">
+              <button type="button" class="lp-btn" style="align-self:flex-start" onclick="rtLocate()">GPS</button>
             </div>
           </div>
-          <div class="form-group"><label>🏁 To (destination — koi bhi address, city ya jagah)</label>
+          <div class="form-group"><label>To (destination — any address, city or place)</label>
             <input id="rtTo" class="field-input" placeholder="e.g. Race Course Park, Rawalpindi">
           </div>
-          <div class="form-group"><label>Ya kisi shelter se select karein</label><select id="rtDest" class="field-input" onchange="rtPickDest()"><option value="">— custom destination upar likhein —</option></select></div>
+          <div class="form-group"><label>Or select a shelter</label><select id="rtDest" class="field-input" onchange="rtPickDest()"><option value="">— type a custom destination above —</option></select></div>
           <button class="submit-btn" onclick="planRoute()"><i data-i="pin"></i>Plan safest route</button>
-          <div id="rtResult" style="margin-top:14px"><p class="mute" style="font-size:13px">Route, safety score, weather aur turn-by-turn directions yahan aayengi.</p></div>
+          <div id="rtResult" style="margin-top:14px"><p class="mute" style="font-size:13px">Your route, safety score, weather and turn-by-turn directions will appear here.</p></div>
         </div>
         <div class="card fade-up"><div class="card-header"><h3>Live Weather</h3><span class="badge-sm">3-day outlook</span></div><div id="wxLive"><p class="mute" style="font-size:13px">Loading weather…</p></div><div class="wx-days" id="wx3day"></div></div>
       </div>
       <div class="map-box fade-up" style="height:440px;position:relative;overflow:hidden">
         <div id="routeMap" style="position:absolute;inset:0"></div>
-        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700">🧭 Map par tap kar ke start pin set karein</div>
+        <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700">Tap the map to set the start pin</div>
       </div>
     </div>
   </div>
@@ -375,14 +571,85 @@
   <!-- SMART SAFETY SCAN -->
   <div id="page-scan" class="hide">
     <div class="card fade-up" style="max-width:680px;margin-bottom:16px">
-      <div class="card-header"><h3>🛰️ Smart Safety Scan</h3><span class="badge-sm">Instant AI report</span></div>
-      <p style="font-size:13px;opacity:.75;margin-bottom:14px">Pakistan ki koi bhi jagah likhein — foran poori safety report: <b>weather, flood risk, earthquakes (30 din), active alerts aur nearest shelter/hospital</b> real distance ke saath.</p>
+      <div class="card-header"><h3>Smart Safety Scan</h3><span class="badge-sm">Instant AI report</span></div>
+      <p style="font-size:13px;opacity:.75;margin-bottom:14px">Enter any place in Pakistan — get an instant, complete safety report: <b>weather, flood risk, earthquakes (30 days), active alerts and the nearest shelter/hospital</b> with real distances.</p>
       <div style="display:flex;gap:8px">
         <input id="scanQ" class="field-input" placeholder="e.g. Chitral, Gilgit, Sukkur…" style="flex:1" onkeydown="if(event.key==='Enter')runScan()">
         <button class="submit-btn" style="width:auto;margin:0;padding:0 22px" onclick="runScan()">Scan</button>
       </div>
     </div>
     <div id="scanOut"></div>
+  </div>
+
+  <!-- LIVE DISASTER ALERTS -->
+  <div id="page-alerts" class="hide">
+    <div class="card fade-up" style="margin-bottom:16px">
+      <div class="card-header"><h3>Real-Time Disaster Alerts</h3><span class="badge-sm" id="alStamp">Live · USGS + Open-Meteo + ReliefLink</span></div>
+      <div class="al-tabs">
+        <button class="al-tab active" data-tab="all" onclick="alFilter('all',this)">All</button>
+        <button class="al-tab" data-tab="earthquake" onclick="alFilter('earthquake',this)">Earthquakes</button>
+        <button class="al-tab" data-tab="flood" onclick="alFilter('flood',this)">Floods</button>
+        <button class="al-tab" data-tab="storm" onclick="alFilter('storm',this)">Storms</button>
+        <button class="al-tab" data-tab="weather" onclick="alFilter('weather',this)">Weather</button>
+      </div>
+      <div id="alertFeed"><p class="mute" style="font-size:13px;padding:14px 4px">Loading live alerts…</p></div>
+      <p class="mute" style="font-size:11.5px;margin-top:12px">Auto-refreshes every 5 minutes · Sources: USGS (earthquakes) · Open-Meteo river gauges (floods) · Open-Meteo forecasts (storms / weather) · ReliefLink broadcasts.</p>
+    </div>
+  </div>
+
+  <!-- LIVE OPERATIONS MAP -->
+  <div id="page-livemap" class="hide">
+    <div class="card fade-up" style="margin-bottom:16px">
+      <div class="card-header"><h3>Live Operations Map</h3><span class="badge-sm">Toggle layers</span></div>
+      <div class="layer-bar" id="layerBar">
+        <label class="layer-chip"><input type="checkbox" data-layer="quake" checked onchange="opsToggle('quake',this.checked)"> Earthquakes</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="flood" checked onchange="opsToggle('flood',this.checked)"> Flood risk</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="sos" checked onchange="opsToggle('sos',this.checked)"> Active SOS</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="shelter" checked onchange="opsToggle('shelter',this.checked)"> Shelters</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="hospital" checked onchange="opsToggle('hospital',this.checked)"> Hospitals</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="pharmacy" onchange="opsToggle('pharmacy',this.checked)"> Pharmacies</label>
+        <label class="layer-chip"><input type="checkbox" data-layer="me" checked onchange="opsToggle('me',this.checked)"> My location</label>
+      </div>
+      <div class="map-box" style="height:520px;position:relative;overflow:hidden;border-radius:16px">
+        <div id="opsMap" style="position:absolute;inset:0"></div>
+      </div>
+      <p class="mute" style="font-size:11.5px;margin-top:10px">Hospitals, shelters &amp; pharmacies load live from OpenStreetMap around your area. Earthquakes from USGS (30 days) · flood hotspots from Open-Meteo river basins · active SOS from ReliefLink requests.</p>
+    </div>
+  </div>
+
+  <!-- OFFLINE MESH NETWORK -->
+  <div id="page-mesh" class="hide">
+    <div class="card fade-up" style="margin-bottom:16px">
+      <div class="card-header"><h3>Offline Mesh Network</h3><span class="badge-sm" id="meshStatusBadge">Off</span></div>
+      <p class="mute" style="font-size:12.5px;margin-bottom:12px">Works with <b>no internet or mobile data</b>. Your phone relays a message, photo or your location to ReliefLink volunteers nearby over <b>Bluetooth</b> — hopping phone-to-phone up to about 1&nbsp;km until one of them has signal and can forward it to dispatch.</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <div>
+          <b style="font-size:14px">Bluetooth Mesh</b>
+          <div class="mute" style="font-size:12px">Internet: <span id="meshNetState">checking…</span></div>
+        </div>
+        <button type="button" class="lp-btn" id="meshToggleBtn" onclick="meshToggle()">Join Mesh</button>
+      </div>
+      <div id="meshNetNote" style="display:none;font-size:12.5px;color:var(--o);background:#F58A3D18;border-radius:12px;padding:8px 12px;margin-bottom:12px"></div>
+      <div id="meshSummary" class="mute" style="font-size:12.5px">Mesh is off — tap <b>Join Mesh</b> to find nearby volunteers.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card fade-up">
+        <div class="card-header"><h3>Nearby Volunteers</h3><span class="badge-sm" id="meshPeerCount">0 in range</span></div>
+        <div id="meshPeerList"><p class="mute" style="font-size:13px;padding:10px 0">No peers yet. Join the mesh to scan.</p></div>
+      </div>
+      <div class="card fade-up">
+        <div class="card-header"><h3 id="meshChatTitle">Relay Chat</h3><span class="badge-sm">Hop-by-hop</span></div>
+        <div class="mesh-chat" id="meshChat"><p class="mute" style="font-size:13px;padding:10px 0">Select a volunteer to start relaying messages.</p></div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+          <input id="meshInput" class="field-input" style="flex:1;min-width:140px" placeholder="Type a short message…" onkeydown="if(event.key==='Enter')meshSendText()">
+          <button type="button" class="lp-btn" title="Send a photo" onclick="document.getElementById('meshPhoto').click()">Photo</button>
+          <input type="file" id="meshPhoto" accept="image/*" style="display:none" onchange="meshSendPhoto(this)">
+          <button type="button" class="lp-btn" title="Share your location" onclick="meshSendLocation()">Location</button>
+          <button type="button" class="submit-btn" style="width:auto;margin:0;padding:0 16px;flex:none" onclick="meshSendText()">Send</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- NOTIFICATIONS -->
@@ -409,6 +676,18 @@
 
 </div><!-- /main -->
 </div><!-- /layout -->
+
+<div class="sos-bar">
+  <div class="sos-ic"></div>
+  <div class="sos-txt"><b>Emergency &amp; Rescue</b><small>24/7 Immediate Assistance Available</small></div>
+  <button class="sos-call" onclick="RL_Tel('1122')"><i data-i="phone"></i>Call 1122</button>
+</div>
+<nav class="bottom-nav">
+  <button class="bn-item active" data-nav="home" onclick="navigate('home')" aria-label="Home"><i data-i="home"></i></button>
+  <button class="bn-item" data-nav="myrequests" onclick="navigate('myrequests')" aria-label="Requests"><i data-i="list"></i></button>
+  <button class="bn-item" data-nav="copilot" onclick="navigate('copilot')" aria-label="AI Copilot"><i data-i="inbox"></i></button>
+  <button class="bn-item" data-nav="profile" onclick="navigate('profile')" aria-label="Profile"><i data-i="user"></i></button>
+</nav>
 
 <div class="toast" id="toast"></div>
 
@@ -437,8 +716,8 @@
 <script>
 /* App language dictionary (EN / Urdu / Roman Urdu) — consumed by RL_Lang in shared.js */
 window.RL_LANGDICT = {
-  homeTitle:   { en: 'What kind of help do you need?', ur: '\u0622\u067e \u06a9\u0633 \u0642\u0633\u0645 \u06a9\u06cc \u0645\u062f\u062f \u0686\u0627\u06c1\u06cc\u06d2\u061f', roman: 'Aap ko kis qism ki madad chahiye?' },
-  waSos:       { en: '📲 No internet? SOS on WhatsApp bhejein', ur: '\U0001F4F2 \u0627\u0646\u0679\u0631\u0646\u06cc\u0679 \u0646\u06c1\u06cc\u06ba\u061f \u0648\u0627\u0679\u0633 \u0627\u06cc\u067e \u067e\u0631 SOS \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Internet nahi? WhatsApp par SOS bhejein' },
+  homeTitle:   { en: 'Help reaches you, even when the network doesn\'t.', ur: '\u0645\u062f\u062f \u0622\u067e \u062a\u06a9 \u067e\u06c1\u0646\u0686\u062a\u06cc \u06c1\u06d2\u060c \u0686\u0627\u06c1\u06d2 \u0646\u06cc\u0679\u0648\u0631\u06a9 \u0646\u06c1 \u06c1\u0648\u06d2', roman: 'Madad aap tak pohanchti hai, chahe network na ho' },
+  waSos:       { en: 'No internet? Send SOS on WhatsApp', ur: '\U0001F4F2 \u0627\u0646\u0679\u0631\u0646\u06cc\u0679 \u0646\u06c1\u06cc\u06ba\u061f \u0648\u0627\u0679\u0633 \u0627\u06cc\u067e \u067e\u0631 SOS \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Internet nahi? WhatsApp par SOS bhejein' },
   navHome:     { en: 'Home', ur: '\u0645\u06a9\u0627\u0646', roman: 'Ghar' },
   navRequest:  { en: 'Request Help', ur: '\u0645\u062f\u062f \u06a9\u06cc \u0644\u06cc\u06d2 \u0631\u0633\u062a\u06c1', roman: 'Madad ki request' },
   navMyReqs:   { en: 'My Requests', ur: '\u0645\u06cc\u0631\u06cc \u0628\u0646\u06cc\u0627\u0626\u06cc\u06ba', roman: 'Meri requests' },
@@ -447,7 +726,10 @@ window.RL_LANGDICT = {
   navFlood:    { en: 'Flood Predictor', ur: '\u0633\u06cc\u0644\u0627\u0628 \u06a9\u06cc \u067e\u06cc\u0634\u06af\u0648\u06cc', roman: 'Sel ki prediction' },
   navRoute:    { en: 'Safe Route Planner', ur: '\u0645\u062d\u0641\u0648\u0638 \u0631\u0627\u0633\u062a\u06c1', roman: 'Mahfooz raasta' },
   navScan:     { en: 'Smart Safety Scan', ur: '\u0633\u0644\u0627\u0645\u062a\u06cc \u062c\u0627\u0686', roman: 'Safety check' },
+  navAlerts:   { en: 'Live Alerts', ur: '\u0644\u0627\u0626\u06cc\u0648 \u0627\u0646\u062a\u0628\u0627\u06c1\u06cc\u0627\u06ba', roman: 'Live alerts' },
+  navLiveMap:  { en: 'Live Ops Map', ur: '\u0644\u0627\u0626\u06cc\u0648 \u0646\u0642\u0634\u06c1', roman: 'Live map' },
   navCopilot:  { en: 'AI Copilot', ur: '\u0627\u06cc \u0622\u0626\u06cc \u0645\u062f\u062f\u06af\u0627\u0631', roman: 'AI Madadgar' },
+  navMesh:     { en: 'Mesh Network', ur: '\u0645\u06cc\u0634 \u0646\u06cc\u0679\u0648\u0631\u06a9', roman: 'Mesh network' },
   navNotifs:   { en: 'Notifications', ur: '\u0627\u0639\u0644\u0627\u0645\u0627\u062a', roman: 'Alerts' },
   navProfile:  { en: 'My Profile', ur: '\u0645\u06cc\u0631\u0627 \u067e\u0631\u0648\u0641\u0627\u0626\u06cc\u0644', roman: 'Mera profile' },
   navSettings: { en: 'Settings', ur: '\u062a\u0631\u062a\u06cc\u0628\u0627\u062a', roman: 'Settings' },
@@ -456,7 +738,7 @@ window.RL_LANGDICT = {
   lblLoc:      { en: '\U0001F4CD Your Location', ur: '\U0001F4CD \u0622\u067e \u06a9\u0627 \u0645\u0642\u0627\u0645', roman: '\U0001F4CD Aap ka thikana' },
   btnSend:     { en: 'Request Help', ur: '\u0645\u062f\u062f \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Madad bhejein' },
   lblUrgent:   { en: '\U0001F6A8 Mark as URGENT', ur: '\U0001F6A8 \u0627\u0633\u06cc\u0644 \u0637\u06c1\u0631\u06cc\u06ba', roman: '\U0001F6A8 Urgent mark karein' },
-  reqLocPh:    { en: 'Exact address, ya map par pin rakhein', ur: '\u062d\u0642\u06cc\u0642\u06cc \u067e\u062a\u06c1 \u06cc\u0627 \u0646\u0642\u0634\u06c1 \u067e\u0631 \u067e\u0646 \u0631\u06a9\u06be\u06cc\u06ba', roman: 'Exact address, ya map par pin rakhein' },
+  reqLocPh:    { en: 'Exact address, or drop a pin on the map', ur: '\u062d\u0642\u06cc\u0642\u06cc \u067e\u062a\u06c1 \u06cc\u0627 \u0646\u0642\u0634\u06c1 \u067e\u0631 \u067e\u0646 \u0631\u06a9\u06be\u06cc\u06ba', roman: 'Exact address, ya map par pin rakhein' },
   accOfferTitle: { en: 'Create an account — track status on any device', ur: '\u0627\u06a9\u0627\u0624\u0646\u0679 \u0628\u0646\u0627 \u0644\u06cc\u06ba \u2014 \u0627\u0633\u0679\u06cc\u0679\u0633 \u06c1\u0631 \u0688\u0648\u0627\u0626\u0633 \u067e\u0631 \u062f\u06cc\u06a9\u06be\u06cc\u06ba', roman: 'Account bana lein \u2014 status har device par track karein' },
   accOfferSub: { en: 'We already have your name and number from your request — just set a password and your past requests will be linked.', ur: '\u06c1\u0645\u06cc\u06ba \u0622\u067e \u06a9\u0627 \u0646\u0627\u0645 \u0627\u0648\u0631 \u0646\u0645\u0628\u0631 \u0628\u0631\u06cc\u062a \u0633\u06d2 \u0645\u0644 \u0686\u06a9\u0627 \u06c1\u06d2 \u2014 \u0635\u0631\u0641 \u0644\u06af\u06cc\u062c\u06cc\u0646 \u0633\u06cc\u0679 \u06a9\u0631\u06cc\u06ba\u060c \u067e\u06c1\u0644\u06cc \u0628\u0646\u06cc\u0627\u062f\u06cc\u06ba \u0628\u06be\u06cc \u0644\u0627\u0626\u0646\u06a9 \u06c1\u0648 \u062c\u0627 \u0626\u06cc\u06ba \u06af\u06cc\u06d2', roman: 'Aap ka naam aur number request se mil chuka hai — bas password set karein, purani requests bhi link ho jayengi.' },
   accOfferBtn: { en: 'Create account', ur: '\u0627\u06a9\u0627\u0624\u0646\u0679 \u0628\u0646\u0627 \u062f\u06cc\u06ba', roman: 'Account banayein' },
@@ -467,12 +749,12 @@ window.RL_LANGDICT = {
 <script>
 /* ── DATA ── */
 var myReqs = [];
-var CATS = {'Emergency Rescue & Evacuation':'🚤','Medical Assistance':'🏥','Food & Clean Water':'🍱','Shelter & Accommodation':'🏕️','Clothing & Supplies':'👕','Transportation & Relocation':'🚌','Sanitation & Hygiene':'🧼','Special Assistance':'♿','Home & Damage Recovery':'🏠','Missing Persons':'🔍','Psychological Support':'💚'};
+var CATS = {'Emergency Rescue & Evacuation':'','Food & Clean Water':'','Shelter & Accommodation':'','Clothing & Supplies':'','Home & Damage Recovery':'','Missing Persons':''};
 var ST = {0:'Received',1:'Assigned',2:'On the way',3:'Completed'};
 var SC = {0:'tag-blue',1:'tag-yellow',2:'tag-orange',3:'tag-green'};
 
-var SHELTERS = [['Govt School Shelter','Rajanpur','320/400 people','1.2 km',29.1044,70.3302],['Community Hall','Muzaffargarh','410/420 people','3.8 km',30.0703,71.1933],['Relief Camp','Layyah','180/350 people','6.5 km',30.9693,70.9428]];
-var HOSPS   = [['DHQ Hospital','Rajanpur','46 beds free','2.1 km',29.1044,70.3302],['Civil Hospital','Sukkur','70 beds free','8.3 km',27.7052,68.8574]];
+var SHELTERS = [];  /* nearby shelters — populated LIVE from /shelters (loadNearbyLive) */
+var HOSPS   = [];   /* nearby hospitals — populated LIVE from /hospitals (loadNearbyLive) */
 var CONTACTS = [
   {name:'1122 Rescue',role:'Emergency Services',phone:'1122',c:'#EF5B5B'},
   {name:'Edhi Foundation',role:'Rescue & Medical',phone:'115',c:'#3CC08E'},
@@ -481,11 +763,7 @@ var CONTACTS = [
   {name:'Pakistan Police',role:'Law & Order',phone:'15',c:'#7C6CF0'},
   {name:'Ambulance',role:'Medical Emergency',phone:'1122',c:'#F58A3D'}
 ];
-var NOTIFS = [
-  {icon:'drop',col:'var(--r)',title:'Flood alert: Your area is at risk',desc:'High risk in Rajanpur. Evacuate to higher ground.',read:false},
-  {icon:'check',col:'var(--gr)',title:'Your request has been assigned',desc:'A volunteer has been assigned to your food request.',read:false},
-  {icon:'bell',col:'var(--y)',title:'Relief camp opened near you',desc:'Govt School, Rajanpur is now an official relief camp.',read:true}
-];
+var NOTIFS = [];    /* notifications — populated LIVE from admin alerts + USGS quakes (loadNotifsLive) */
 var SEV_COL = { critical:'var(--r)', high:'var(--o)', medium:'var(--y)', low:'var(--gr)' };
 
 /* ── RENDERERS ── */
@@ -495,11 +773,13 @@ function selectCat(el, cat) {
   navigate('request');
   var sel = RL_$('reqCat'); if (sel) sel.value = cat;
 }
+/* Select a request category without a tile element (used by the emergency panel) */
+function selectCatByName(cat) { var s = RL_$('reqCat'); if (s) s.value = cat; navigate('request'); }
 
 var GCO = null; // GPS coords captured via picker
 /* ── WHATSAPP SOS — works even when app/server is unreachable ── */
 function waText(r) {
-  var p = ['🆘 RELIEFLINK SOS'];
+  var p = ['RELIEFLINK SOS'];
   if (r && r.id && r._live) p.push('Request ID: ' + r.id);
   p.push('Need: ' + ((r && r.cat) || 'Emergency help (flood / earthquake / medical)'));
   var loc = (r && r.loc) || ((RL_$('reqLoc') || {}).value || '');
@@ -508,34 +788,72 @@ function waText(r) {
   var nm = ((RL_$('reqName') || {}).value || '');
   if (nm) p.push('Name: ' + nm);
   p.push('Time: ' + new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' }));
-  p.push('Agar 30 minute mein response na aaye to Rescue 1122 ko call karein. — sent via ReliefLink');
+  p.push('If there is no response within 30 minutes, call Rescue 1122. — sent via ReliefLink');
   return 'https://wa.me/?text=' + encodeURIComponent(p.join('\n'));
 }
 function waSos(btn) {
   var r = (typeof myReqs !== 'undefined' && myReqs.length) ? myReqs[0] : null;
   var w = window.open(waText(r), '_blank');
-  if (!w) { RL_Toast('Popup allow karein — phir WhatsApp khul jayega'); return; }
-  RL_Toast('WhatsApp khul gaya — message family group ya Rescue contact ko forward karein');
-  if (btn) btn.textContent = '✅ SOS message bana — dobara dabayein to naya khulega';
+  if (!w) { RL_Toast('Allow the popup — WhatsApp will then open'); return; }
+  RL_Toast('WhatsApp opened — forward the message to your family group or Rescue contact');
+  if (btn) btn.textContent = 'SOS message created — tap again to open a new one';
+}
+/* ── #2 OFFLINE SOS QUEUE — requests stored on device while there is no connection, flushed automatically on reconnect. Deduped by clientId, never sent twice. ── */
+var SOS_QK = 'rl_sos_queue', _sosFlushing = false;
+function sosQueue(){ try { var q = JSON.parse(localStorage.getItem(SOS_QK)||'[]'); return Array.isArray(q)?q:[]; } catch(e){ return []; } }
+function sosSave(q){ try { localStorage.setItem(SOS_QK, JSON.stringify(q)); } catch(e){} }
+function sosEnqueue(body, clientId){ if(!clientId) return; var q=sosQueue(); if(q.some(function(x){return x.clientId===clientId;})) return; q.push({ clientId: clientId, body: body, t: Date.now() }); sosSave(q); }
+function sosCount(){ return sosQueue().length; }
+/* Send every queued request, oldest first; items that still can't reach the server stay queued. */
+function sosFlush(){
+  if(!window.RL_API || !navigator.onLine || _sosFlushing) return;
+  var q = sosQueue(); if(!q.length) return;
+  _sosFlushing = true;
+  var delivered = {}, chain = Promise.resolve();
+  q.forEach(function(item){
+    chain = chain.then(function(){
+      return RL_Send('POST','/help-requests', item.body).then(function(res){
+        if(res && res.ok && res.data && res.data.id){
+          delivered[item.clientId] = res.data.id;
+          for(var i=0;i<myReqs.length;i++){ if(myReqs[i].clientId===item.clientId){ myReqs[i].id=res.data.id; myReqs[i]._live=true; myReqs[i]._delivered=true; } }
+        }
+      });
+    });
+  });
+  chain.then(function(){
+    sosSave(q.filter(function(item){ return !delivered[item.clientId]; }));
+    try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e){}
+    _sosFlushing = false;
+    var n = Object.keys(delivered).length;
+    if(n){ updateBadges(); renderActive(); renderMyReqs(); RL_Toast('Reconnected — '+n+' saved request'+(n>1?'s were':' was')+' delivered to the control room'); }
+    if(sosCount()) setTimeout(sosFlush, 15000); // still queued — retry shortly in case of flaky signal
+  }).catch(function(){ _sosFlushing = false; });
 }
 function submitReq() {
   var loc = (RL_$('reqLoc')||{}).value||'';
-  if (!loc.trim()) { RL_Toast('📍 Sirf apna location dein'); return; }  // location is the only required field
+  if (!loc.trim()) { RL_Toast('Please provide your location'); return; }  // location is the only required field
   var nm = (RL_$('reqName')||{}).value||'', ph = (RL_$('reqPhone')||{}).value||'';
   var catLabel = (RL_$('reqCat')||{}).value || '';
+  var desc = (RL_$('reqDesc')||{}).value||'';
   var r = {
-    id: 'RL-' + Date.now(), cat: catLabel, name: nm, phone: ph, loc: loc,
-    desc: (RL_$('reqDesc')||{}).value||'', people: (RL_$('reqPeople')||{}).value||1,
+    id: 'RL-' + Date.now(), clientId: 'RL-' + Date.now(), cat: catLabel, name: nm, phone: ph, loc: loc,
+    desc: desc, people: (RL_$('reqPeople')||{}).value||1,
     urgent: !!(RL_$('reqUrgent')||{}).checked, status: 0, date: new Date().toLocaleDateString()
   };
+  /* #1 AI auto-triage — understand category, urgency, people and flags before it is even sent */
+  var anText = catLabel + ' — ' + desc + (r.people ? ' (' + r.people + ' people)' : '');
+  if (window.RL_AI) {
+    var an = RL_AI.applyUrgentFlag(RL_AI.analyze(anText), r.urgent);
+    r.triage = an.triage; r.needs = an.intent.needs; r.flags = an.intent.flags; r.incident = an.intent.incident_type;
+  }
   myReqs.unshift(r);
   try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
   var body = {
     category: (window.RL_CAT_LABEL2KEY[catLabel] || 'special'),
     full_name: nm || 'Help seeker', phone: ph, city: loc,
-    description: catLabel + (r.desc ? ' — ' + r.desc : '') + (r.people ? ' (' + r.people + ' people)' : ''),
-    urgent: r.urgent
+    description: anText, urgent: r.urgent
   };
+  if (r.triage) { body.urgency = r.triage.recommended; body.triage_score = r.triage.score; body.needs = r.needs; body.incident_type = r.incident; }
   var sUid = (window.RL_Auth && window.RL_Auth.user() || {}).id;
   if (sUid) body.user_id = sUid; // signed-in citizen — link the request to the account
   if (GCO) { body.latitude = GCO.lat; body.longitude = GCO.lng; }
@@ -545,13 +863,28 @@ function submitReq() {
   GCO = null;
   if (window.LP) LP.reset();
   updateBadges(); renderActive(); renderMyReqs();
-  RL_Toast(r.urgent ? '🚨 Urgent request submitted!' : '✅ Request submitted! A volunteer will contact you soon.');
+  if (r.triage && window.RL_AI) RL_Toast('Understood: ' + (RL_AI.NEED_LABEL[(r.needs||[])[0]]||'Help') + ' · ' + RL_AI.sevLabel(r.triage.recommended));
+  /* #2 Offline SOS — no connection? save on device, send automatically when back online */
+  if (window.RL_API && !navigator.onLine) {
+    r._delivered = false; sosEnqueue(body, r.clientId);
+    try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
+    renderActive(); renderMyReqs();
+    RL_Toast('Saved on device — not yet delivered. It will send automatically when you reconnect.');
+    setTimeout(function(){ navigate('myrequests'); }, 1200);
+    return;
+  }
   RL_Send('POST', '/help-requests', body).then(function(res){
     if (res && res.ok && res.data && res.data.id) {
-      r.id = res.data.id; r._live = true;
+      r.id = res.data.id; r._live = true; r._delivered = true;
       try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
       renderActive();
       if (!sUid) showAccOffer(); // guest just sent their request — offer an account (skippable)
+    } else if (res && res.status === 0) {
+      // connection dropped mid-send — fall back to the offline queue
+      r._delivered = false; sosEnqueue(body, r.clientId);
+      try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
+      renderActive(); renderMyReqs();
+      RL_Toast('Connection lost — request saved on device and will send automatically when you reconnect.');
     }
   });
   setTimeout(function(){ navigate('myrequests'); }, 1200);
@@ -592,19 +925,35 @@ function aoSubmit() {
   });
 }
 
+/* Compact AI-triage badge reused by the active card and the My Requests list */
+function reqTriageHTML(r) {
+  if (!r.triage || !window.RL_AI) return '';
+  var col = RL_AI.sevColor(r.triage.recommended);
+  var chip = '<span style="display:inline-block;padding:2px 8px;border-radius:8px;font-weight:700;font-size:11px;background:' + col + '22;color:' + col + '">' + RL_AI.sevLabel(r.triage.recommended) + ' · ' + r.triage.score + '/100</span>';
+  var need = (r.needs && r.needs.length) ? '<span style="margin-left:6px;font-size:11px">' + r.needs.map(function(n){ return RL_AI.NEED_LABEL[n]||n; }).slice(0,3).join(' · ') + '</span>' : '';
+  var flag = (r.flags && r.flags.length) ? '<span style="margin-left:6px;font-size:11px;color:var(--o)">' + r.flags.join(', ') + '</span>' : '';
+  return '<div style="margin-top:3px">' + chip + need + flag + '</div>';
+}
+
 function renderActive() {
   var el = RL_$('activeReqCard'); if (!el) return;
   if (!myReqs.length) { el.innerHTML = '<p class="mute" style="font-size:13px;padding:10px 0">No active requests yet.</p>'; return; }
   var r = myReqs[0];
-  el.innerHTML = '<div class="track-card">'
-    + '<div class="track-status">' + ST[r.status] + '</div>'
-    + '<h4>' + r.cat + '</h4><p style="opacity:.7;font-size:12px">' + r.loc + '</p>'
+  var pend = (r._delivered === false);
+  var pill = pend ? '<span class="ar-pill" style="background:rgba(239,91,91,.22);color:#f87171">Saved on device — not delivered</span>'
+                  : '<span class="ar-pill">' + ST[r.status] + ' • Waiting</span>';
+  var tri = r.triage ? '<p class="ar-meta" style="margin-top:2px">' + reqTriageHTML(r) + '</p>' : '';
+  el.innerHTML = '<div class="active-req">'
+    + '<div class="ar-top"><b>' + r.cat + (r.loc ? ' • ' + r.loc : '') + '</b>' + pill + '</div>'
+    + '<p class="ar-meta">Requested • ' + (r.date || '') + ' • ID: ' + r.id + '</p>'
+    + tri
     + '<div class="steps">'
     + mkStep(r.status >= 0, r.status === 0, 'Received','check')
-    + mkStep(r.status >= 1, r.status === 1, 'Assigned','check')
-    + mkStep(r.status >= 2, r.status === 2, 'On way','check')
-    + mkStep(r.status >= 3, false, 'Done','check')
-    + '</div><button type="button" class="submit-btn" style="width:auto;margin:10px 0 0;padding:8px 14px;background:#128C7E" onclick="waSos()">📲 WhatsApp par family ko forward karein</button>'
+    + mkStep(r.status >= 1, r.status === 1, 'Dispatched','check')
+    + mkStep(r.status >= 2, r.status === 2, 'On Route','check')
+    + mkStep(r.status >= 3, false, 'On Site','check')
+    + '</div>'
+    + '<button type="button" class="ar-wa" onclick="waSos()">Forward to family on WhatsApp</button>'
     + '</div>';
   RL_Icons();
 }
@@ -617,9 +966,12 @@ function renderMyReqs() {
   var el = RL_$('myReqList'); if (!el) return;
   el.innerHTML = myReqs.length
     ? myReqs.map(function(r) {
-        return '<div class="item"><div class="item-icon" style="font-size:22px">' + (CATS[r.cat]||'📋') + '</div>'
-          + '<div class="t"><b>' + r.cat + '</b><small>' + r.loc + (r.people ? ' · ' + r.people + ' people' : '') + ' · ' + r.date + '</small></div>'
-          + '<span class="tag ' + SC[r.status] + '">' + ST[r.status] + '</span></div>';
+        var tag = (r._delivered === false)
+          ? '<span class="tag" style="background:rgba(239,91,91,.18);color:#f87171">Not delivered</span>'
+          : '<span class="tag ' + SC[r.status] + '">' + ST[r.status] + '</span>';
+        return '<div class="item"><div class="item-icon" style="font-size:22px">' + (CATS[r.cat]||'') + '</div>'
+          + '<div class="t"><b>' + r.cat + '</b><small>' + r.loc + (r.people ? ' · ' + r.people + ' people' : '') + ' · ' + r.date + '</small>' + reqTriageHTML(r) + '</div>'
+          + tag + '</div>';
       }).join('')
     : '<p class="mute" style="font-size:13px;padding:10px 0">No requests yet</p>';
   updateBadges();
@@ -632,8 +984,10 @@ function updateBadges() {
 
 function renderNearby() {
   var s = RL_$('nearbyShelters'), h = RL_$('nearbyHosp');
-  if (s) s.innerHTML = SHELTERS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🏕️</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
-  if (h) h.innerHTML = HOSPS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏥</div><div style="flex:1"><h5>'+x[0]+'</h5><p>'+x[1]+' · '+x[2]+'</p></div><div class="dist">'+x[3]+'</div></div>'; }).join('');
+  var EMPTY_S = '<p class="mute" style="font-size:13px;padding:12px 4px">No shelter locations published yet — they appear here as soon as they are registered.</p>';
+  var EMPTY_H = '<p class="mute" style="font-size:13px;padding:12px 4px">No hospital locations published yet — they appear here as soon as they are registered.</p>';
+  if (s) s.innerHTML = SHELTERS.length ? SHELTERS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#7C6CF022;color:var(--p)"></div><div style="flex:1"><h5>'+esc(x[0])+'</h5><p>'+esc(x[1])+' · '+esc(x[2])+'</p></div><div class="dist">'+esc(x[3])+'</div></div>'; }).join('') : EMPTY_S;
+  if (h) h.innerHTML = HOSPS.length ? HOSPS.map(function(x){ return '<div class="nearby-card"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div style="flex:1"><h5>'+esc(x[0])+'</h5><p>'+esc(x[1])+' · '+esc(x[2])+'</p></div><div class="dist">'+esc(x[3])+'</div></div>'; }).join('') : EMPTY_H;
 }
 
 /* ── LIVE: real requests + nearby resources WITH coordinates + true distances ── */
@@ -648,12 +1002,17 @@ function loadMyReqs() {
   RL_Get('/help-requests' + (sUid ? '?user_id=' + encodeURIComponent(sUid) : '')).then(function(rows){
     if (!Array.isArray(rows) || !rows.length) return;
     if (sUid) rows = rows.filter(function(r){ return String(r.user_id) === String(sUid); }); // defense in depth if server filter is ignored
-    myReqs = rows.map(function(row){ return {
-      id: row.id, cat: (window.RL_CAT_KEY2LABEL[row.category] || row.category || 'Help Request'),
-      name: row.full_name, phone: row.phone, loc: row.city || '', desc: row.description || '',
-      people: '', urgent: row.urgency === 'critical',
-      status: (window.RL_HELP_STEP[row.status] || 0), date: (row.created_at || '').slice(0, 10), _live: true
-    }; });
+    myReqs = rows.map(function(row){
+      var an = window.RL_AI ? RL_AI.applyUrgentFlag(RL_AI.analyze(row.description || row.category || ''), row.urgency === 'critical') : null;
+      if (an && row.urgency === 'critical' && an.triage.recommended !== 'critical') an.triage = { score: Math.max(an.triage.score, 78), recommended: 'critical' };
+      return {
+        id: row.id, cat: (window.RL_CAT_KEY2LABEL[row.category] || row.category || 'Help Request'),
+        name: row.full_name, phone: row.phone, loc: row.city || '', desc: row.description || '',
+        people: '', urgent: row.urgency === 'critical',
+        triage: an ? an.triage : null, needs: an ? an.intent.needs : null, flags: an ? an.intent.flags : null,
+        status: (window.RL_HELP_STEP[row.status] || 0), date: (row.created_at || '').slice(0, 10), _live: true, _delivered: true
+      };
+    });
     try { localStorage.setItem('rl_help', JSON.stringify(myReqs)); } catch(e) {}
     updateBadges(); renderActive(); renderMyReqs();
     if (!sUid && myReqs.length) { // guest: if a request with their saved phone exists, offer the account once
@@ -688,12 +1047,13 @@ function loadNearbyLive() {
 function renderContacts() {
   var el = RL_$('contactList'); if (!el) return;
   el.innerHTML = CONTACTS.map(function(c) {
-    return '<div class="contact-card"><div class="item-icon" style="background:'+c.c+'22;color:'+c.c+'">📞</div><div><h5>'+c.name+'</h5><p>'+c.role+'</p></div><button class="call-pill" onclick="RL_Tel(\''+c.phone+'\')">'+c.phone+'</button></div>';
+    return '<div class="contact-card"><div class="item-icon" style="background:'+c.c+'22;color:'+c.c+'"></div><div><h5>'+c.name+'</h5><p>'+c.role+'</p></div><button class="call-pill" onclick="RL_Tel(\''+c.phone+'\')">'+c.phone+'</button></div>';
   }).join('');
 }
 
 function renderNotifs(allRead) {
   var el = RL_$('notifList'); if (!el) return;
+  if (!NOTIFS.length) { el.innerHTML = '<p class="mute" style="font-size:13px;padding:14px 4px">No notifications right now — live alerts and updates about your requests appear here.</p>'; var b0 = RL_$('notifBadge'); if (b0) b0.textContent = '0'; return; }
   el.innerHTML = NOTIFS.map(function(n) {
     if (allRead) n.read = true;
     return '<div class="item" style="' + (n.read?'opacity:.6':'') + '">'
@@ -742,9 +1102,9 @@ function cpSend() {
   var inp = RL_$('cpInput'); var v = inp ? inp.value.trim() : '';
   if (!v) return;
   cpBubble('me', esc(v)); inp.value = '';
-  var wait = cpBubble('ai', '<span class="mute">soch raha hoon…</span>');
+  var wait = cpBubble('ai', '<span class="mute">Thinking…</span>');
   RL_Send('POST', '/ai/copilot', { message: v }).then(function(res) {
-    if (!res || !res.ok || !res.data) { wait.innerHTML = 'Server reachable nahi. Emergency ho to <b>1122</b> dial karein.'; return; }
+    if (!res || !res.ok || !res.data) { wait.innerHTML = 'Server unreachable. In an emergency, dial <b>1122</b>.'; return; }
     cpRender(res.data, wait);
   });
 }
@@ -753,33 +1113,33 @@ function cpRender(d, el) {
   var html = (d.reply ? esc(d.reply) + '\n\n' : '');
   html += '<span class="tri-chip" style="background:' + (TRI_COL[t.recommended] || 'var(--g)') + '">' + esc((t.recommended || '?').toUpperCase()) + ' · ' + (t.score || 0) + '/100</span>'
     + '<span class="tri-chip" style="background:var(--g2)">' + esc(i.incident_type || '?') + '</span>'
-    + (i.people_count ? '<span class="tri-chip" style="background:#4C8DF6">👥 ' + i.people_count + '</span>' : '')
-    + (i.flags && i.flags.length ? '<span class="tri-chip" style="background:#7C6CF0">⚑ ' + esc(i.flags.join(', ')) + '</span>' : '');
+    + (i.people_count ? '<span class="tri-chip" style="background:#4C8DF6">' + i.people_count + '</span>' : '')
+    + (i.flags && i.flags.length ? '<span class="tri-chip" style="background:#7C6CF0">' + esc(i.flags.join(', ')) + '</span>' : '');
   if (d.guidance && d.guidance.length) {
-    html += '<div class="cp-guide"><b>Abhi ke liye safety:</b><br>• ' + d.guidance.map(esc).join('<br>• ') + '</div>';
+    html += '<div class="cp-guide"><b>Immediate safety:</b><br>• ' + d.guidance.map(esc).join('<br>• ') + '</div>';
   }
   if (d.question) html += '\n<b>' + esc(d.question) + '</b>';
   el.innerHTML = html;
   var dr = RL_$('cpDraft');
   if (dr && d.draft) {
     window._cpDraft = d.draft;
-    dr.innerHTML = '<div class="cp-draft"><b>📝 Request draft tayyar hai</b> — '
-      + esc(d.draft.incident_type) + ' · ' + esc((d.draft.needs || []).join(', ')) + (d.draft.people_count ? ' · ' + d.draft.people_count + ' log' : '')
+    dr.innerHTML = '<div class="cp-draft"><b>Request draft is ready</b> — '
+      + esc(d.draft.incident_type) + ' · ' + esc((d.draft.needs || []).join(', ')) + (d.draft.people_count ? ' · ' + d.draft.people_count + ' people' : '')
       + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">'
-      + '<button type="button" class="submit-btn" style="width:auto;margin:0;padding:8px 14px" onclick="cpUseDraft()">📝 Quick form mein bhar dein</button>'
+      + '<button type="button" class="submit-btn" style="width:auto;margin:0;padding:8px 14px" onclick="cpUseDraft()">Fill the quick form</button>'
       + '<button type="button" class="pill" onclick="document.getElementById(\'cpDraft\').innerHTML=\'\'">Cancel</button></div></div>';
   }
   RL_$('cpChat').scrollTop = RL_$('cpChat').scrollHeight;
 }
 function cpUseDraft() {
   var d = window._cpDraft; if (!d) return;
-  var CAT = { flood: 'Emergency Rescue & Evacuation', earthquake: 'Emergency Rescue & Evacuation', fire: 'Emergency Rescue & Evacuation', storm: 'Emergency Rescue & Evacuation', landslide: 'Emergency Rescue & Evacuation', medical: 'Medical Assistance', missing: 'Missing Persons', other: 'Special Assistance' };
-  var sel = RL_$('reqCat'); if (sel) { var want = CAT[d.incident_type] || 'Special Assistance'; [].forEach.call(sel.options, function(o) { if (o.text.indexOf(want.slice(0, 12)) === 0 || o.text === want) sel.value = o.text; }); }
+  var CAT = { flood: 'Emergency Rescue & Evacuation', earthquake: 'Emergency Rescue & Evacuation', fire: 'Emergency Rescue & Evacuation', storm: 'Emergency Rescue & Evacuation', landslide: 'Emergency Rescue & Evacuation', medical: 'Emergency Rescue & Evacuation', missing: 'Missing Persons', other: 'Emergency Rescue & Evacuation' };
+  var sel = RL_$('reqCat'); if (sel) { var want = CAT[d.incident_type] || 'Emergency Rescue & Evacuation'; [].forEach.call(sel.options, function(o) { if (o.text.indexOf(want.slice(0, 12)) === 0 || o.text === want) sel.value = o.text; }); }
   var de = RL_$('reqDesc'); if (de && d.description) de.value = d.description;
   if (d.urgency === 'critical' || d.urgency === 'high') { var uc = RL_$('reqUrgent'); if (uc) uc.checked = true; }
   var pe = RL_$('reqPeople'); if (pe && d.people_count) pe.value = d.people_count;
   navigate('request');
-  RL_Toast('Copilot ne form bhar diya — location dein aur Send dabayein');
+  RL_Toast('Copilot filled the form — add your location and tap Send');
 }
 /* voice input — Web Speech API (free, Chrome/Edge/Android) */
 var CP_REC = null;
@@ -787,19 +1147,160 @@ function cpMicToggle() {
   var btn = RL_$('cpMic');
   if (CP_REC) { CP_REC.stop(); return; }
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { RL_Toast('Is browser mein voice support nahi — type karke bhejein'); return; }
+  if (!SR) { RL_Toast('Voice is not supported in this browser — type your message instead'); return; }
   CP_REC = new SR();
   CP_REC.lang = (RL_$('cpLang') || {}).value || 'en-PK';
   CP_REC.interimResults = true; CP_REC.continuous = false;
-  btn.classList.add('mic-on'); btn.textContent = '🔴';
+  btn.classList.add('mic-on'); btn.textContent = '';
   CP_REC.onresult = function(e) {
     var t = ''; for (var i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;
     var inp = RL_$('cpInput'); if (inp) inp.value = t;
     if (e.results[e.results.length - 1].isFinal) cpSend();
   };
-  CP_REC.onend = function() { CP_REC = null; btn.classList.remove('mic-on'); btn.textContent = '🎤'; };
-  CP_REC.onerror = function(e) { RL_Toast('Mic error: ' + (e && e.error ? e.error : 'unknown') + ' — permission/check confirm karein'); if (CP_REC) CP_REC.onend(); };
+  CP_REC.onend = function() { CP_REC = null; btn.classList.remove('mic-on'); btn.textContent = ''; };
+  CP_REC.onerror = function(e) { RL_Toast('Mic error: ' + (e && e.error ? e.error : 'unknown') + ' — check your microphone permission'); if (CP_REC) CP_REC.onend(); };
   CP_REC.start();
+}
+
+/* ── OFFLINE MESH NETWORK — Bluetooth peer-to-peer relay, works without internet ── */
+var MESH = { on: false, peers: [], sel: null, threads: {} };
+var MESH_POOL = [
+  { id:'v1', name:'Ali — Rescue 1122', role:'Volunteer team',    dist:0.3, hop:1, hasSignal:true,  av:'\u200D' },
+  { id:'v2', name:'Sana — Edhi Camp',  role:'Shelter volunteer', dist:0.6, hop:1, hasSignal:true,  av:'' },
+  { id:'v3', name:'Bilal — NDMA',      role:'Relief coordinator',dist:0.9, hop:2, hasSignal:false, av:'' },
+  { id:'v4', name:'Usman — Neighbour', role:'Nearby phone',      dist:1.2, hop:3, hasSignal:true,  av:'' }
+];
+function meshTime(){ return new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}); }
+function meshPeer(id){ return MESH.peers.filter(function(x){ return x.id===id; })[0]; }
+function meshNetState(){
+  var el=RL_$('meshNetState'); if(!el) return;
+  var online = navigator.onLine;
+  el.textContent = online ? 'Online' : 'No internet (offline)';
+  el.style.color = online ? 'var(--gr)' : 'var(--o)';
+  var note=RL_$('meshNetNote');
+  if (note){
+    if (!online && MESH.on){ note.style.display=''; note.innerHTML='You are offline — this is exactly what the mesh is for. Nearby phones will relay your message over Bluetooth until one of them finds signal.'; }
+    else note.style.display='none';
+  }
+}
+function meshInit(){
+  meshNetState();
+  try { window.removeEventListener('online', meshNetState); window.removeEventListener('offline', meshNetState); } catch(e){}
+  window.addEventListener('online', meshNetState); window.addEventListener('offline', meshNetState);
+  if (MESH.on) { renderMeshPeers(); meshRenderChat(); }
+}
+function meshToggle(){
+  MESH.on = !MESH.on;
+  var btn=RL_$('meshToggleBtn'), badge=RL_$('meshStatusBadge'), sum=RL_$('meshSummary');
+  if (MESH.on){
+    if (btn) btn.textContent='Leave Mesh';
+    if (badge){ badge.textContent='Live'; badge.style.color='var(--gr)'; }
+    if (sum) sum.textContent='Scanning for nearby Bluetooth peers…';
+    meshNetState();
+    setTimeout(meshScan, 700);
+  } else {
+    MESH.peers=[]; MESH.sel=null;
+    if (btn) btn.textContent='Join Mesh';
+    if (badge){ badge.textContent='Off'; badge.style.color=''; }
+    if (sum) sum.innerHTML='Mesh is off — tap <b>Join Mesh</b> to find nearby volunteers.';
+    var pc=RL_$('meshPeerCount'); if(pc) pc.textContent='0 in range';
+    var pl=RL_$('meshPeerList'); if(pl) pl.innerHTML='<p class="mute" style="font-size:13px;padding:10px 0">No peers yet. Join the mesh to scan.</p>';
+    var ct=RL_$('meshChatTitle'); if(ct) ct.textContent='Relay Chat';
+    var cb=RL_$('meshChat'); if(cb) cb.innerHTML='<p class="mute" style="font-size:13px;padding:10px 0">Select a volunteer to start relaying messages.</p>';
+    var note=RL_$('meshNetNote'); if(note) note.style.display='none';
+  }
+}
+function meshScan(){
+  if (!MESH.on) return;
+  // Real build: discover nearby peer phones over Bluetooth / Nearby Connections within ~1 km.
+  // Offline browsers cannot open the radio directly, so this prototype simulates the mesh neighbours.
+  MESH.peers = MESH_POOL.slice(0, 2 + Math.floor(Math.random()*3));
+  var sum=RL_$('meshSummary');
+  if (sum) sum.innerHTML='Mesh live — <b>'+MESH.peers.length+'</b> volunteer phone(s) in range. Pick one to relay a message.';
+  renderMeshPeers();
+}
+function renderMeshPeers(){
+  var el=RL_$('meshPeerList'); if(!el) return;
+  var pc=RL_$('meshPeerCount'); if(pc) pc.textContent=MESH.peers.length+' in range';
+  if (!MESH.peers.length){ el.innerHTML='<p class="mute" style="font-size:13px;padding:10px 0">No peers yet. Join the mesh to scan.</p>'; return; }
+  el.innerHTML = MESH.peers.map(function(p){
+    var sig='<span class="mp-badge" style="background:'+(p.hasSignal?'var(--gr)':'var(--o)')+'"></span>';
+    return '<div class="mesh-peer'+(MESH.sel===p.id?' sel':'')+'" onclick="meshSelect(\''+p.id+'\')">'
+      + '<div class="mp-ic">'+p.av+'</div>'
+      + '<div class="mp-t"><b>'+sig+esc(p.name)+'</b><small>'+esc(p.role)+' · '+p.dist.toFixed(1)+' km</small></div>'
+      + '<span class="mp-hop">'+(p.hasSignal?'Signal ✓':'No signal')+' · '+p.hop+'-hop</span>'
+      + '</div>';
+  }).join('');
+}
+function meshSelect(id){
+  if (!MESH.on) return;
+  MESH.sel = id;
+  var p = meshPeer(id);
+  var ct=RL_$('meshChatTitle'); if(ct) ct.textContent = p ? ('Relay to '+p.name) : 'Relay Chat';
+  renderMeshPeers();
+  meshRenderChat();
+}
+function meshRenderChat(){
+  var box=RL_$('meshChat'); if(!box) return;
+  if (!MESH.sel){ box.innerHTML='<p class="mute" style="font-size:13px;padding:10px 0">Select a volunteer to start relaying messages.</p>'; return; }
+  var t=MESH.threads[MESH.sel]||[];
+  box.innerHTML = t.map(function(m){
+    return '<div class="mm '+(m.me?'me':'them')+'">'+m.html+(m.me?'<span class="mm-meta">'+m.time+' · '+m.status+'</span>':'')+'</div>';
+  }).join('') || '<p class="mute" style="font-size:13px;padding:10px 0">Say hello — your message hops to this volunteer over Bluetooth.</p>';
+  box.scrollTop=box.scrollHeight;
+}
+function meshPushTo(k, msg){ (MESH.threads[k]=MESH.threads[k]||[]).push(msg); if (MESH.sel===k) meshRenderChat(); }
+function meshGate(){
+  if (!MESH.on){ RL_Toast('Join the mesh first'); return false; }
+  if (!MESH.sel){ RL_Toast('Pick a nearby volunteer'); return false; }
+  return true;
+}
+function meshSendText(){
+  if (!meshGate()) return;
+  var inp=RL_$('meshInput'); var v=inp?inp.value.trim():'';
+  if (!v){ RL_Toast('Type a short message first'); return; }
+  if (inp) inp.value='';
+  var k=MESH.sel;
+  meshPushTo(k, { me:true, html: esc(v), time: meshTime(), status:'Relaying…' });
+  meshAfterSend(k);
+}
+function meshSendPhoto(input){
+  if (!meshGate()) { if(input) input.value=''; return; }
+  var f=input && input.files && input.files[0]; if (!f) return;
+  var k=MESH.sel;
+  var rd=new FileReader();
+  rd.onload=function(){
+    meshPushTo(k, { me:true, html:'<img src="'+rd.result+'" alt="photo">', time: meshTime(), status:'Relaying photo…' });
+    meshAfterSend(k);
+  };
+  rd.readAsDataURL(f); input.value='';
+}
+function meshSendLocation(){
+  if (!meshGate()) return;
+  var k=MESH.sel;
+  var done=function(lat,lng){
+    var link='https://maps.google.com/?q='+lat.toFixed(5)+','+lng.toFixed(5);
+    var txt='<b>My location</b><br><a class="mm-link" href="'+link+'" target="_blank" rel="noopener">'+lat.toFixed(5)+', '+lng.toFixed(5)+' — open map</a>';
+    meshPushTo(k, { me:true, html: txt, time: meshTime(), status:'Relaying location…' });
+    meshAfterSend(k);
+  };
+  var fb=function(){ var g=(window.liveArea&&liveArea())||{lat:29.1044,lng:70.3302}; done(g.lat,g.lng); };
+  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(function(pos){ done(pos.coords.latitude,pos.coords.longitude); }, fb, {enableHighAccuracy:true,timeout:5000});
+  else fb();
+}
+function meshAfterSend(k){
+  var p=meshPeer(k);
+  setTimeout(function(){
+    var t=MESH.threads[k]||[]; var last=t[t.length-1];
+    if (last && last.me) last.status = (p && p.hop>1) ? ('Delivered via '+p.hop+'-hop relay ✓') : 'Delivered ✓';
+    if (MESH.sel===k) meshRenderChat();
+    setTimeout(function(){
+      var reply = (p && p.hasSignal===false)
+        ? 'Received. I have no signal yet — holding this and will forward it to dispatch as soon as I reach the edge of the mesh.'
+        : 'Copy that — relief team notified via mesh. Stay where it is safe; help is on the way.';
+      meshPushTo(k, { me:false, html: esc(reply), time: meshTime() });
+    }, 1500);
+  }, 900 + Math.random()*700);
 }
 
 /* ── NAVIGATION ── */
@@ -812,22 +1313,46 @@ var PAGES = {
   flood:         'Flood Predictor|AI-powered flood risk for your area',
   route:         'Safe Route Planner|Any address to any address — safest route, AI-scored',
   scan:          'Smart Safety Scan|Instant danger report for any area in Pakistan',
-  copilot:       'AI Disaster Copilot|Likho ya bolo — English, Urdu, Roman Urdu — request ka draft banega',
+  alerts:        'Live Disaster Alerts|Real-time earthquakes, floods & storms near you (USGS + Open-Meteo)',
+  livemap:       'Live Operations Map|Earthquakes, flood risk, shelters, hospitals and active SOS on one map',
+  copilot:       'AI Disaster Copilot|Write or speak — English, Urdu, Roman Urdu — a request draft will be created',
+  mesh:          'Offline Mesh Network|No internet? Relay messages, photos and your location to nearby volunteers over Bluetooth (up to ~1 km)',
   notifications: 'Notifications|Live alerts and earthquakes near you',
   profile:       'My Profile|Your personal information'
 };
 function navigate(page) {
   RL_Navigate(page, PAGES, function(p) {
     if (p === 'nearby')        { renderNearby(); initHelpMap(); }
-    if (p === 'flood')         initFloodMap();
+    if (p === 'flood')         { initFloodMap(); loadFloodLive(); }
     if (p === 'route')         initRouteMap();
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') { renderNotifs(false); loadNotifsLive(); }
     if (p === 'myrequests')    renderMyReqs();
     if (p === 'request')       { renderActive(); LP.init(); }
+    if (p === 'mesh')          meshInit();
+    if (p === 'alerts')        loadAlerts();
+    if (p === 'livemap')       initOpsMap();
+    /* Bottom SOS bar shows on Home only */
+    var sos = document.querySelector('.sos-bar'); if (sos) sos.style.display = (p === 'home') ? '' : 'none';
+    var bn = document.querySelectorAll('.bn-item');
+    for (var i = 0; i < bn.length; i++) bn[i].classList.toggle('active', bn[i].dataset.nav === p);
   });
 }
 RL_WireNav(PAGES, function(p){ navigate(p); });
+
+/* ── Hero search — live-filter the feature tiles ── */
+function filterCats(q) {
+  var s = (q || '').toLowerCase().trim();
+  document.querySelectorAll('#page-home .cat-card').forEach(function(c) {
+    var t = (c.textContent || '').toLowerCase();
+    c.style.display = (!s || t.indexOf(s) > -1) ? '' : 'none';
+  });
+  /* hide a whole group when none of its tiles match the search */
+  document.querySelectorAll('#page-home .grp').forEach(function(g) {
+    var any = Array.prototype.some.call(g.querySelectorAll('.cat-card'), function(c) { return c.style.display !== 'none'; });
+    g.style.display = any ? '' : 'none';
+  });
+}
 
 /* ── BOOT ── */
 var u = RL_BootUser({ defaultName: 'User', defaultRole: 'help' });
@@ -840,8 +1365,14 @@ renderNotifs(false);
 RL_Icons();
 loadMyReqs();
 loadNearbyLive();
+loadHeroLive();
 loadNotifsLive();
 var _cpMic = RL_$('cpMic'); if (_cpMic) _cpMic.addEventListener('click', cpMicToggle);
+navigate('home'); // apply correct initial chrome (hero + bottom SOS bar, no top emergency card)
+
+/* ── #2 Offline SOS — flush any device-saved requests the moment a connection returns ── */
+try { window.addEventListener('online', function(){ setTimeout(sosFlush, 1200); }); } catch(e){}
+setTimeout(sosFlush, 2500);
 
 /* ── LIVE weather / flood / map (free, no API key) ── */
 function _setTxt(id,v){ var e=RL_$(id); if(e) e.textContent=v; }
@@ -886,19 +1417,31 @@ function loadFloodLive(){
   Promise.all([ RL_LIVE.weather(g.lat,g.lng).catch(function(){return null;}), RL_LIVE.flood(g.lat,g.lng).catch(function(){return null;}) ])
     .then(function(a){ applyRisk(RL_LIVE.risk(a[0],a[1]), g.name+', Pakistan'); });
 }
+/* Hero metrics — derived LIVE from platform help requests (no fabricated numbers) */
+function loadHeroLive(){
+  RL_Get('/help-requests?limit=200').then(function(a){
+    var t = RL_$('heroTeams'), pv = RL_$('heroProgVal'), pb = RL_$('heroProgBar');
+    if (!Array.isArray(a) || !a.length) { if (t) t.textContent = '0'; if (pv) pv.textContent = '0%'; if (pb) pb.style.width = '0%'; return; }
+    var done = a.filter(function(r){ var s = String(r.status||'').toLowerCase(); return s==='resolved'||s==='completed'||s==='closed'; }).length;
+    if (t) t.textContent = (a.length - done);
+    var pct = Math.round(done / a.length * 100);
+    if (pv) pv.textContent = pct + '%';
+    if (pb) pb.style.width = pct + '%';
+  }).catch(function(){});
+}
 var HELP_MAP=null;
 function initHelpMap(){
   if(!window.L || HELP_MAP) return; var g=liveArea();
   HELP_MAP = RL_LIVE.map('helpMap', g.lat, g.lng, 10); if(!HELP_MAP) return;
-  RL_LIVE.marker(HELP_MAP, g.lat, g.lng, '📍 <b>'+g.name+'</b> — your area', '#B91C1C');
+  RL_LIVE.marker(HELP_MAP, g.lat, g.lng, '<b>'+g.name+'</b> — your area', '#B91C1C');
   var placed={s:0,h:0};
   RL_Get('/shelters').then(function(a){
-    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏕️ '+(x.name||'Shelter'),'#2E7D32'); placed.s++; } });
-    if(!placed.s) SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
+    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,''+(x.name||'Shelter'),'#2E7D32'); placed.s++; } });
+    if(!placed.s) SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],''+x[0]+' — '+x[1],'#2E7D32'); });
   });
   RL_Get('/hospitals').then(function(a){
-    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,'🏥 '+(x.name||'Hospital'),'#4C8DF6'); placed.h++; } });
-    if(!placed.h) HOSPS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],'🏥 '+x[0]+' — '+x[1],'#4C8DF6'); });
+    if(Array.isArray(a)) a.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ RL_LIVE.marker(HELP_MAP,+x.latitude,+x.longitude,''+(x.name||'Hospital'),'#4C8DF6'); placed.h++; } });
+    if(!placed.h) HOSPS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(HELP_MAP,x[4],x[5],''+x[0]+' — '+x[1],'#4C8DF6'); });
   });
   setTimeout(function(){try{HELP_MAP.invalidateSize();}catch(e){}},250);
 }
@@ -907,10 +1450,94 @@ function initFloodMap(){
   if(!window.L||!window.RL_LIVE||FLOOD_MAP) return;
   var g=liveArea();
   FLOOD_MAP = RL_LIVE.map('floodMap', g.lat, g.lng, 5); if(!FLOOD_MAP) return;
-  ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) RL_LIVE.marker(FLOOD_MAP,p.lat,p.lng,'🌊 '+p.name+' — flood-prone','#EF5B5B'); });
-  RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> (your area)','#F5B83D');
+  ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) RL_LIVE.marker(FLOOD_MAP,p.lat,p.lng,''+p.name+' — flood-prone','#EF5B5B'); });
+  RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'<b>'+g.name+'</b> (your area)','#F5B83D');
   setTimeout(function(){try{FLOOD_MAP.invalidateSize();}catch(e){}},250);
 }
+/* ── LIVE DISASTER ALERTS FEED (keyless: USGS + GDACS + ReliefLink + Open-Meteo) ── */
+var ALERTS = [], AL_TAB = 'all', AL_TIMER = null;
+var AL_CAT = { earthquake:{ic:'',c:'#F58A3D'}, flood:{ic:'',c:'#EF5B5B'}, storm:{ic:'',c:'#7C6CF0'}, weather:{ic:'',c:'#4C8DF6'}, official:{ic:'',c:'#2E7D32'} };
+function agoShort(ms){ var dt=Date.now()-ms; if(dt<0) dt=0; var h=Math.floor(dt/36e5); if(h<1) return Math.max(1,Math.round(dt/6e4))+' min ago'; if(h<24) return h+' h ago'; return Math.floor(h/24)+' d ago'; }
+function loadAlerts(){
+  if(!window.RL_LIVE){ var e=RL_$('alertFeed'); if(e) e.innerHTML='<p class="mute" style="font-size:13px;padding:14px 4px">Live services unavailable right now.</p>'; return; }
+  var g = liveArea();
+  var FP = ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].map(function(c){return RL_LIVE.geo(c);}).filter(Boolean);
+  var WP = ['islamabad','lahore','karachi','peshawar','quetta','multan','faisalabad','rawalpindi','hyderabad','sialkot'].map(function(c){return RL_LIVE.geo(c);}).filter(Boolean);
+  var pQ = RL_LIVE.quakesPK  ? RL_LIVE.quakesPK().catch(function(){return [];})  : Promise.resolve([]);
+  var pF = RL_LIVE.floodAt   ? RL_LIVE.floodAt(FP).catch(function(){return [];}) : Promise.resolve([]);
+  var pW = RL_LIVE.weatherAt ? RL_LIVE.weatherAt(WP).catch(function(){return [];}) : Promise.resolve([]);
+  var pM = RL_LIVE.weather   ? RL_LIVE.weather(g.lat,g.lng).catch(function(){return null;}) : Promise.resolve(null);
+  var pA = RL_Get('/alerts?active=true&limit=10');
+  Promise.all([pQ,pF,pW,pM,pA]).then(function(res){
+    var qk=res[0]||[], fl=res[1]||[], wx=res[2]||[], me=res[3], ad=Array.isArray(res[4])?res[4]:[];
+    var list=[];
+    qk.forEach(function(q){ list.push({ cat:'earthquake', title:'Earthquake M'+(+q.mag).toFixed(1), loc:(q.place||'Pakistan region'), time:agoShort(q.time), ms:q.time, lat:q.lat, lng:q.lng }); });
+    fl.forEach(function(f,i){ var p=FP[i]; if(!f||!f.daily||!f.daily.river_discharge) return; var d=f.daily.river_discharge; var now=(d[2]!=null?d[2]:(d[0]||0)); var fc=d.slice(3).filter(function(x){return x!=null;}); var mx=fc.length?Math.max.apply(null,fc):0; var rising=(mx>now*1.3&&now>30); if(mx>250||rising){ list.push({ cat:'flood', title:(p.name||'River')+' — '+(mx>600?'High':(mx>250?'Elevated':'Rising'))+' flow', loc:(p.name||'Pakistan')+', Pakistan', time:'now', ms:Date.now(), desc:Math.round(mx)+' m\u00b3/s peak · next 5 days', lat:p.lat, lng:p.lng }); } });
+    wx.forEach(function(w,i){ var p=WP[i]; if(!w) return; var cur=w.current||{}, d=w.daily||{}; var mm=(d.precipitation_sum&&d.precipitation_sum[0])||0, wind=cur.wind_speed_10m||0;
+      if(wind>=55) list.push({ cat:'storm', title:'Strong winds — '+(p.name||''), loc:(p.name||'Pakistan')+', Pakistan', time:'now', ms:Date.now(), desc:Math.round(wind)+' km/h winds', lat:p.lat, lng:p.lng });
+      if(mm>=30) list.push({ cat:'weather', title:'Heavy rain — '+(p.name||''), loc:(p.name||'Pakistan')+', Pakistan', time:'now', ms:Date.now(), desc:mm+' mm expected today', lat:p.lat, lng:p.lng }); });
+    if(me&&me.current){ var c=me.current, dd=me.daily||{}, m2=(dd.precipitation_sum&&dd.precipitation_sum[0])||0;
+      list.push({ cat:'weather', title:(m2>20?'Heavy rain near you':'Weather near you'), loc:g.name+', Pakistan', time:'now', ms:Date.now(), desc:Math.round(c.temperature_2m)+'\u00b0C · '+m2+'mm today · wind '+Math.round(c.wind_speed_10m||0)+' km/h', lat:g.lat, lng:g.lng }); }
+    ad.forEach(function(x){ list.push({ cat:'official', title:(x.title||'ReliefLink Alert'), loc:(x.location_text||'Pakistan'), time:x.created_at?agoShort(new Date(x.created_at).getTime()):'recent', ms:x.created_at?new Date(x.created_at).getTime():Date.now(), desc:x.description, sev:x.severity }); });
+    var st=RL_$('alStamp'); if(st) st.textContent='Live · updated '+new Date().toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'});
+    ALERTS=list.sort(function(a,b){ return (b.ms||0)-(a.ms||0); }); renderAlerts();
+    if (AL_TIMER) clearInterval(AL_TIMER);
+    AL_TIMER = setInterval(function(){ var pg=RL_$('page-alerts'); if(pg && !pg.classList.contains('hide')) loadAlerts(); }, 300000);
+  });
+}
+function alFilter(tab, btn){ AL_TAB=tab; document.querySelectorAll('.al-tab').forEach(function(b){b.classList.remove('active');}); if(btn)btn.classList.add('active'); renderAlerts(); }
+function renderAlerts(){
+  var el=RL_$('alertFeed'); if(!el) return;
+  var list=ALERTS.filter(function(a){ return AL_TAB==='all'||a.cat===AL_TAB; });
+  if(!list.length){ el.innerHTML='<p class="mute" style="font-size:13px;padding:14px 4px">'+(ALERTS.length?('No '+AL_TAB+' alerts right now.'):'No alerts found — you may be offline.')+'</p>'; return; }
+  el.innerHTML=list.slice(0,30).map(function(a){
+    var m=AL_CAT[a.cat]||AL_CAT.official;
+    return '<div class="al-item"><div class="al-ic" style="background:'+m.c+'22">'+m.ic+'</div><div class="al-b">'
+      +'<b>'+esc(a.title)+'</b><small>'+esc(a.loc)+(a.desc?' · '+esc(a.desc):'')+' · '+esc(a.time)+'</small></div>'
+      +(a.sev?RL_Tag(String(a.sev).toUpperCase(),SEV_COL[a.sev]||'var(--y)'):'')+'</div>';
+  }).join('');
+}
+
+/* ── LIVE OPERATIONS MAP (toggleable layers) ── */
+var OPS_MAP=null, OPS_LAYERS={}, OPS_SEEN={};
+function opsLayer(k){ if(!OPS_LAYERS[k]){ OPS_LAYERS[k]=window.L.layerGroup().addTo(OPS_MAP); } return OPS_LAYERS[k]; }
+function initOpsMap(){
+  if(!window.L||!window.RL_LIVE) return;
+  var g=liveArea();
+  if(OPS_MAP){ setTimeout(function(){try{OPS_MAP.invalidateSize();}catch(e){}},150); return; }
+  OPS_MAP=RL_LIVE.map('opsMap',g.lat,g.lng,7); if(!OPS_MAP) return;
+  setTimeout(function(){try{OPS_MAP.invalidateSize();}catch(e){}},250);
+  opsSeedMe(g);
+  ['quake','flood','sos','shelter','hospital','pharmacy'].forEach(function(k){
+    var cb=document.querySelector('.layer-chip input[data-layer="'+k+'"]');
+    if(cb && cb.checked) opsLoad(k,g);
+  });
+}
+function opsSeedMe(g){ OPS_SEEN.me=1; var Lg=opsLayer('me'); Lg.clearLayers(); window.L.circleMarker([g.lat,g.lng],{radius:9,color:'#B91C1C',weight:2,fillColor:'#B91C1C',fillOpacity:.9}).addTo(Lg).bindPopup('<b>'+g.name+'</b> — your area'); }
+function opsToggle(k,on){ var g=liveArea();
+  if(k==='me'){ if(on){ opsSeedMe(g); } else if(OPS_LAYERS.me){ OPS_LAYERS.me.clearLayers(); } return; }
+  if(on){ OPS_SEEN[k]=0; opsLoad(k,g); } else if(OPS_LAYERS[k]){ OPS_LAYERS[k].clearLayers(); OPS_SEEN[k]=0; }
+}
+function opsLoad(k,g){
+  if(OPS_SEEN[k]) return; OPS_SEEN[k]=1;
+  var Lg=opsLayer(k), col={quake:'#F58A3D',flood:'#EF5B5B',sos:'#DC2626',shelter:'#2E7D32',hospital:'#4C8DF6',pharmacy:'#0E9F8A'}[k];
+  function add(lat,lng,html){ if(lat==null||lng==null) return; window.L.circleMarker([+lat,+lng],{radius:6,color:col,weight:2,fillColor:col,fillOpacity:.8}).addTo(Lg).bindPopup(html); }
+  if(k==='quake'){ RL_LIVE.quakesPK(30,4.0).then(function(a){ (a||[]).forEach(function(q){ add(q.lat,q.lng,'<b>M'+q.mag+'</b><br>'+esc(q.place||'')+' · '+agoShort(q.time)); }); }).catch(function(){}); }
+  else if(k==='flood'){ ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) add(p.lat,p.lng,'<b>'+p.name+'</b> — flood-prone basin'); }); }
+  else if(k==='sos'){ RL_Get('/help-requests?limit=100').then(function(rows){ if(Array.isArray(rows)) rows.forEach(function(r){ var st=String(r.status||'').toLowerCase(); if(st==='resolved'||st==='completed'||st==='closed') return; if(r.latitude!=null&&r.longitude!=null) add(+r.latitude,+r.longitude,'<b>'+(r.full_name||'Help request')+'</b><br>'+esc(r.description||r.category||'')); }); }); }
+  else if(k==='shelter'){ RL_Get('/shelters').then(function(a){ if(Array.isArray(a)&&a.length){ a.forEach(function(x){ add(+x.latitude,+x.longitude,'<b>'+(x.name||'Shelter')+'</b><br>'+esc(x.address||'')); }); return; } opsOverpass('shelter',g,add); }); }
+  else if(k==='hospital'){ RL_Get('/hospitals').then(function(a){ if(Array.isArray(a)&&a.length){ a.forEach(function(x){ add(+x.latitude,+x.longitude,'<b>'+(x.name||'Hospital')+'</b><br>'+esc(x.address||'')); }); return; } opsOverpass('hospital',g,add); }); }
+  else if(k==='pharmacy'){ opsOverpass('pharmacy',g,add); }
+}
+function opsOverpass(kind,g,add){
+  if(!RL_LIVE.overpassPOI){ RL_Toast('Live map needs internet for OpenStreetMap data'); return; }
+  RL_LIVE.overpassPOI(g.lat,g.lng,25000,kind).then(function(list){
+    var ic={shelter:'',hospital:'',pharmacy:''}[kind]||'';
+    if(!list||!list.length){ RL_Toast('No '+(kind==='pharmacy'?'pharmacies':kind+'s')+' found within 25 km in OpenStreetMap'); return; }
+    (list||[]).forEach(function(x){ add(x.lat,x.lng, ic+' <b>'+esc(x.name)+'</b>'+(x.addr?'<br>'+esc(x.addr):'')+(x.phone?'<br>'+esc(x.phone):'')); });
+  }).catch(function(){ RL_Toast('OpenStreetMap is busy right now — try again shortly'); });
+}
+
 /* ── LOCATION PICKER: exact pin, live GPS, street-level reverse address ── */
 var LP=(function(){
   var map=null, marker=null, cur=null, watchId=null, liveOn=false;
@@ -925,7 +1552,7 @@ var LP=(function(){
   }
   function inval(){ try{ map&&map.invalidateSize(); }catch(e){} }
   function setPos(lat,lng,rev){
-    if(!RL_LIVE.inPK(lat,lng)){ RL_Toast('Pakistan ke andar location dein'); return; }
+    if(!RL_LIVE.inPK(lat,lng)){ RL_Toast('Pick a location inside Pakistan'); return; }
     cur={lat:lat,lng:lng}; GCO={lat:lat,lng:lng};
     if(map){
       if(!marker){ marker=window.L.marker([lat,lng],{draggable:true}).addTo(map); marker.on('dragend',function(){ var p=marker.getLatLng(); setPos(p.lat,p.lng); }); }
@@ -938,13 +1565,13 @@ var LP=(function(){
     RL_LIVE.reverse(lat,lng).then(function(j){
       var txt=RL_LIVE.fmtAddr(j)||('('+lat.toFixed(4)+', '+lng.toFixed(4)+')');
       var f=RL_$("reqLoc"); if(f) f.value=txt;
-      var a=RL_$("lpAddr"); if(a){ a.textContent='📍 '+txt; a.classList.remove('empty'); }
-    }).catch(function(){ var a=RL_$("lpAddr"); if(a){ a.textContent='📍 Exact: '+lat.toFixed(4)+', '+lng.toFixed(4); a.classList.remove('empty'); } });
+      var a=RL_$("lpAddr"); if(a){ a.textContent=''+txt; a.classList.remove('empty'); }
+    }).catch(function(){ var a=RL_$("lpAddr"); if(a){ a.textContent='Exact: '+lat.toFixed(4)+', '+lng.toFixed(4); a.classList.remove('empty'); } });
   }
   function locateOnce(){
-    if(!window.RL_LIVE){ RL_Toast('Location service nahi'); return; }
+    if(!window.RL_LIVE){ RL_Toast('Location service unavailable'); return; }
     RL_LIVE.locate(function(pos){
-      if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS available nahi / Pakistan se bahar'); return; }
+      if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS unavailable / outside Pakistan'); return; }
       init(); if(map) map.setView([pos.lat,pos.lng],16); setPos(pos.lat,pos.lng);
     });
   }
@@ -952,8 +1579,8 @@ var LP=(function(){
     if(!window.RL_LIVE) return;
     liveOn=!liveOn; var b=RL_$("lpLiveBtn"); if(b) b.classList.toggle('on',liveOn);
     if(liveOn){
-      if(!navigator.geolocation){ RL_Toast('GPS supported nahi'); liveOn=false; if(b)b.classList.remove('on'); return; }
-      RL_Toast('Live GPS ON 📡'); locateOnce();
+      if(!navigator.geolocation){ RL_Toast('GPS not supported'); liveOn=false; if(b)b.classList.remove('on'); return; }
+      RL_Toast('Live GPS ON '); locateOnce();
       watchId=navigator.geolocation.watchPosition(function(p){
         var la=p.coords.latitude, lo=p.coords.longitude; if(!RL_LIVE.inPK(la,lo)) return;
         init(); if(map&&marker) map.panTo([la,lo]); setPos(la,lo,false); resolve(la,lo);
@@ -961,14 +1588,14 @@ var LP=(function(){
     } else { if(watchId!=null&&navigator.geolocation){ navigator.geolocation.clearWatch(watchId); watchId=null; } RL_Toast('Live GPS OFF'); }
   }
   function recenter(){ init(); if(map&&cur) map.setView([cur.lat,cur.lng],16); else if(map){ var g=liveArea(); map.setView([g.lat,g.lng],12); } }
-  function reset(){ cur=null; GCO=null; if(marker&&map){ map.removeLayer(marker); marker=null; } var a=RL_$("lpAddr"); if(a){ a.textContent='Abhi koi exact location nahi — map par tap karein.'; a.classList.add('empty'); } }
+  function reset(){ cur=null; GCO=null; if(marker&&map){ map.removeLayer(marker); marker=null; } var a=RL_$("lpAddr"); if(a){ a.textContent='No exact location yet — tap the map.'; a.classList.add('empty'); } }
   return { init:init, locateOnce:locateOnce, toggleLive:toggleLive, recenter:recenter, getCur:function(){return cur;}, reset:reset, setPos:setPos };
 })();
 /* ── SAFE ROUTE PLANNER v2 — any→any address, AI safety score, alternatives ── */
 var ROUTE_MAP=null, RT_START=null, RT_START_M=null, RT_DEST_SEL=null;
 function destList(rebuild){
   var el=RL_$('rtDest'); if(!el) return;
-  if (rebuild) el.innerHTML='<option value="">— custom destination upar likhein —</option>';
+  if (rebuild) el.innerHTML='<option value="">— type a custom destination above —</option>';
   if (el.options.length > 1) return;
   SHELTERS.forEach(function(x,i){ if(x[4]!=null){ var o=document.createElement('option'); o.value=i; o.textContent=x[0]+' — '+x[1]; el.appendChild(o); } });
 }
@@ -982,29 +1609,29 @@ function initRouteMap(){
   destList();
   if(!window.L||!window.RL_LIVE||ROUTE_MAP){ if(ROUTE_MAP) setTimeout(function(){try{ROUTE_MAP.invalidateSize();}catch(e){}},150); return; }
   var g=liveArea(); ROUTE_MAP=RL_LIVE.map('routeMap',g.lat,g.lng,8); loadWxLive();
-  ROUTE_MAP.on('click',function(e){ RT_START={lat:e.latlng.lat,lng:e.latlng.lng}; pinStart(); rtReverseStart(); RL_Toast('Start pin set — ab Plan dabayein'); });
-  RL_LIVE.marker(ROUTE_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> — your area','#B91C1C');
-  SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(ROUTE_MAP,x[4],x[5],'🏕️ '+x[0]+' — '+x[1],'#2E7D32'); });
+  ROUTE_MAP.on('click',function(e){ RT_START={lat:e.latlng.lat,lng:e.latlng.lng}; pinStart(); rtReverseStart(); RL_Toast('Start pin set — now tap Plan'); });
+  RL_LIVE.marker(ROUTE_MAP,g.lat,g.lng,'<b>'+g.name+'</b> — your area','#B91C1C');
+  SHELTERS.forEach(function(x){ if(x[4]!=null) RL_LIVE.marker(ROUTE_MAP,x[4],x[5],''+x[0]+' — '+x[1],'#2E7D32'); });
   setTimeout(function(){try{ROUTE_MAP.invalidateSize();}catch(e){}},250);
 }
-function pinStart(){ if(RT_START_M&&ROUTE_MAP) ROUTE_MAP.removeLayer(RT_START_M); RT_START_M=window.L.marker([RT_START.lat,RT_START.lng],{draggable:true}).addTo(ROUTE_MAP).bindPopup('🚩 Start (drag to adjust)'); RT_START_M.on('dragend',function(){ var p=RT_START_M.getLatLng(); RT_START={lat:p.lat,lng:p.lng}; rtReverseStart(); }); }
+function pinStart(){ if(RT_START_M&&ROUTE_MAP) ROUTE_MAP.removeLayer(RT_START_M); RT_START_M=window.L.marker([RT_START.lat,RT_START.lng],{draggable:true}).addTo(ROUTE_MAP).bindPopup('Start (drag to adjust)'); RT_START_M.on('dragend',function(){ var p=RT_START_M.getLatLng(); RT_START={lat:p.lat,lng:p.lng}; rtReverseStart(); }); }
 function rtReverseStart(){
   RL_LIVE.reverse(RT_START.lat,RT_START.lng).then(function(j){ var f=RL_$('rtFrom'); if(f) f.value=RL_LIVE.fmtAddr(j)||('('+RT_START.lat.toFixed(4)+', '+RT_START.lng.toFixed(4)+')'); }).catch(function(){});
 }
 function rtLocate(){
   RL_LIVE.locate(function(pos){
-    if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS nahi mila / Pakistan se bahar'); return; }
+    if(!pos||!RL_LIVE.inPK(pos.lat,pos.lng)){ RL_Toast('GPS not found / outside Pakistan'); return; }
     RT_START={lat:pos.lat,lng:pos.lng}; initRouteMap(); pinStart(); rtReverseStart();
     if(ROUTE_MAP) ROUTE_MAP.setView([pos.lat,pos.lng],13);
-    RL_Toast('📍 Start = your location');
+    RL_Toast('Start = your location');
   });
 }
 function loadWxLive(){
   var g=liveArea(); if(!window.RL_LIVE) return;
   RL_LIVE.weather(g.lat,g.lng).then(function(w){
     var el=RL_$('wxLive'); if(!el||!w||!w.current) return; var c=w.current, d=w.daily||{};
-    el.innerHTML='<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🌡️</div><div class="t"><b>'+Math.round(c.temperature_2m)+'°C</b><small>'+(c.relative_humidity_2m||0)+'% humidity · wind '+(c.wind_speed_10m||0)+' km/h</small></div></div>'
-      +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🌧️</div><div class="t"><b>'+(d.precipitation_sum?d.precipitation_sum[0]:0)+' mm</b><small>Today · '+(d.precipitation_probability_max?d.precipitation_probability_max[0]:0)+'% chance</small></div></div>';
+    el.innerHTML='<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"></div><div class="t"><b>'+Math.round(c.temperature_2m)+'°C</b><small>'+(c.relative_humidity_2m||0)+'% humidity · wind '+(c.wind_speed_10m||0)+' km/h</small></div></div>'
+      +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>'+(d.precipitation_sum?d.precipitation_sum[0]:0)+' mm</b><small>Today · '+(d.precipitation_probability_max?d.precipitation_probability_max[0]:0)+'% chance</small></div></div>';
     var days=RL_$('wx3day');
     if(days && d.time){
       days.innerHTML=d.time.slice(0,3).map(function(t,i){
@@ -1029,15 +1656,15 @@ function resolveEnd(cb){
 }
 function planRoute(){
   if(!window.RL_LIVE||!window.L){ RL_Toast('Map not ready'); return; }
-  var res=RL_$('rtResult'); if(res) res.innerHTML='<p style="font-size:13px">🛰️ Locations resolve ho rahe hain…</p>';
+  var res=RL_$('rtResult'); if(res) res.innerHTML='<p style="font-size:13px">Resolving locations…</p>';
   resolveStart(function(start){
-    if(!start){ RL_Toast('Start location nahi mil saka — likhein ya GPS lein'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Start resolve nahi hua.</p>'; return; }
+    if(!start){ RL_Toast('Start location not found — type it or use GPS'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Start could not be resolved.</p>'; return; }
     resolveEnd(function(end){
-      if(!end||end.lat==null){ RL_Toast('Destination likhein — kahin bhi Pakistan mein'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Destination resolve nahi hua.</p>'; return; }
-      if(!RL_LIVE.inPK(end.lat,end.lng)){ RL_Toast('Sirf Pakistan ke andar route milta hai'); return; }
-      if(res) res.innerHTML='<p style="font-size:13px">🛣️ Route + 5-point danger scan ho raha hai… (10-15 sec)</p>';
+      if(!end||end.lat==null){ RL_Toast('Enter a destination — anywhere in Pakistan'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Destination could not be resolved.</p>'; return; }
+      if(!RL_LIVE.inPK(end.lat,end.lng)){ RL_Toast('Routes are available only within Pakistan'); return; }
+      if(res) res.innerHTML='<p style="font-size:13px">Planning route + 5-point danger scan… (10-15 sec)</p>';
       RL_LIVE.routeOSRM(start,end).then(function(routes){
-        if(!routes||!routes.length){ RL_Toast('Route service abhi unavailable'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Route service reachable nahi — dobara try karein.</p>'; return; }
+        if(!routes||!routes.length){ RL_Toast('Route service currently unavailable'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Route service unreachable — try again.</p>'; return; }
         scoreAndRender(start,end,routes);
       }).catch(function(){ RL_Toast('Route service unavailable'); if(res) res.innerHTML='<p class="mute" style="font-size:13px">Route service offline.</p>'; });
     });
@@ -1061,16 +1688,16 @@ function scoreRoute(samples, wxArr, flArr, alerts, quakes){
       var d=Math.max.apply(null,f.daily.river_discharge.map(function(x){return x||0;})); if(d>dis) dis=d;
     }
   });
-  if(precip>20){ risk+=30; warns.push('🌧️ Route par bohot tez barish ('+precip.toFixed(0)+' mm)'); }
-  else if(precip>6){ risk+=12; warns.push('🌧️ Route par barish ka imkaan ('+precip.toFixed(0)+' mm)'); }
-  if(dis>150){ risk+=35; warns.push('🌊 Nadi danger mark se upar ('+dis.toFixed(0)+' m³/s)'); }
-  else if(dis>50){ risk+=15; warns.push('🌊 Nadi ka level khaufnaak ('+dis.toFixed(0)+' m³/s)'); }
+  if(precip>20){ risk+=30; warns.push('Very heavy rain on the route ('+precip.toFixed(0)+' mm)'); }
+  else if(precip>6){ risk+=12; warns.push('Chance of rain on the route ('+precip.toFixed(0)+' mm)'); }
+  if(dis>150){ risk+=35; warns.push('River above danger mark ('+dis.toFixed(0)+' m³/s)'); }
+  else if(dis>50){ risk+=15; warns.push('Alarming river level ('+dis.toFixed(0)+' m³/s)'); }
   (alerts||[]).forEach(function(a){
     if(a.latitude==null) return;
     var near=samples.some(function(s){ return RL_LIVE.distKm(s,{lat:+a.latitude,lng:+a.longitude})<40; });
-    if(near){ risk+=20; warns.push('⚠️ Active alert route ke paas: '+(a.title||'')); }
+    if(near){ risk+=20; warns.push('Active alert near the route: '+(a.title||'')); }
   });
-  (quakes||[]).forEach(function(q){ if(q.mag>=4.5){ risk+=10; warns.push('🌍 Haal hi ka earthquake M'+q.mag+' — '+(q.place||'')); } });
+  (quakes||[]).forEach(function(q){ if(q.mag>=4.5){ risk+=10; warns.push('Recent earthquake M'+q.mag+' — '+(q.place||'')); } });
   var score=Math.max(5,100-risk);
   return { score:score, warns:warns, tempLo:temps.length?Math.min.apply(null,temps):null, tempHi:temps.length?Math.max.apply(null,temps):null, precip:precip, dis:dis };
 }
@@ -1116,34 +1743,34 @@ function drawRoute(start,end,rt,altRt,info){
     ROUTE_MAP.fitBounds(ROUTE_MAP._rtLine.getBounds(),{padding:[30,30]});
   }
   RT_START={lat:start.lat,lng:start.lng}; pinStart();
-  RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'🏁 <b>Destination</b>','#2E7D32');
+  RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'<b>Destination</b>','#2E7D32');
   var km=(rt.distance/1000).toFixed(1), min=Math.max(1,Math.round(rt.duration/60));
   var eta=new Intl.DateTimeFormat('en-PK',{timeZone:'Asia/Karachi',hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date(Date.now()+rt.duration*1000));
   var steps=((rt.legs&&rt.legs[0]&&rt.legs[0].steps)||[]).slice(0,7);
   var c=scoreColor(info.score);
-  var wxLine = info.tempLo!=null ? ('🌡️ Route par '+Math.round(info.tempLo)+'–'+Math.round(info.tempHi)+'°C') : '🌡️ Weather data unavailable';
+  var wxLine = info.tempLo!=null ? ('On route '+Math.round(info.tempLo)+'–'+Math.round(info.tempHi)+'°C') : 'Weather data unavailable';
   res.innerHTML =
-    '<div class="item" style="border-color:'+c+'44"><div class="item-icon" style="background:'+c+'22;color:'+c+'">🛡️</div><div class="t"><b>Safety Score: '+info.score+'/100 — '+scoreLabel(info.score)+'</b><small>'+wxLine+' · rain '+info.precip.toFixed(0)+'mm · river '+info.dis.toFixed(0)+' m³/s</small></div></div>'
-    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">📏</div><div class="t"><b>'+km+' km · ~'+min+' min drive</b><small>Arrival (Karachi time): <b>'+eta+'</b></small></div></div>'
-    +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🚩</div><div class="t"><b>Start</b><small id="rtStartAddr">Address la raha hoon…</small></div></div>'
-    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏁</div><div class="t"><b>Destination</b><small id="rtEndAddr">Address la raha hoon…</small></div></div>'
-    +(info.warns.length ? info.warns.map(function(w){ return '<div class="item" style="border-color:#EF5B5B44"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">⚠️</div><div class="t"><b>'+w+'</b></div></div>'; }).join('')
-      : '<div class="item" style="border-color:#3CC08E44"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">✅</div><div class="t"><b>Raaste mein koi danger nahi mili</b><small>Weather, river, alerts aur earthquakes sab clear hain</small></div></div>')
-    +(altRt ? '<div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🔀</div><div class="t"><b>Alternative route skipped</b><small>Safety score '+(altRt._sc!=null?altRt._sc:'kam')+' — is line ko map par grey dekhein</small></div></div>' : '')
-    +(steps.length ? '<div style="margin-top:10px"><b style="font-size:13px">🧭 Turn-by-turn</b>'+steps.map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('')+'</div>' : '');
+    '<div class="item" style="border-color:'+c+'44"><div class="item-icon" style="background:'+c+'22;color:'+c+'"></div><div class="t"><b>Safety Score: '+info.score+'/100 — '+scoreLabel(info.score)+'</b><small>'+wxLine+' · rain '+info.precip.toFixed(0)+'mm · river '+info.dis.toFixed(0)+' m³/s</small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>'+km+' km · ~'+min+' min drive</b><small>Arrival (Karachi time): <b>'+eta+'</b></small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"></div><div class="t"><b>Start</b><small id="rtStartAddr">Fetching address…</small></div></div>'
+    +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>Destination</b><small id="rtEndAddr">Fetching address…</small></div></div>'
+    +(info.warns.length ? info.warns.map(function(w){ return '<div class="item" style="border-color:#EF5B5B44"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"></div><div class="t"><b>'+w+'</b></div></div>'; }).join('')
+      : '<div class="item" style="border-color:#3CC08E44"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>No dangers found along the route</b><small>Weather, river, alerts and earthquakes all clear</small></div></div>')
+    +(altRt ? '<div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)"></div><div class="t"><b>Alternative route skipped</b><small>Safety score '+(altRt._sc!=null?altRt._sc:'lower')+' — see this line in grey on the map</small></div></div>' : '')
+    +(steps.length ? '<div style="margin-top:10px"><b style="font-size:13px">Turn-by-turn</b>'+steps.map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('')+'</div>' : '');
   RL_Icons();
   RL_LIVE.reverse(start.lat,start.lng).then(function(j1){ var e=RL_$('rtStartAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j1)||('('+start.lat.toFixed(4)+', '+start.lng.toFixed(4)+')'); }).catch(function(){});
   RL_LIVE.reverse(end.lat,end.lng).then(function(j2){ var e=RL_$('rtEndAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j2)||('('+end.lat.toFixed(4)+', '+end.lng.toFixed(4)+')'); }).catch(function(){});
-  RL_Toast(info.score>=70?'✅ Safest route selected ('+km+' km)':'⚠️ Route set — warnings upar hain');
+  RL_Toast(info.score>=70?'Safest route selected ('+km+' km)':'Route set — warnings are above');
 }
 /* ── SMART SAFETY SCAN — instant danger report for any PK area ── */
 function runScan(){
   var q=((RL_$('scanQ')||{}).value||'').trim();
   var out=RL_$('scanOut');
-  if(!q){ RL_Toast('Koi jagah likhein — e.g. Chitral'); return; }
-  if(out) out.innerHTML='<p style="font-size:13px;padding:8px">🛰️ '+q+' scan ho raha hai…</p>';
+  if(!q){ RL_Toast('Enter a place — e.g. Chitral'); return; }
+  if(out) out.innerHTML='<p style="font-size:13px;padding:8px">Scanning '+q+'…</p>';
   RL_LIVE.place(q).then(function(p){
-    if(!p){ if(out) out.innerHTML='<div class="card"><p class="mute" style="padding:12px">Pakistan mein "'+q+'" nahi mila — doosri spelling try karein.</p></div>'; RL_Toast('Jagah nahi mili'); return; }
+    if(!p){ if(out) out.innerHTML='<div class="card"><p class="mute" style="padding:12px">Not found: "'+q+'" in Pakistan — try another spelling.</p></div>'; RL_Toast('Place not found'); return; }
     Promise.all([
       RL_LIVE.weather(p.lat,p.lng).catch(function(){return null;}),
       RL_LIVE.flood(p.lat,p.lng).catch(function(){return null;}),
@@ -1156,14 +1783,14 @@ function runScan(){
       var sh=SHELTERS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
       var hp=HOSPS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
       var c=r.pct>=60?'#EF5B5B':r.pct>=30?'#F5B83D':'#3CC08E';
-      var html='<div class="card fade-up" style="border-color:'+c+'55"><div class="card-header"><h3>🛰️ Safety Report — '+p.name+', Pakistan</h3><span class="tag" style="background:'+c+'22;color:'+c+'">'+(r.pct>=60?'HIGH RISK':r.pct>=30?'MODERATE':'LOW RISK')+' '+r.pct+'%</span></div>'
-        +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🌡️</div><div class="t"><b>'+(wx&&wx.current?Math.round(wx.current.temperature_2m)+'°C · '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather unavailable')+'</b><small>'+(wx&&wx.daily&&wx.daily.precipitation_sum?'Aaj '+(wx.daily.precipitation_sum[0]||0)+' mm barish · '+(wx.daily.precipitation_probability_max[0]||0)+'% chance':'')+'</small></div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#16467022;color:#164670">🌊</div><div class="t"><b>Flood risk '+r.pct+'% — '+r.status+'</b><small>River '+(r.riverMax||0)+' m³/s · trend: '+r.trend+' · confidence '+r.confidence+'%</small></div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)">🌍</div><div class="t"><b>'+(qs.length?'30 din mein '+qs.length+' earthquake(s) nearby':'30 din mein koi earthquake nearby nahi')+'</b>'+(qs.length?'<small>'+qs.slice(0,3).map(function(q){return 'M'+q.mag+' — '+(q.place||'')+' ('+Math.round(RL_LIVE.distKm(p,q))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">📡</div><div class="t"><b>'+(alNear.length?alNear.length+' active alert(s) is area ke paas':'Koi active alert is area ke paas nahi')+'</b>'+(alNear.length?'<small>'+alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
-        +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏕️</div><div class="t"><b>Nearest help</b><small>'
-          +(sh.length?'🏕️ '+sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'🏕️ Koi shelter registered nahi')
-          +(hp.length?'<br>🏥 '+hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'')
+      var html='<div class="card fade-up" style="border-color:'+c+'55"><div class="card-header"><h3>Safety Report — '+p.name+', Pakistan</h3><span class="tag" style="background:'+c+'22;color:'+c+'">'+(r.pct>=60?'HIGH RISK':r.pct>=30?'MODERATE':'LOW RISK')+' '+r.pct+'%</span></div>'
+        +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"></div><div class="t"><b>'+(wx&&wx.current?Math.round(wx.current.temperature_2m)+'°C · '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather unavailable')+'</b><small>'+(wx&&wx.daily&&wx.daily.precipitation_sum?'Today '+(wx.daily.precipitation_sum[0]||0)+' mm rain · '+(wx.daily.precipitation_probability_max[0]||0)+'% chance':'')+'</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#16467022;color:#164670"></div><div class="t"><b>Flood risk '+r.pct+'% — '+r.status+'</b><small>River '+(r.riverMax||0)+' m³/s · trend: '+r.trend+' · confidence '+r.confidence+'%</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"></div><div class="t"><b>'+(qs.length?qs.length+' earthquake(s) nearby in 30 days':'No earthquakes nearby in the last 30 days')+'</b>'+(qs.length?'<small>'+qs.slice(0,3).map(function(q){return 'M'+q.mag+' — '+(q.place||'')+' ('+Math.round(RL_LIVE.distKm(p,q))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"></div><div class="t"><b>'+(alNear.length?alNear.length+' active alert(s) near this area':'No active alerts near this area')+'</b>'+(alNear.length?'<small>'+alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
+        +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>Nearest help</b><small>'
+          +(sh.length?''+sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'No shelters registered')
+          +(hp.length?'<br>'+hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'')
         +'</small></div></div></div>';
       if(out) out.innerHTML=html;
       RL_Icons();

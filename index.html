@@ -379,7 +379,7 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <div class="field" style="--i:4">
         <div style="display:flex;gap:8px">
           <input id="helpArea" aria-label="Area" placeholder="Area / city" required style="flex:1">
-          <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📍 My location</button>
+          <button type="button" id="geoBtn" title="Use my GPS location" onclick="RL.useGeo('helpArea')" style="flex:none;background:var(--g);color:#fff;border:none;border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">My location</button>
         </div>
       </div>
       <div class="row" style="--i:5"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
@@ -693,7 +693,7 @@ return req.then(function(r){if(r.ok){var d=(r.data&&r.data.data)||{};if((role===
 function _msg(t){var el=document.getElementById('toast');if(el){el.textContent=t;el.classList.add('show');clearTimeout(el._mt);el._mt=setTimeout(function(){el.classList.remove('show');},2800);}}
 function useGeo(fid){
   var btn=document.getElementById('geoBtn'); if(btn) btn.textContent='Locating…';
-  var done=function(ok){ if(btn){ btn.textContent=ok?'✓ Set':'📍 My location'; if(ok) setTimeout(function(){btn.textContent='📍 My location';},2000); else btn.textContent='📍 My location'; } };
+  var done=function(ok){ if(btn){ btn.textContent=ok?'✓ Set':'My location'; if(ok) setTimeout(function(){btn.textContent='My location';},2000); else btn.textContent='My location'; } };
   if(!navigator.geolocation){ _msg('Your browser does not support location'); done(false); return; }
   navigator.geolocation.getCurrentPosition(function(p){
     var la=p.coords.latitude, lo=p.coords.longitude;

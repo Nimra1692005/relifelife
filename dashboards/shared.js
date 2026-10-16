@@ -389,9 +389,9 @@ window.RL_CAT_KEY2LABEL = {
   psychological: 'Psychological Support', flood_predictor: 'AI Flood Predictor'
 };
 window.RL_CAT_EMOJI = {
-  rescue: '🚤', medical: '🏥', food: '🍱', shelter: '🏕️', clothing: '👕',
-  transport: '🚌', sanitation: '🧼', special: '♿', recovery: '🏠',
-  missing: '🔍', psychological: '💚', flood_predictor: '🌊'
+  rescue: '', medical: '', food: '', shelter: '', clothing: '',
+  transport: '', sanitation: '', special: '', recovery: '',
+  missing: '', psychological: '', flood_predictor: ''
 };
 /* Help request status → step index (0-3) matching the tracker UI */
 window.RL_HELP_STEP = { pending: 0, assigned: 1, in_progress: 2, resolved: 3 };
@@ -408,6 +408,112 @@ window.RL_MyId = function(key) {
 window.RL_Prefs = {
   get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
   set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+
+/* ═══════════════════════════════════════════
+   AI TRIAGE ENGINE — deterministic, multilingual (English / Urdu / Roman Urdu).
+   Front-end port of the backend intent + scoring engine so triage works even
+   when the server / LLM is unreachable. Exposed as window.RL_AI.
+═══════════════════════════════════════════ */
+var K = {
+  water:     /paani|pani|water|flood|sel\b|siyabi|bah[ao]|doob|subk|dub|پانی|سیلاب|ڈوب/i,
+  injured:   /zakhmi|injur|blood|bleed|chot|khoon|wound|زخمی|چوٹ|خون/i,
+  trapped:   /phans|trapped|stuck|chat\b|chatt|roof|tarap|پھنس/i,
+  medical:   /medical|ambulance|doctor|dard|tabiyat|bhari|sick|patient|pregnan|operation|oxygen|heart|طبی|اسبیتال|دل|آکسیجن/i,
+  fire:      /\baag\b|fire|burn|lash\b|smoke|dhuain|flame|آگ|جل/i,
+  storm:     /toofan|storm|cyclone|tez hawa|aandhi|heavy rain|tez barish|baarish|طوفان|بارش/i,
+  quake:     /zalzala|earthquake|kamp|tremor|shaking|زلزلہ/i,
+  landslide: /landslide|pahaad|pahad|rockfall|mountain.*slide/i,
+  missing:   /missing|gum|kho gaya|kho gayi|nazar nahi|la pata|lost child|لاپتا|گم/i,
+  children:  /bach|child|kid|minor|infant|bache|beta|beti|بچے/i,
+  elderly:   /buzurg|elderly|dadi|nani|abu|ammi jan|old person|frail|disab|بوڑھے|کمزور/i,
+  women:     /aurat|woman|female|khatoon|behen|mother|ladies|عورت|خاتون/i,
+  urgent:    /urgent|foran|fauran|jaldi|critical|khatra|danger|immediately|abhi|mauth|death|dying|فوری|خطرہ/i,
+  shelter:   /shelter|khanabados|rehne|camp\b|homeless|ghar toot|ghar gir|makan gir|پناہ|شیلٹر|کیمپ/i,
+  food:      /khaana|khana|food|roti|meal|bhook|ration|clean water|کھانا|روٹی|بھوک/i,
+  transport: /transport|gari|vehicle|nikalne|evacuat|relocate|move us|boat|kashi|bus|کشتی|نقل/i
+};
+var NUMWORD = { ek:1, do:2, teen:3, char:4, panj:5, panch:5, che:6, saat:7, aath:8, nau:9, das:10,
+  one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10 };
+
+function extractIntent(text) {
+  text = String(text || '');
+  var hit = function (re) { return re.test(text); };
+  var people = 0;
+  var m = text.match(/(\d+)\s*(?:\+)?\s*(?:log|people|members|family|individual)/i);
+  if (m) people = parseInt(m[1], 10) || 0;
+  if (!people) {
+    var w = text.match(/\b(ek|do|teen|char|panch|panj|che|saat|aath|nau|das|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:log|people|members|persons|of us|bachay|children|individuals)/i);
+    if (w) people = NUMWORD[w[1].toLowerCase()] || 0;
+  }
+  var incident = 'other';
+  if (hit(K.quake)) incident = 'earthquake';
+  else if (hit(K.fire)) incident = 'fire';
+  else if (hit(K.landslide)) incident = 'landslide';
+  else if (hit(K.water)) incident = 'flood';
+  else if (hit(K.storm)) incident = 'storm';
+  else if (hit(K.medical) || hit(K.injured)) incident = 'medical';
+  else if (hit(K.missing)) incident = 'missing';
+  var needs = [];
+  if (hit(K.trapped) || (hit(K.water) && hit(K.transport))) needs.push('rescue');
+  if (hit(K.transport) || hit(K.trapped)) needs.push('evacuation');
+  if (hit(K.medical) || hit(K.injured)) needs.push('medical');
+  if (hit(K.shelter)) needs.push('shelter');
+  if (hit(K.food) || hit(K.water)) needs.push('food_water');
+  if (hit(K.transport)) needs.push('transport');
+  if (hit(K.missing)) needs.push('search');
+  if (!needs.length) needs.push(hit(K.urgent) ? 'rescue' : 'assessment');
+  var enteringHome = hit(K.water) && /house|ghar|home|makan|building|گھر|عمارت|floor|kamra|room/i.test(text);
+  var danger = hit(K.trapped) || hit(K.injured) || hit(K.fire) || enteringHome || (hit(K.water) && hit(K.transport)) || (hit(K.medical) && (hit(K.children) || hit(K.elderly)));
+  var urgency = danger ? ((hit(K.children) || hit(K.elderly) || people >= 6 || hit(K.urgent)) ? 'critical' : 'high')
+    : hit(K.urgent) ? 'high' : 'medium';
+  if ((needs.indexOf('rescue') > -1 || needs.indexOf('evacuation') > -1) && urgency === 'medium') urgency = 'high';
+  var flags = [];
+  if (hit(K.trapped)) flags.push('trapped');
+  if (hit(K.injured)) flags.push('injured');
+  if (hit(K.children)) flags.push('children');
+  if (hit(K.elderly)) flags.push('elderly');
+  if (/pregnan/i.test(text)) flags.push('pregnant');
+  return { incident_type: incident, needs: needs.filter(function (x, i) { return needs.indexOf(x) === i; }), people_count: people, urgency: urgency, flags: flags };
+}
+
+function triageScore(urgency, people, flags) {
+  flags = flags || [];
+  var s = { critical: 55, high: 40, medium: 20, low: 8 }[urgency] || 20;
+  s += Math.min(20, (people || 0) * 3);
+  if (flags.indexOf('trapped') > -1) s += 15;
+  if (flags.indexOf('injured') > -1) s += 12;
+  if (flags.indexOf('children') > -1) s += 8;
+  if (flags.indexOf('elderly') > -1) s += 6;
+  if (flags.indexOf('pregnant') > -1) s += 8;
+  s = Math.min(100, s);
+  return { score: s, recommended: s >= 75 ? 'critical' : s >= 45 ? 'high' : s >= 25 ? 'medium' : 'low' };
+}
+
+window.RL_AI = {
+  /* Full analysis: intent + triage score + colour + human summary (EN). */
+  analyze: function (text) {
+    var intent = extractIntent(text);
+    var triage = triageScore(intent.urgency, intent.people_count, intent.flags);
+    return { intent: intent, triage: triage, color: window.RL_AI.sevColor(triage.recommended), label: window.RL_AI.sevLabel(triage.recommended) };
+  },
+  /* Force critical when the citizen themselves ticked "urgent". */
+  applyUrgentFlag: function (res, isUrgent) {
+    if (!res) return res;
+    if (isUrgent) {
+      if (res.triage.recommended === 'medium' || res.triage.recommended === 'low') {
+        res.triage = { score: Math.max(res.triage.score, 60), recommended: 'high' };
+      } else if (res.triage.recommended === 'high') {
+        res.triage = { score: Math.max(res.triage.score, 78), recommended: 'critical' };
+      }
+      res.color = window.RL_AI.sevColor(res.triage.recommended);
+      res.label = window.RL_AI.sevLabel(res.triage.recommended);
+    }
+    return res;
+  },
+  sevColor: function (u) { return { critical: '#EF5B5B', high: '#F58A3D', medium: '#F5B83D', low: '#3CC08E' }[u] || '#F5B83D'; },
+  sevLabel: function (u) { return { critical: 'CRITICAL', high: 'HIGH', medium: 'MEDIUM', low: 'LOW' }[u] || 'MEDIUM'; },
+  NEED_LABEL: { rescue: 'Rescue', evacuation: 'Evacuation', medical: 'Medical', shelter: 'Shelter', food_water: 'Food & Water', transport: 'Transport', search: 'Search', assessment: 'Assessment' }
 };
 
 /* ── TEXT SIZE (small / medium / large — applied everywhere, remembered on device) ── */
