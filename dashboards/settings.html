@@ -89,6 +89,22 @@ body { background: var(--bg); }
   margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: var(--bg);
   border: 1px dashed var(--line); font-size: 13px; line-height: 1.5;
 }
+
+/* ── ACCOUNT / danger zone ── */
+.set-card.danger { border-color: rgba(239,91,91,.32); }
+.set-card > h2 .ic-disc.danger { background: rgba(239,91,91,.12); color: #EF5B5B; }
+.acct-status { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 800; padding: 5px 11px; border-radius: 999px; margin: 2px 0 14px; }
+.acct-status.on { background: rgba(60,192,142,.15); color: #2f9e73; }
+.acct-status.off { background: rgba(245,184,61,.20); color: #b4821b; }
+.acct-status .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.acct-who { font-size: 13.5px; margin-bottom: 4px; }
+.acct-actions { display: flex; flex-direction: column; gap: 10px; }
+.acct-note { font-size: 11.5px; color: var(--mute); margin: 12px 0 0; line-height: 1.45; }
+.danger-btn { padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px; cursor: pointer; border: 1.5px solid rgba(239,91,91,.5); background: #fff; color: #EF5B5B; transition: .2s; text-align: left; font-family: inherit; }
+.danger-btn:hover { background: rgba(239,91,91,.08); }
+.warn-btn { padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px; cursor: pointer; border: 1.5px solid var(--line); background: #fff; color: var(--ink); transition: .2s; text-align: left; font-family: inherit; }
+.warn-btn:hover { border-color: var(--gold); }
+.linkin { color: var(--g); font-weight: 800; text-decoration: underline; cursor: pointer; background: none; border: none; font-size: 13.5px; padding: 0; font-family: inherit; }
 @media (max-width: 520px) {
   .set-card { padding: 18px; }
   .set-card > .sec-sub { margin-left: 0; }
@@ -191,7 +207,40 @@ body { background: var(--bg); }
     </div>
   </section>
 
+  <!-- ── ACCOUNT ── -->
+  <section class="set-card danger" id="acctCard">
+    <h2><span class="ic-disc danger"><i data-i="user"></i></span><span data-rl="acctTitle">Account</span></h2>
+    <p class="sec-sub" data-rl="acctSub">Manage your own profile — deactivate it (reversible) or delete it permanently.</p>
+    <div id="acctBody"><p class="acct-note">…</p></div>
+  </section>
+
   <p class="set-foot" data-rl="footNote">All choices are saved on this device and apply automatically.</p>
+</div>
+
+<!-- deactivate confirmation -->
+<div class="modal-overlay" id="deactModal" onclick="RL_CloseModalOutside(event,'deactModal')">
+  <div class="modal">
+    <h3 data-rl="deactTitle">Deactivate profile?</h3>
+    <p data-rl="deactDesc">Your profile is turned off and hidden. Nothing is deleted — you can reactivate any time from here.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-o" data-rl="cancel" onclick="RL_CloseModal('deactModal')">Cancel</button>
+      <button type="button" class="btn-g" style="background:#EF5B5B;color:#fff" data-rl="deactConfirm" onclick="confirmDeactivate()">Deactivate</button>
+    </div>
+  </div>
+</div>
+
+<!-- permanent delete (password confirm) -->
+<div class="modal-overlay" id="delModal" onclick="RL_CloseModalOutside(event,'delModal')">
+  <div class="modal">
+    <h3 data-rl="delTitle">Delete account permanently?</h3>
+    <p data-rl="delDesc">This removes your account, your volunteer profile (if any) and every request you submitted. This cannot be undone.</p>
+    <label for="delPw" data-rl="delPwLabel">Confirm your password</label>
+    <input class="field-input" type="password" id="delPw" placeholder="Your password" autocomplete="current-password">
+    <div class="modal-actions">
+      <button type="button" class="btn-o" data-rl="cancel" onclick="RL_CloseModal('delModal')">Cancel</button>
+      <button type="button" class="btn-g" style="background:#EF5B5B;color:#fff" id="delConfirmBtn" data-rl="delConfirm" onclick="confirmDelete()">Delete forever</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -220,6 +269,16 @@ window.RL_LANGDICT = {
   hcOptDesc:       { en: 'Stronger colours and borders for better readability.', ur: 'بہتر پڑھائی کے لیے گہرے رنگ اور borders۔', roman: 'Behtar parhai ke liye gehre colours aur borders.' },
   rmOpt:           { en: 'Reduce motion', ur: 'کم اینیمیشن', roman: 'Reduce motion (kam animations)' },
   rmOptDesc:       { en: 'Turns off animations and transitions across the app.', ur: 'پوری ایپ میں اینیمیشنز بند کر دیتا ہے۔', roman: 'Poori app mein animations aur transitions band ho jaate hain.' },
+  acctTitle:       { en: 'Account', ur: 'اکاؤنٹ', roman: 'Account' },
+  acctSub:         { en: 'Manage your own profile — deactivate it (reversible) or delete it permanently.', ur: 'اپنی پروفائل خود منتظم کریں — غیر فعال (واپس قابلِ بحالی) یا مستقل حذف کریں۔', roman: 'Apni profile khud manage karein — deactivate (wapas on ho sakti hai) ya hamesha ke liye delete karein.' },
+  deactTitle:      { en: 'Deactivate profile?', ur: 'پروفائل غیر فعال کریں؟', roman: 'Profile deactivate karein?' },
+  deactDesc:       { en: 'Your profile is turned off and hidden. Nothing is deleted — you can reactivate any time from here.', ur: 'آپ کی پروفائل بند اور پوشیدہ ہو جائے گی۔ کچھ حذف نہیں ہوگا — آپ یہاں سے کسی بھی وقت دوبارہ فعال کر سکتے ہیں۔', roman: 'Aapki profile band aur chhup jayegi. Kuch delete nahi hoga — aap yahan se kabhi bhi wapas activate kar sakte hain.' },
+  deactConfirm:    { en: 'Deactivate', ur: 'غیر فعال کریں', roman: 'Deactivate' },
+  delTitle:        { en: 'Delete account permanently?', ur: 'اکاؤنٹ مستقل حذف کریں؟', roman: 'Account hamesha ke liye delete karein?' },
+  delDesc:         { en: 'This removes your account, your volunteer profile (if any) and every request you submitted. This cannot be undone.', ur: 'یہ آپ کا اکاؤنٹ، رضاکار پروفائل (اگر کوئی) اور آپ کی تمام جمع شدہ درخواستیں حذف کر دے گا۔ یہ واپس نہیں ہو سکتا۔', roman: 'Yeh aapka account, volunteer profile (agar koi ho) aur aapki saari requests delete kar dega. Yeh wapas nahi ho sakta.' },
+  delPwLabel:      { en: 'Confirm your password', ur: 'اپنا پاس ورڈ تصدیق کریں', roman: 'Apna password confirm karein' },
+  delConfirm:      { en: 'Delete forever', ur: 'مستقل حذف کریں', roman: 'Hamesha ke liye delete' },
+  cancel:          { en: 'Cancel', ur: 'منسوخ', roman: 'Cancel' },
   footNote:        { en: 'All choices are saved on this device and apply automatically.', ur: 'تمام انتخاب اسی ڈیوائس پر محفوظ ہوتے اور خودکار طور پر لاگو ہوتے ہیں۔', roman: 'Saare choices isi device par save hote hain aur automatic lag jaate hain.' }
 };
 </script>
@@ -275,6 +334,65 @@ rSw.addEventListener('change', function () {
 /* sync UI with saved prefs (shared.js applies on its own DOMContentLoaded) */
 RL_TextSize(RL_TextSize());
 RL_Lang();
+
+/* ── ACCOUNT: view own status, deactivate (reversible), delete (permanent) ── */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+var ACCT = { status:'active', name:'', phone:'', role:'citizen' };
+function acctSignedIn(){ return !!(window.RL_Auth && RL_Auth.token()); }
+function loadAccountState(){
+  var body = document.getElementById('acctBody'); if(!body) return;
+  if(!acctSignedIn()){
+    body.innerHTML = '<p class="acct-note">You are browsing without an account. Sign in to manage or delete your profile.</p> <button type="button" class="linkin" onclick="location.href=\'../index.html\'">Sign in to manage account</button>';
+    return;
+  }
+  body.innerHTML = '<p class="acct-note">Loading\u2026</p>';
+  RL_Get('/auth/me').then(function(d){
+    var u = (d && (d.user || (d.data && d.data.user))) || (RL_Auth.user()) || {};
+    ACCT.status = u.status || 'active'; ACCT.name = u.full_name || ''; ACCT.phone = u.phone || ''; ACCT.role = u.role || 'citizen';
+    paintAccount();
+  }).catch(function(){ paintAccount(); });
+}
+function paintAccount(){
+  var body = document.getElementById('acctBody'); if(!body) return;
+  var deact = ACCT.status === 'deactivated';
+  var who = ACCT.name ? ('<div class="acct-who">' + esc(ACCT.name) + (ACCT.phone ? (' \u00b7 ' + esc(ACCT.phone)) : '') + '</div>') : '';
+  var pill = deact ? '<span class="acct-status off"><span class="dot"></span>Deactivated</span>' : '<span class="acct-status on"><span class="dot"></span>Active</span>';
+  var firstBtn = deact
+    ? '<button type="button" class="warn-btn" onclick="reactivateProfile()">Reactivate profile</button>'
+    : '<button type="button" class="warn-btn" onclick="RL_OpenModal(\'deactModal\')">Deactivate profile</button>';
+  body.innerHTML = who + pill + '<div class="acct-actions">' + firstBtn
+    + '<button type="button" class="danger-btn" onclick="openDeleteModal()">Delete account permanently</button></div>'
+    + '<p class="acct-note">Deactivating hides your profile but keeps your data. Deleting removes your account, volunteer profile and all your requests \u2014 permanently.</p>';
+  if (window.RL_Lang) RL_Lang();
+}
+function confirmDeactivate(){
+  RL_Send('POST','/auth/deactivate',{}).then(function(res){
+    RL_CloseModal('deactModal');
+    if(res && res.ok && res.data && res.data.user){ ACCT.status='deactivated'; paintAccount(); RL_Toast(res.message||'Profile deactivated'); }
+    else RL_Toast((res&&res.message)||'Could not deactivate \u2014 try again');
+  });
+}
+function reactivateProfile(){
+  RL_Send('POST','/auth/reactivate',{}).then(function(res){
+    if(res && res.ok && res.data && res.data.user){ ACCT.status='active'; paintAccount(); RL_Toast(res.message||'Profile reactivated'); }
+    else RL_Toast((res&&res.message)||'Could not reactivate \u2014 try again');
+  });
+}
+function openDeleteModal(){ var p=document.getElementById('delPw'); if(p) p.value=''; RL_OpenModal('delModal'); }
+function confirmDelete(){
+  var p=document.getElementById('delPw'); var pw=p?p.value:'';
+  if(!pw){ RL_Toast('Enter your password to confirm'); return; }
+  var btn=document.getElementById('delConfirmBtn'); if(btn) btn.disabled=true;
+  RL_Send('POST','/auth/delete-account',{password:pw}).then(function(res){
+    if(btn) btn.disabled=false;
+    if(res && res.ok && res.data && res.data.deleted){
+      RL_Toast('Account deleted');
+      setTimeout(function(){ try{ localStorage.removeItem('rl_user'); sessionStorage.removeItem('rl_user'); }catch(e){} RL_Logout(); }, 900);
+    } else if(res && res.status===0){ RL_Toast('Connection problem \u2014 please try again'); }
+    else { RL_Toast((res&&res.message)||'Could not delete \u2014 check your password'); if(p) p.value=''; }
+  });
+}
+loadAccountState();
 </script>
 </body>
 </html>

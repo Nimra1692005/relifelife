@@ -91,7 +91,7 @@ function readToken(req) {
     return t.exp && t.exp > Date.now() ? t : null;
   } catch (e) { return null; }
 }
-function publicUser(u) { return { id: u.id, full_name: u.full_name, phone: u.phone, email: u.email || null, role: u.role, city: u.city }; }
+function publicUser(u) { return { id: u.id, full_name: u.full_name, phone: u.phone, email: u.email || null, role: u.role, city: u.city, status: u.status || 'active' }; }
 
 /* ── Endpoint handlers ─────────────────────────────────── */
 async function createHelpRequest(res, b) {
@@ -268,6 +268,51 @@ async function updateProfile(res, req, b) {
     await sb('volunteers', { method: 'PATCH', query: { user_id: 'eq.' + nu.id }, body: { full_name: nu.full_name, phone: nu.phone, city: nu.city } }).catch(function () {});
   }
   ok(res, { user: publicUser(nu), token: makeToken(nu) }, 'Profile updated');
+}
+
+/* ── Self-service account controls. The token (never the body) decides which row is
+   affected, so a user can only act on their OWN profile. ── */
+async function _selfFromToken(req) {
+  const t = readToken(req);
+  if (!t || !t.uid || t.uid === 'admin') return null;
+  const rows = await sb('users', { query: { select: '*', id: 'eq.' + t.uid, limit: '1' } });
+  return (rows || [])[0] || null;
+}
+
+// Soft, reversible — profile is turned off but every record is kept.
+async function deactivateAccount(res, req) {
+  const u = await _selfFromToken(req);
+  if (!u) return fail(res, 'Session expired \u2014 please sign in again', 401);
+  try {
+    const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: { status: 'deactivated', deactivated_at: nowIso(), updated_at: nowIso() }, prefer: 'return=representation' });
+    ok(res, { user: publicUser((out && out[0]) || Object.assign({}, u, { status: 'deactivated' })) }, 'Profile deactivated \u2014 you can reactivate any time');
+  } catch (e) {
+    fail(res, 'Account settings not ready yet \u2014 the database migration (005) needs to be applied first', 500);
+  }
+}
+
+async function reactivateAccount(res, req) {
+  const u = await _selfFromToken(req);
+  if (!u) return fail(res, 'Session expired \u2014 please sign in again', 401);
+  try {
+    const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: { status: 'active', deactivated_at: null, updated_at: nowIso() }, prefer: 'return=representation' });
+    ok(res, { user: publicUser((out && out[0]) || Object.assign({}, u, { status: 'active' })) }, 'Profile reactivated');
+  } catch (e) {
+    fail(res, 'Account settings not ready yet \u2014 the database migration (005) needs to be applied first', 500);
+  }
+}
+
+// Permanent — needs the account password, then removes the account, its volunteer
+// profile and every help request the person submitted. Cannot be undone.
+async function deleteAccount(res, req, b) {
+  const u = await _selfFromToken(req);
+  if (!u) return fail(res, 'Session expired \u2014 please sign in again', 401);
+  if (!b.password || !verifyPassword(b.password, u.password_hash)) return fail(res, 'Enter your password to confirm permanent deletion', 401);
+  await sb('volunteers', { method: 'DELETE', query: { user_id: 'eq.' + u.id } }).catch(function () {});
+  await sb('help_requests', { method: 'DELETE', query: { user_id: 'eq.' + u.id } }).catch(function () {});
+  if (u.phone) await sb('help_requests', { method: 'DELETE', query: { phone: 'eq.' + u.phone } }).catch(function () {});
+  await sb('users', { method: 'DELETE', query: { id: 'eq.' + u.id } });
+  ok(res, { deleted: true }, 'Your account and its data have been permanently deleted');
 }
 
 async function adminSignin(res, b) {
@@ -631,6 +676,9 @@ module.exports = async function handler(req, res) {
       if (seg[1] === 'me' && method === 'GET') return await me(res, req);
       if (seg[1] === 'promote-citizen' && method === 'POST') return await promoteCitizen(res, b);
       if (seg[1] === 'update-profile' && method === 'POST') return await updateProfile(res, req, b);
+      if (seg[1] === 'deactivate' && method === 'POST') return await deactivateAccount(res, req);
+      if (seg[1] === 'reactivate' && method === 'POST') return await reactivateAccount(res, req);
+      if (seg[1] === 'delete-account' && method === 'POST') return await deleteAccount(res, req, b);
       if (seg[1] === 'register-role' && method === 'POST') return await registerRole(res, b);
       return fail(res, 'Unknown auth endpoint', 404);
     }
