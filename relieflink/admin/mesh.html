@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ReliefLink — Mesh Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--dk:#0b3b2c;--dk2:#12503c;--cream:#fbf3de;--cream2:#f3e6c4;--gold:#d9b567;--card:#fffaf0;--ink:#0b3b2c;--mut:#6b7c6b;
+--red:#c4443a;--mesh:#2ee6a6;--mesh2:#0d9c70;--amber:#e0a02e;--line:rgba(11,59,44,.12);--sh:0 4px 20px rgba(11,59,44,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;background:var(--cream);color:var(--ink);display:flex;flex-direction:column}
+button,input{font:inherit;color:inherit}
+.top{background:linear-gradient(135deg,var(--dk),var(--dk2));color:var(--cream);padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));
+display:flex;align-items:center;gap:12px;border-bottom:2px solid rgba(217,181,103,.25);flex:none}
+.back{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;color:inherit;text-decoration:none;font-size:18px}
+.top h1{font-size:16px;font-weight:800;line-height:1.1}.top small{font-size:11px;opacity:.7}
+.grow{flex:1;min-width:0}
+.pill{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.1)}
+.dot{width:9px;height:9px;border-radius:50%;background:#999}
+.pill.live .dot{background:var(--mesh);box-shadow:0 0 0 0 rgba(46,230,166,.7);animation:pulse 1.8s infinite}
+.pill.wait .dot{background:var(--amber);animation:blink 1s infinite}
+.pill.off .dot{background:var(--red)}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(46,230,166,0)}100%{box-shadow:0 0 0 0 rgba(46,230,166,0)}}
+@keyframes blink{50%{opacity:.25}}
+.banner{display:none;flex:none;padding:9px 16px;font-size:12.5px;font-weight:600;background:#fff3cd;color:#6b4e00;border-bottom:1px solid #ecd28a}
+.banner.show{display:block}.banner.err{background:#fde4e1;color:#8a2a22;border-color:#f0b7b1}
+main{flex:1;min-height:0;display:grid;grid-template-columns:360px 1fr;gap:14px;padding:14px;max-width:1200px;width:100%;margin:0 auto}
+.col{display:flex;flex-direction:column;gap:14px;min-height:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh);padding:14px}
+.card h2{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.inp{width:100%;padding:11px 13px;border-radius:11px;border:1.5px solid var(--line);background:#fff;margin-bottom:10px;outline:none}
+.inp:focus{border-color:var(--mesh2)}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--mesh2),#14b886);color:#fff;width:100%}
+.btn:active{transform:scale(.98)}.btn.sec{background:var(--cream2);color:var(--ink)}
+.btn.sos{background:linear-gradient(135deg,#d9483b,#a8281f)}
+.radar-wrap{display:grid;place-items:center}
+svg.radar{width:100%;max-width:330px;height:auto}
+.legend{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:6px}
+.peers{display:flex;flex-direction:column;gap:8px;max-height:240px;overflow:auto}
+.peer{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--dk2);color:var(--gold);display:grid;place-items:center;font-weight:800;font-size:12px;flex:none}
+.peer b{font-size:13px;display:block}.peer span{font-size:11px;color:var(--mut)}
+.tag{margin-left:auto;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:99px;background:#dff7ec;color:#0a7a55;white-space:nowrap}
+.tag.far{background:#f3eede;color:#7a6a3a}.tag.unk{background:#eee;color:#777}
+.empty{font-size:12.5px;color:var(--mut);text-align:center;padding:14px}
+.chat{display:flex;flex-direction:column;min-height:0;height:100%;padding:0;overflow:hidden}
+.chat-h{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.chat-h b{font-size:15px}.chat-h span{font-size:12px;color:var(--mut)}
+#box{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(#fffdf6,#fbf3de)}
+.m{max-width:80%;display:flex;flex-direction:column;gap:3px}.m.me{align-self:flex-end;align-items:flex-end}
+.m .n{font-size:11px;font-weight:700;color:var(--mut)}
+.bub{padding:9px 13px;border-radius:16px;background:#fff;border:1px solid var(--line);font-size:14px;line-height:1.4;word-break:break-word;white-space:pre-wrap}
+.me .bub{background:var(--dk2);color:#fff;border-color:transparent;border-bottom-right-radius:4px}
+.m:not(.me) .bub{border-bottom-left-radius:4px}
+.m.em .bub{background:#fde4e1;border:1.5px solid var(--red);color:#7d1f18;font-weight:700}
+.me.em .bub{background:var(--red);color:#fff}
+.meta{font-size:10.5px;color:var(--mut)}
+.sys{align-self:center;font-size:11.5px;color:var(--mut);background:rgba(11,59,44,.06);padding:5px 12px;border-radius:99px;text-align:center}
+.quick{display:flex;gap:6px;padding:8px 12px 0;overflow-x:auto;flex:none}
+.quick button{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}
+.send{display:flex;gap:8px;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));flex:none}
+.send .inp{margin:0;flex:1}.send .btn{width:auto;padding:0 18px}.send .btn.sos{padding:0 14px}
+.info{font-size:12px;color:var(--mut);line-height:1.55}.info b{color:var(--ink)}
+.hide{display:none!important}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--dk);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media(max-width:860px){
+ main{grid-template-columns:1fr;padding:10px;gap:10px;overflow:auto;display:block}
+ .col{margin-bottom:10px}.chat{height:70vh;min-height:420px}
+ .tabs{display:flex!important}
+ body.joined .side{display:none}body.joined.tab-peers .side{display:flex}body.joined.tab-peers .chatcol{display:none}
+}
+.tabs{display:none;gap:8px;padding:8px 10px;background:var(--cream2);flex:none}
+.tabs button{flex:1;border:0;border-radius:10px;padding:9px;font-weight:700;background:transparent;cursor:pointer}
+.tabs button.on{background:var(--dk2);color:#fff}
+</style>
+</head>
+<body>
+<div class="top">
+  <a class="back" href="javascript:history.back()" aria-label="Back">←</a>
+  <div class="grow"><h1>Mesh Network</h1><small id="zoneLbl">Real-time zone chat · 1 km radar</small></div>
+  <div class="pill off" id="pill"><i class="dot"></i><span id="pillTxt">Not joined</span></div>
+</div>
+<div class="banner" id="banner"></div>
+<div class="tabs" id="tabs"><button id="tChat" class="on">💬 Chat</button><button id="tPeers">📡 Nearby <span id="tCount"></span></button></div>
+
+<main>
+  <div class="col side">
+    <div class="card" id="joinCard">
+      <h2>Join a zone</h2>
+      <input class="inp" id="nameInp" placeholder="Your name" maxlength="30" autocomplete="name">
+      <input class="inp" id="zoneInp" placeholder="Zone (e.g. Lahore-Ravi)" maxlength="40" value="General">
+      <button class="btn" id="joinBtn">Join network</button>
+      <p class="info" style="margin-top:10px">Everyone who enters the same zone name sees your messages instantly. Share the zone name with your team.</p>
+    </div>
+
+    <div class="card hide" id="radarCard">
+      <h2>Nearby radar <span id="gpsLbl" style="text-transform:none;letter-spacing:0">GPS off</span></h2>
+      <div class="radar-wrap">
+        <svg class="radar" viewBox="-160 -160 320 320" id="radar">
+          <circle r="150" fill="#0b3b2c"/>
+          <circle r="150" fill="none" stroke="#2ee6a6" stroke-opacity=".5"/>
+          <circle r="100" fill="none" stroke="#2ee6a6" stroke-opacity=".28" stroke-dasharray="3 4"/>
+          <circle r="50" fill="none" stroke="#2ee6a6" stroke-opacity=".28" stroke-dasharray="3 4"/>
+          <line x1="-150" y1="0" x2="150" y2="0" stroke="#2ee6a6" stroke-opacity=".15"/>
+          <line x1="0" y1="-150" x2="0" y2="150" stroke="#2ee6a6" stroke-opacity=".15"/>
+          <text y="-153" x="0" fill="#d9b567" font-size="9" text-anchor="middle" dy="12">N</text>
+          <text x="4" y="-46" fill="#2ee6a6" fill-opacity=".7" font-size="8">250 m</text>
+          <text x="4" y="-96" fill="#2ee6a6" fill-opacity=".7" font-size="8">500 m</text>
+          <text x="4" y="-146" fill="#2ee6a6" fill-opacity=".7" font-size="8" dy="10">1 km</text>
+          <g id="blips"></g>
+          <circle r="6" fill="#d9b567"/><circle r="11" fill="none" stroke="#d9b567" stroke-opacity=".6"/>
+        </svg>
+      </div>
+      <div class="legend"><span>● You</span><span>● Within 1 km</span><span>● Farther / unknown</span></div>
+    </div>
+
+    <div class="card hide" id="peerCard">
+      <h2>People in zone <span id="peerCount" style="text-transform:none;letter-spacing:0">0</span></h2>
+      <div class="peers" id="peers"></div>
+    </div>
+
+    <div class="card">
+      <h2>How it works</h2>
+      <p class="info"><b>Online:</b> messages travel through the ReliefLink server in real time, with delivery ticks (✓ sent, ✓✓ delivered).<br>
+      <b>No internet:</b> messages wait in your outbox and are sent automatically when the connection returns.<br>
+      <b>Radar:</b> uses GPS positions to show who is within 1 km.<br>
+      <b>Note:</b> phone Bluetooth reaches only ~10–50 m and browsers can't build a Bluetooth mesh. For true offline 1 km+ links use LoRa radios (e.g. Meshtastic).</p>
+    </div>
+  </div>
+
+  <div class="col chatcol">
+    <div class="card chat hide" id="chatCard">
+      <div class="chat-h"><div class="av" style="background:var(--mesh2);color:#fff">📡</div>
+        <div class="grow"><b id="chatTitle">Zone</b><br><span id="chatSub">Connecting…</span></div></div>
+      <div id="box"></div>
+      <div class="quick" id="quick">
+        <button>💧 Need water</button><button>🩺 Medical help</button><button>🍞 Need food</button><button>✅ I'm safe</button><button>🚧 Road blocked</button>
+      </div>
+      <div class="send">
+        <input class="inp" id="msgInp" placeholder="Type a message…" maxlength="1000" autocomplete="off">
+        <button class="btn" id="sendBtn">Send</button>
+        <button class="btn sos" id="sosBtn" title="Send emergency alert with location">🚨 SOS</button>
+      </div>
+    </div>
+    <div class="card empty" id="chatPlaceholder"><div style="font-size:34px">📡</div>Join a zone to start chatting in real time.</div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script src="../../config.js" onerror="void 0"></script>
+<script>
+(function(){
+'use strict';
+var API=(window.RELIEF_API||'https://relieflink-api.onrender.com/api/v1').replace(/\/$/,'');
+var WS_BASE=API.replace(/^http/,'ws')+'/mesh/ws';
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+
+var myId=store('rl_mesh_id')||('p'+Math.random().toString(36).slice(2,9)); store('rl_mesh_id',myId);
+var myName='',zone='',ws=null,joined=false,retry=0,hb=null,lastPong=0,wake=null,reconTimer=null;
+var peers={},me=null,seen={},outbox=[],pending={},watchId=null,lastSent=null;
+
+/* ── UI helpers ── */
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('show')},2600)}
+function setPill(cls,txt){$('pill').className='pill '+cls;$('pillTxt').textContent=txt;$('chatSub').textContent=txt}
+function banner(msg,err){var b=$('banner');if(!msg){b.className='banner';return}b.textContent=msg;b.className='banner show'+(err?' err':'')}
+function time(d){return new Date(d||Date.now()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+function sys(t){var d=document.createElement('div');d.className='sys';d.textContent=t;add(d)}
+function add(el){var b=$('box'),near=b.scrollHeight-b.scrollTop-b.clientHeight<120;b.appendChild(el);if(near||el.classList.contains('me'))b.scrollTop=b.scrollHeight}
+function beep(){try{var C=new(window.AudioContext||window.webkitAudioContext)(),o=C.createOscillator(),g=C.createGain();o.connect(g);g.connect(C.destination);o.type='square';o.frequency.value=880;g.gain.value=.08;o.start();o.stop(C.currentTime+.35)}catch(e){}if(navigator.vibrate)navigator.vibrate([200,100,200])}
+
+function bubble(m,mine,status){
+  var d=document.createElement('div');d.className='m'+(mine?' me':'')+(m.emergency?' em':'');
+  d.innerHTML=(mine?'':'<div class="n">'+esc(m.from_name)+(m.emergency?' · 🚨 EMERGENCY':'')+'</div>')+
+    '<div class="bub">'+esc(m.text)+'</div><div class="meta"><span class="t">'+time(m.timestamp)+'</span> <span class="st">'+(status||'')+'</span></div>';
+  add(d);return d}
+
+/* ── geo ── */
+function hav(a,b){var R=6371000,r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lon-a.lon)*r,
+ x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
+function bear(a,b){var r=Math.PI/180,y=Math.sin((b.lon-a.lon)*r)*Math.cos(b.lat*r),
+ x=Math.cos(a.lat*r)*Math.sin(b.lat*r)-Math.sin(a.lat*r)*Math.cos(b.lat*r)*Math.cos((b.lon-a.lon)*r);return Math.atan2(y,x)}
+function fmt(m){return m<1000?Math.round(m)+' m':(m/1000).toFixed(1)+' km'}
+
+function startGPS(){
+  if(!navigator.geolocation){$('gpsLbl').textContent='GPS unsupported';return}
+  if(watchId!=null)return;
+  watchId=navigator.geolocation.watchPosition(function(p){
+    me={lat:p.coords.latitude,lon:p.coords.longitude,accuracy:p.coords.accuracy};
+    $('gpsLbl').textContent='GPS ±'+Math.round(me.accuracy)+' m';
+    var now=Date.now();
+    if(!lastSent||now-lastSent.t>15000||hav(lastSent,me)>25){shareLoc(true)}
+    render();
+  },function(){$('gpsLbl').textContent='GPS denied — radar needs location'},{enableHighAccuracy:true,maximumAge:5000,timeout:20000});
+}
+function shareLoc(quiet){
+  if(!me)return false;
+  if(ws&&ws.readyState===1){ws.send(JSON.stringify({type:'location',lat:me.lat,lon:me.lon,accuracy:me.accuracy}));lastSent={lat:me.lat,lon:me.lon,t:Date.now()};return true}
+  return false}
+
+/* ── peers + radar ── */
+function render(){
+  var list=Object.keys(peers).map(function(id){var p=peers[id];
+    p.dist=(me&&p.lat!=null)?hav(me,p):null;return p}).sort(function(a,b){return(a.dist==null)-(b.dist==null)||a.dist-b.dist});
+  var n=list.length;$('peerCount').textContent=n;$('tCount').textContent=n?'('+n+')':'';
+  $('peers').innerHTML=n?list.map(function(p){
+    var ini=esc((p.name||'?').split(' ').map(function(w){return w[0]}).join('').toUpperCase().slice(0,2));
+    var cls=p.dist==null?'unk':p.dist<=1000?'':'far',txt=p.dist==null?'location unknown':fmt(p.dist);
+    return '<div class="peer"><div class="av">'+ini+'</div><div><b>'+esc(p.name)+'</b><span>'+(p.dist!=null&&p.dist<=1000?'In range':'Online')+'</span></div><div class="tag '+cls+'">'+txt+'</div></div>'}).join('')
+    :'<div class="empty">No one else here yet. Share the zone name with your team.</div>';
+  var g='';
+  list.forEach(function(p){
+    if(!me||p.lat==null)return;
+    var d=p.dist,r=Math.min(d,1200)/1200*150,a=bear(me,p),x=Math.sin(a)*r,y=-Math.cos(a)*r,ok=d<=1000;
+    g+='<g><circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6" fill="'+(ok?'#2ee6a6':'#9a8f6a')+'"/>'+
+       '<text x="'+(x+9).toFixed(1)+'" y="'+(y+3).toFixed(1)+'" fill="#fbf3de" font-size="9">'+esc(p.name.split(' ')[0])+'</text></g>'});
+  $('blips').innerHTML=g}
+
+/* ── websocket ── */
+function connect(){
+  clearTimeout(reconTimer);
+  if(ws&&(ws.readyState===0||ws.readyState===1))return;
+  setPill('wait',retry?'Reconnecting…':'Connecting…');
+  clearTimeout(wake);wake=setTimeout(function(){banner('Waking up the server (free hosting) — this can take up to 40 seconds…')},5000);
+  var s=new WebSocket(WS_BASE+'/'+encodeURIComponent(zone)+'/'+encodeURIComponent(myId)+'?name='+encodeURIComponent(myName));
+  ws=s;
+  s.onopen=function(){clearTimeout(wake);banner('');retry=0;lastPong=Date.now();
+    clearInterval(hb);hb=setInterval(function(){
+      if(Date.now()-lastPong>50000){try{s.close()}catch(e){}return}
+      if(s.readyState===1)s.send('{"type":"ping"}')},20000)};
+  s.onmessage=function(e){var d;try{d=JSON.parse(e.data)}catch(x){return}handle(d)};
+  s.onclose=function(){if(ws!==s)return;clearTimeout(wake);clearInterval(hb);
+    if(!joined)return;
+    setPill(navigator.onLine?'wait':'off',navigator.onLine?'Reconnecting…':'Offline — messages will be queued');
+    if(!navigator.onLine)banner('No internet. Your messages are saved and will send when you are back online.',true);
+    var wait=Math.min(1000*Math.pow(2,retry++),15000);reconTimer=setTimeout(connect,wait)};
+  s.onerror=function(){}
+}
+function handle(d){
+  switch(d.type){
+  case 'welcome':
+    setPill('live','Live · '+d.peers.length+' in zone');banner('');
+    peers={};d.peers.forEach(function(p){if(p.peer_id!==myId)peers[p.peer_id]=p});
+    (d.history||[]).forEach(function(m){if(seen[m.id])return;seen[m.id]=1;bubble(m,m.from_id===myId,m.from_id===myId?'✓✓':'')});
+    flush();if(me)shareLoc(true);render();break;
+  case 'peer_joined':peers[d.peer_id]={peer_id:d.peer_id,name:d.name};sys('👋 '+d.name+' joined');render();updateLive();if(me)shareLoc(true);break;
+  case 'peer_left':var nm=(peers[d.peer_id]||{}).name||d.name||'A person';delete peers[d.peer_id];sys(nm+' left');render();updateLive();break;
+  case 'location':var p=peers[d.from_id]||(peers[d.from_id]={peer_id:d.from_id,name:d.from_name});p.lat=d.lat;p.lon=d.lon;p.accuracy=d.accuracy;render();break;
+  case 'message':if(seen[d.id])break;seen[d.id]=1;bubble(d,false);if(d.emergency){beep();toast('🚨 Emergency from '+d.from_name)}break;
+  case 'ack':var el=pending[d.cid];if(el){seen[d.id]=1;el.querySelector('.st').textContent=d.delivered_to>0?'✓✓ delivered to '+d.delivered_to:'✓ sent (nobody else online)';delete pending[d.cid]}break;
+  case 'pong':lastPong=Date.now();break}}
+function updateLive(){setPill('live','Live · '+(Object.keys(peers).length+1)+' in zone')}
+
+/* ── sending (with offline outbox) ── */
+function deliver(item){
+  if(ws&&ws.readyState===1){ws.send(JSON.stringify({type:'send',text:item.text,emergency:item.em,cid:item.cid}));return true}return false}
+function flush(){var q=outbox;outbox=[];q.forEach(function(it){if(!deliver(it))outbox.push(it);else it.el.querySelector('.st').textContent='sending…'})}
+function send(text,em){
+  text=(text||'').trim();if(!text)return;
+  var cid=Math.random().toString(36).slice(2,9);
+  var el=bubble({from_name:'You',text:text,emergency:em,timestamp:Date.now()},true,'');
+  var it={cid:cid,text:text,em:!!em,el:el};pending[cid]=el;
+  if(deliver(it))el.querySelector('.st').textContent='sending…';
+  else{outbox.push(it);el.querySelector('.st').textContent='⏳ queued — will send when online'}}
+
+/* ── join ── */
+function join(){
+  myName=$('nameInp').value.trim()||'Anonymous';zone=($('zoneInp').value.trim()||'General').replace(/\s+/g,'-');
+  store('rl_mesh_name',myName);store('rl_mesh_zone',zone);
+  joined=true;document.body.classList.add('joined');
+  ['joinCard'].forEach(function(i){$(i).classList.add('hide')});
+  ['radarCard','peerCard','chatCard'].forEach(function(i){$(i).classList.remove('hide')});
+  $('chatPlaceholder').classList.add('hide');$('chatTitle').textContent='Zone: '+zone;$('zoneLbl').textContent='Zone: '+zone;
+  sys('Joining zone "'+zone+'"…');startGPS();connect();render()}
+
+$('joinBtn').onclick=join;
+$('nameInp').value=store('rl_mesh_name')||'';$('zoneInp').value=store('rl_mesh_zone')||'General';
+$('nameInp').onkeydown=$('zoneInp').onkeydown=function(e){if(e.key==='Enter')join()};
+$('sendBtn').onclick=function(){send($('msgInp').value);$('msgInp').value='';$('msgInp').focus()};
+$('msgInp').onkeydown=function(e){if(e.key==='Enter')$('sendBtn').click()};
+$('quick').onclick=function(e){if(e.target.tagName==='BUTTON')send(e.target.textContent)};
+$('sosBtn').onclick=function(){
+  if(!confirm('Send an EMERGENCY alert to everyone in this zone?'))return;
+  var loc=me?' My location: https://maps.google.com/?q='+me.lat.toFixed(5)+','+me.lon.toFixed(5):'';
+  send('🚨 EMERGENCY — I need immediate help!'+loc,true);shareLoc();toast('🚨 Emergency alert sent')};
+$('tChat').onclick=function(){document.body.classList.remove('tab-peers');$('tChat').classList.add('on');$('tPeers').classList.remove('on')};
+$('tPeers').onclick=function(){document.body.classList.add('tab-peers');$('tPeers').classList.add('on');$('tChat').classList.remove('on')};
+window.addEventListener('online',function(){if(joined){retry=0;connect()}});
+window.addEventListener('offline',function(){if(joined){setPill('off','Offline — messages will be queued');banner('No internet. Your messages are saved and will send when you are back online.',true)}});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&joined&&(!ws||ws.readyState>1)){retry=0;connect()}});
+})();
+</script>
+</body>
+</html>
