@@ -149,26 +149,108 @@ window.RL_LIVE = (function () {
     }).catch(function () { return null; });
   }
 
-  // Combine weather + river discharge into an honest flood-risk estimate.
+  // Combine weather + river discharge into an honest, location-calibrated flood-risk
+  // estimate. NEVER fabricates: when no usable source returns, pct=null + uncertain=true.
+  function _mean(a){ return a.length ? a.reduce(function(x,y){return x+y;},0)/a.length : 0; }
   function risk(wx, fl) {
-    var precip48 = 0;
-    if (wx && wx.daily && wx.daily.precipitation_sum) {
-      var p = wx.daily.precipitation_sum; precip48 = (p[0] || 0) + (p[1] || 0);
+    var nowD = new Date().toISOString().slice(0, 10);
+    // Rainfall: Open-Meteo daily precipitation (mm). Use the forecast window from today forward, next 48h.
+    var precip48 = 0, rainDays = 0;
+    if (wx && wx.daily && Array.isArray(wx.daily.precipitation_sum) && Array.isArray(wx.daily.time)) {
+      var t = wx.daily.time, p = wx.daily.precipitation_sum;
+      for (var i = 0; i < t.length && rainDays < 2; i++) { if (t[i] >= nowD) { precip48 += (p[i] || 0); rainDays++; } }
     }
-    var dis = [], now = 0, maxFc = 0;
-    if (fl && fl.daily && Array.isArray(fl.daily.river_discharge)) {
-      dis = fl.daily.river_discharge;
-      now = dis.length > 6 ? dis[5] : dis[0];
-      maxFc = Math.max.apply(null, dis.slice(6).length ? dis.slice(6) : dis);
+    var hasRain = rainDays > 0;
+    // River discharge (GloFAS via Open-Meteo flood API, m³/s at this point's grid cell).
+    // Calibrate against THIS location's own recent baseline, not one global threshold.
+    var riverNow = 0, riverMax = 0, baseline = 0, ratio = 0, hasRiver = false;
+    if (fl && fl.daily && Array.isArray(fl.daily.river_discharge) && Array.isArray(fl.daily.time)) {
+      var rt = fl.daily.time, rd = fl.daily.river_discharge, past = [], fc = [];
+      for (var k = 0; k < rt.length; k++) { var v = rd[k]; if (v == null || isNaN(v)) continue; (rt[k] < nowD ? past : fc).push(v); }
+      if (fc.length) {
+        hasRiver = true;
+        riverMax = Math.max.apply(null, fc);
+        riverNow = past.length ? past[past.length - 1] : fc[0];
+        baseline = past.length >= 2 ? _mean(past) : (past.length === 1 ? past[0] : _mean(fc));
+        ratio = baseline > 0.5 ? riverMax / baseline : 1;
+      }
     }
-    var pct = Math.round(Math.min(95,
-      precip48 * 3 + Math.max(0, (maxFc - now)) * 1.2 +
-      (maxFc > 150 ? 35 : maxFc > 50 ? 18 : maxFc > 10 ? 8 : 0)));
-    var status = maxFc > 150 ? 'Above danger mark' : maxFc > 50 ? 'Elevated' : maxFc > 10 ? 'Normal' : 'Low';
-    var trend = (now > 0.05 && maxFc > now * 1.3) ? 'Rising' : (now > 0.05 && maxFc < now * 0.8) ? 'Falling' : 'Steady';
-    var rise = Math.max(0, maxFc - now);
-    var confidence = Math.min(96, 60 + Math.round(precip48 * 2) + (dis.length ? 12 : 0));
-    return { pct: pct, riverNow: +now.toFixed(2), riverMax: +maxFc.toFixed(2), precip48: +precip48.toFixed(1), status: status, trend: trend, rise: +rise.toFixed(2), confidence: confidence };
+    var usable = hasRain || hasRiver;
+    if (!usable) {
+      return { pct: null, uncertain: true, status: 'Data unavailable', trend: 'Unknown',
+        riverNow: 0, riverMax: 0, precip48: 0, rise: 0, ratio: 0, confidence: 0,
+        sources: { rain: false, river: false }, asOf: null,
+        note: 'Live weather and river sources returned no data for this point — no risk value is estimated.' };
+    }
+    // River anomaly above the local baseline is the primary, calibrated signal (capped at 70).
+    var riverScore = hasRiver ? Math.max(0, Math.min(70, (ratio - 1) * 45)) : 0;
+    // Forecast rainfall adds flash-flood pressure (capped): ~25 mm/48h ≈ full 35 weight.
+    var rainScore = hasRain ? Math.min(35, precip48 * 1.4) : 0;
+    var pct = Math.max(0, Math.min(92, Math.round(riverScore + rainScore)));
+    // Status word from the discharge ratio (relative to this reach's normal) — not a fake absolute danger mark.
+    var status = !hasRiver ? 'No river gauge at this point'
+      : ratio >= 1.6 ? 'Well above this reach\u2019s normal'
+      : ratio >= 1.2 ? 'Above normal'
+      : ratio >= 0.8 ? 'Near normal' : 'Below normal';
+    var trend = !hasRiver ? 'Unknown'
+      : (riverNow > 0.5 && riverMax > riverNow * 1.3) ? 'Rising'
+      : (riverNow > 0.5 && riverMax < riverNow * 0.8) ? 'Falling' : 'Steady';
+    var rise = hasRiver ? Math.max(0, riverMax - riverNow) : 0;
+    // Confidence reflects source completeness + corroboration; capped at 85%, never 100%.
+    var confidence = 0;
+    if (hasRiver) confidence += 35;
+    if (hasRain) confidence += 25;
+    if (hasRiver && ratio >= 1.2) confidence += 10;   // a real measured anomaly raises certainty
+    if (hasRiver && hasRain) confidence += 10;         // two independent sources agree
+    confidence = Math.min(85, Math.max(20, confidence));
+    return { pct: pct, uncertain: false, status: status, trend: trend,
+      riverNow: +riverNow.toFixed(2), riverMax: +riverMax.toFixed(2),
+      precip48: +precip48.toFixed(1), rise: +rise.toFixed(2), ratio: +ratio.toFixed(2),
+      confidence: confidence, sources: { rain: hasRain, river: hasRiver },
+      asOf: new Date().toISOString(),
+      note: hasRiver ? ('River discharge here is ' + ratio.toFixed(2) + '\u00d7 its recent baseline (GloFAS grid cell, m\u00b3/s).')
+                     : 'No river gauge cell here — estimate is rainfall-driven only (flash-flood signal).' };
+  }
+
+  /* ── Verified nearby facilities: OpenStreetMap (Overpass) + an optional caller registry.
+       Distances are haversine-checked, coordinates validated inside Pakistan, and results
+       are capped to a radius so a far-away place is NEVER presented as "nearest". ── */
+  function nearestFacilities(lat, lng, opts) {
+    opts = opts || {};
+    var radiusKm = opts.radiusKm || 50, limit = opts.limit || 6;
+    var self = { lat: lat, lng: lng };
+    var registry = (opts.registry || []).map(function (x) {
+      return { name: x.name, kind: x.kind, lat: +x.lat, lng: +x.lng, source: x.source || 'Registry' };
+    });
+    function finalize(all) {
+      var seen = {}, out = [];
+      (all || []).forEach(function (f) {
+        if (f.lat == null || f.lng == null || isNaN(f.lat) || isNaN(f.lng)) return;   // drop unverified rows
+        if (!inPK(f.lat, f.lng)) return;                                             // reject out-of-scope coords
+        var d = distKm(self, { lat: f.lat, lng: f.lng });
+        if (d > radiusKm) return;                                                    // never call a far place "nearest"
+        var key = (f.name || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 28);
+        if (key && seen[key]) return; seen[key] = 1;
+        f.km = d; out.push(f);
+      });
+      out.sort(function (a, b) { return a.km - b.km; });
+      // Keep the nearest `limit` PER kind so a dense cluster of one type (e.g. shelters)
+      // can never crowd out hospitals (or vice-versa) from the "nearest help" list.
+      var perKind = {}, res = [];
+      out.forEach(function (f) {
+        var k = f.kind || 'Other';
+        perKind[k] = (perKind[k] || 0);
+        if (perKind[k] < limit) { perKind[k]++; res.push(f); }
+      });
+      res.sort(function (a, b) { return a.km - b.km; });
+      return res;
+    }
+    var rM = Math.max(3000, Math.min(50000, radiusKm * 1000));
+    // ONE combined Overpass request (hospital + shelter in a single union) halves the
+    // load on the free endpoint and reduces throttle-failures versus two separate calls.
+    return overpassFacilities(lat, lng, rM).then(function (osm) {
+      return finalize(registry.concat(osm));
+    }).catch(function () { return finalize(registry); });
   }
 
   /* ── Pakistan-wide live earthquake feed — USGS M4.5+ past week (compact, keyless) filtered to Pakistan + Hindu Kush ── */
@@ -184,7 +266,36 @@ window.RL_LIVE = (function () {
   }
 
   /* ── Real nearby Points-of-Interest from OpenStreetMap (Overpass, keyless, mirror fallback) ── */
-  var OPASS_MIRRORS = ['https://overpass-api.de/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  var OPASS_MIRRORS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  /* ── Combined hospital + shelter query in one request — returns rows already tagged Hospital/Shelter ── */
+  function overpassFacilities(lat, lng, radiusM) {
+    var ar = '(around:' + (radiusM || 12000) + ',' + lat + ',' + lng + ')';
+    var specs = [
+      ['node', '["amenity"="hospital"]'], ['way', '["amenity"="hospital"]'],
+      ['node', '["amenity"="shelter"]'], ['node', '["emergency"="shelter"]'],
+      ['way', '["amenity"="shelter"]'], ['node', '["amenity"="community_centre"]']
+    ];
+    var body = specs.map(function (s) { return s[0] + s[1] + ar + ';'; }).join('');
+    var data = '[out:json][timeout:25];(' + body + ');out center 40;';
+    var i = 0;
+    function tryOne() {
+      if (i >= OPASS_MIRRORS.length) return Promise.resolve([]);
+      return fetch(OPASS_MIRRORS[i++], { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'data=' + encodeURIComponent(data) })
+        .then(function (r) { if (!r.ok) throw new Error('http' + r.status); return r.json(); })
+        .then(function (j) {
+          return ((j && j.elements) || []).map(function (el) {
+            var t = el.tags || {};
+            var la = el.lat != null ? el.lat : (el.center && el.center.lat);
+            var lo = el.lon != null ? el.lon : (el.center && el.center.lon);
+            if (la == null || lo == null) return null;
+            var isHosp = t.amenity === 'hospital';
+            return { name: t.name || (isHosp ? 'Hospital' : 'Shelter'), kind: isHosp ? 'Hospital' : 'Shelter', lat: la, lng: lo, source: 'OpenStreetMap' };
+          }).filter(Boolean);
+        })
+        .catch(tryOne);
+    }
+    return tryOne();
+  }
   function opBody(kind, ar) {
     var specs = {
       hospital: [['node', '["amenity"="hospital"]'], ['way', '["amenity"="hospital"]']],
@@ -236,5 +347,5 @@ window.RL_LIVE = (function () {
     return mk;
   }
 
-  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, floodSeries: floodSeries, rainSeries: rainSeries, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, quakesPK: quakesPK, overpassPOI: overpassPOI, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
+  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, floodSeries: floodSeries, rainSeries: rainSeries, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, nearestFacilities: nearestFacilities, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, quakesPK: quakesPK, overpassPOI: overpassPOI, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
 })();
