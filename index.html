@@ -834,7 +834,7 @@ function wireLink(id,fn){var el=document.getElementById(id);if(!el)return;
   el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();}});}
 wireLink('toVolSign',function(){dstop();setRole('volunteer',true);volMode(true);});
 wireLink('toVolReg',function(){volMode(false);});
-if(location.hash==='#signin'){dstop();setRole('volunteer',true);volMode(true);}
+if(location.hash==='#signin'){dstop();setRole('help',true);helpPanel('sign');var _hs=document.getElementById('hsPhone');if(_hs)_hs.focus();}
 
 /* citizen sign-in panel inside the help form (desktop) — replaces the request form, never stacks under it */
 function helpPanel(m){

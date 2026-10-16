@@ -342,7 +342,7 @@ function acctSignedIn(){ return !!(window.RL_Auth && RL_Auth.token()); }
 function loadAccountState(){
   var body = document.getElementById('acctBody'); if(!body) return;
   if(!acctSignedIn()){
-    body.innerHTML = '<p class="acct-note">You are browsing without an account. Sign in to manage or delete your profile.</p> <button type="button" class="linkin" onclick="location.href=\'../index.html\'">Sign in to manage account</button>';
+    body.innerHTML = '<p class="acct-note">You are browsing without an account. Sign in to manage or delete your profile.</p> <button type="button" class="linkin" onclick="location.href=\'../index.html#signin\'">Sign in to manage account</button>';
     return;
   }
   body.innerHTML = '<p class="acct-note">Loading\u2026</p>';
