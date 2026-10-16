@@ -401,6 +401,12 @@
       </div>
     </div>
     <div id="scanOut"></div>
+    <div id="scanGraphCard" class="card fade-up hide" style="max-width:680px;margin-top:16px">
+      <div class="card-header"><h3>📈 7-Day Risk Trend</h3><span class="badge-sm">River + rainfall forecast</span></div>
+      <div id="scanGraph" style="width:100%"></div>
+      <div id="scanGraphLegend" style="display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);margin-top:8px"></div>
+      <div id="scanFactors" style="margin-top:14px"></div>
+    </div>
   </div>
 
   <!-- NOTIFICATIONS -->
@@ -932,8 +938,9 @@ function predictFlood(lat,lng,name){
   });
 }
 /* ── GRAPH: river discharge line (with danger band) + rainfall bars ── */
-function renderFloodGraph(fl, rn){
-  var el=RL_$('flGraph'); if(!el) return;
+function renderFloodGraph(fl, rn, graphId, legendId){
+  var el=RL_$(graphId||'flGraph');
+  if(!el) return;
   var times=(fl&&fl.daily&&fl.daily.time)||[];
   var dis =(fl&&fl.daily&&fl.daily.river_discharge)||[];
   var rainDates=(rn&&rn.daily&&rn.daily.time)||[];
@@ -977,7 +984,7 @@ function renderFloodGraph(fl, rn){
   s+='<text x="4" y="'+(padT+ih)+'" font-size="8.5" fill="#8a866f">0</text>';
   s+='</svg>';
   el.innerHTML=s;
-  var lg=RL_$('flGraphLegend'); if(lg){ lg.innerHTML='<span style="color:#164670">— River discharge (m³/s)</span><span style="color:#EF5B5B">--- Danger threshold</span><span style="color:#4C8DF6">▮ Rainfall (mm)</span><span style="color:#C9A227">| Forecast start</span>'; }
+  var lg=RL_$(legendId||'flGraphLegend'); if(lg){ lg.innerHTML='<span style="color:#164670">— River discharge (m³/s)</span><span style="color:#EF5B5B">--- Danger threshold</span><span style="color:#4C8DF6">▮ Rainfall (mm)</span><span style="color:#C9A227">| Forecast start</span>'; }
 }
 function updateFloodMarker(){
   if(!FL_POS||!window.L||!FLOOD_MAP) return;
@@ -1279,9 +1286,29 @@ function drawRoute(start,end,rt,altRt,info){
   RL_Toast(info.score>=70?'✅ Safest route selected ('+km+' km)':'⚠️ Route set — warnings upar hain');
 }
 /* ── SMART SAFETY SCAN — instant danger report for any PK area ── */
+var SCAN_LAST=null; // last report text for copy/download
+function scanFactorBars(r, qs, alNear, wx){
+  // honest 0-100 contribution per hazard factor for this area
+  var fRain=Math.min(100, Math.round((r.precip48/50)*100));
+  var fRiver=r.pct;
+  var quakeNear=(qs||[]).filter(function(q){ return RL_LIVE.distKm(SCAN_LAST.pos,q)<150 && q.mag>=4; });
+  var fQuake=Math.min(100, quakeNear.reduce(function(a,q){ return a+(q.mag>=6?45:q.mag>=5?25:12); },0));
+  var fAlert=Math.min(100,(alNear||[]).length*35);
+  var rows=[{n:'🌊 River / flood',v:fRiver},{n:'🌧️ Rainfall (7d)',v:fRain},{n:'🌍 Earthquake (30d)',v:fQuake},{n:'📡 Active alerts',v:fAlert}];
+  var h='<div style="font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:8px">Risk factor breakdown</div>';
+  rows.forEach(function(x){
+    var col=x.v>=60?'#EF5B5B':x.v>=30?'#F5B83D':'#3CC08E';
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+      +'<span style="flex:0 0 130px;font-size:12px">'+x.n+'</span>'
+      +'<div style="flex:1;height:8px;border-radius:4px;background:#0002;overflow:hidden"><div style="height:100%;width:'+x.v+'%;background:'+col+';border-radius:4px;transition:width .6s"></div></div>'
+      +'<span style="flex:0 0 34px;font-size:11.5px;font-weight:800;color:'+col+';text-align:right">'+x.v+'</span></div>';
+  });
+  RL_$('scanFactors').innerHTML=h;
+}
 function runScan(){
   var q=((RL_$('scanQ')||{}).value||'').trim();
   var out=RL_$('scanOut');
+  var gc=RL_$('scanGraphCard'); if(gc) gc.classList.add('hide');
   if(!q){ RL_Toast('Koi jagah likhein — e.g. Chitral'); return; }
   if(out) out.innerHTML='<p style="font-size:13px;padding:8px">🛰️ '+q+' scan ho raha hai…</p>';
   RL_LIVE.place(q).then(function(p){
@@ -1290,9 +1317,11 @@ function runScan(){
       RL_LIVE.weather(p.lat,p.lng).catch(function(){return null;}),
       RL_LIVE.flood(p.lat,p.lng).catch(function(){return null;}),
       RL_LIVE.quakes(p.lat,p.lng,300).catch(function(){return [];}),
-      RL_Get('/alerts?active=true&limit=50')
+      RL_Get('/alerts?active=true&limit=50'),
+      RL_LIVE.floodSeries(p.lat,p.lng).catch(function(){return null;}),
+      RL_LIVE.rainSeries(p.lat,p.lng).catch(function(){return null;})
     ]).then(function(res){
-      var wx=res[0], fl=res[1], qs=res[2]||[], al=res[3]||[];
+      var wx=res[0], fl=res[1], qs=res[2]||[], al=res[3]||[], fSeries=res[4], rSeries=res[5];
       var r=RL_LIVE.risk(wx,fl);
       var alNear=al.filter(function(a){ return a.latitude!=null && RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude})<80; });
       var sh=SHELTERS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
@@ -1306,11 +1335,56 @@ function runScan(){
         +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏕️</div><div class="t"><b>Nearest help</b><small>'
           +(sh.length?'🏕️ '+sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'🏕️ Koi shelter registered nahi')
           +(hp.length?'<br>🏥 '+hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'')
-        +'</small></div></div></div>';
+        +'</small></div></div>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">'
+          +'<button type="button" class="btn-g" style="flex:0 0 auto" onclick="copyScanReport()">📋 Copy report</button>'
+          +'<button type="button" class="btn-g" style="flex:0 0 auto" onclick="downloadScanReport()">⬇️ Download .txt</button>'
+          +'<button type="button" class="btn-g" style="flex:0 0 auto" onclick="predictFlood('+p.lat+','+p.lng+',\''+p.name.replace(/'/g,'')+', Pakistan\');navigate(\'flood\')">🌊 Open in Flood Predictor</button>'
+        +'</div></div>';
       if(out) out.innerHTML=html;
       RL_Icons();
+      // graph card + factor breakdown
+      var gcard=RL_$('scanGraphCard');
+      if(gcard && window.RL_LIVE){
+        SCAN_LAST={pos:p, risk:r, name:p.name, wx:wx, qs:qs, alNear:alNear, sh:sh, hp:hp};
+        renderFloodGraph(fSeries, rSeries, 'scanGraph', 'scanGraphLegend');
+        scanFactorBars(r, qs, alNear, wx);
+        gcard.classList.remove('hide');
+      }
+      // plain-text report for copy/download
+      if(SCAN_LAST){
+        var txtLines=['RELIEFLINK SAFETY REPORT — '+p.name+', Pakistan','Generated: '+new Date().toLocaleString('en-PK',{timeZone:'Asia/Karachi'}),'',
+          'Overall flood risk: '+r.pct+'% ('+r.status+') · confidence '+r.confidence+'%',
+          'River discharge now/peak: '+r.riverNow+' / '+r.riverMax+' m³/s · trend: '+r.trend,
+          (wx&&wx.current?'Weather: '+Math.round(wx.current.temperature_2m)+'°C, '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather: unavailable'),
+          (wx&&wx.daily?'48h rainfall forecast: '+r.precip48+' mm':''),
+          'Earthquakes (30d, nearby): '+(qs.length?qs.slice(0,3).map(function(x){return 'M'+x.mag+' '+x.place+' ('+Math.round(RL_LIVE.distKm(p,x))+' km)';}).join('; '):'none'),
+          'Active alerts nearby: '+(alNear.length?alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join('; '):'none'),
+          'Nearest shelters: '+(sh.length?sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join('; '):'none registered'),
+          'Nearest hospitals: '+(hp.length?hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join('; '):'none registered')];
+        SCAN_LAST.text=txtLines.filter(Boolean).join('\n');
+      }
     });
   });
+}
+function copyScanReport(){
+  if(!SCAN_LAST||!SCAN_LAST.text){ RL_Toast('Pehle scan chalayein'); return; }
+  var done=function(){ RL_Toast('✅ Report copy ho gayi — share karein'); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(SCAN_LAST.text).then(done,function(){fallbackCopyText(SCAN_LAST.text,done);}); }
+  else fallbackCopyText(SCAN_LAST.text,done);
+}
+function fallbackCopyText(t,cb){
+  var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); cb(); }catch(e){ RL_Toast('Copy nahi ho saka — download try karein'); }
+  document.body.removeChild(ta);
+}
+function downloadScanReport(){
+  if(!SCAN_LAST||!SCAN_LAST.text){ RL_Toast('Pehle scan chalayein'); return; }
+  var blob=new Blob([SCAN_LAST.text],{type:'text/plain;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='relieflink-report-'+SCAN_LAST.pos.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.txt';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
 }
 loadFloodLive();
 renderSafetyTips(20);
