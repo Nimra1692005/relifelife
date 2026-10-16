@@ -63,6 +63,26 @@
 .sp-go { flex: none; display: inline-flex; align-items: center; gap: 5px; background: var(--g); color: var(--gold); font-weight: 700; font-size: 12px; padding: 8px 12px; border-radius: 10px; }
 .sp-go svg { width: 14px; height: 14px; }
 .sp-card.miss p { margin: 0; }
+.sp-hint { font-size: 12px; color: var(--mute); margin: 0 0 8px; }
+.sp-opts { display: flex; gap: 10px; flex-wrap: wrap; }
+.sp-chip { flex: 1; min-width: 150px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card); color: var(--g); font-weight: 800; font-size: 13px; cursor: pointer; transition: .2s; }
+.sp-chip:hover { border-color: var(--gold); background: rgba(201,162,39,.08); transform: translateY(-1px); }
+.sp-chip svg { width: 17px; height: 17px; }
+.sp-chip.sos-main { border-color: rgba(185,28,28,.45); color: #B91C1C; }
+.sp-chip.sos-main:hover { background: rgba(185,28,28,.08); }
+.sos-box { display: flex; align-items: center; gap: 10px; }
+.sos-box .item-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(185,28,28,.12); color: #B91C1C; display: grid; place-items: center; flex: none; }
+.sos-box .item-icon svg { width: 20px; height: 20px; }
+.sos-box h5 { font-size: 13.5px; font-weight: 800; margin: 0 0 2px; color: var(--g); }
+.sos-box p { font-size: 12px; color: var(--mute); margin: 0; line-height: 1.45; }
+.sp-route-head { display: flex; align-items: center; gap: 10px; padding: 2px 0 10px; border-bottom: 1px solid var(--line); }
+.sp-route-head h5 { font-size: 13.5px; font-weight: 800; margin: 0; }
+.sp-route-head p { font-size: 11.5px; color: var(--mute); margin: 2px 0 0; }
+.sp-route-head .item-icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex: none; }
+.sp-route-head .item-icon svg { width: 18px; height: 18px; }
+.sp-stats { display: flex; gap: 18px; margin: 10px 0 4px; font-size: 12.5px; color: var(--mute); }
+.sp-stats b { font-size: 16px; color: var(--g); margin-right: 3px; }
+.sp-rt-title { display: block; font-size: 12.5px; margin: 10px 0 2px; color: var(--g); }
 .track-card {
   background: linear-gradient(135deg,var(--g),var(--g2)); color: #F5EEDB;
   border-radius: var(--rad); padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden;
@@ -189,6 +209,8 @@
 .cat-card .cat-icon { background: transparent !important; width: auto; height: auto; font-size: 30px; }
 .cat-card h4 { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
 .cat-card .cat-desc { display: none; }
+/* Emergency & Rescue tiles carry one-line feature notes so each box explains its own system (SOS / hospital / shelter) */
+.grp .cat-grid .cat-card .cat-desc { display: block; font-size: 11px; color: var(--mute); margin-top: 2px; }
 .cat-card:hover, .cat-card.active { transform: translateY(-3px); border-color: var(--gold); box-shadow: 0 12px 26px rgba(27,58,42,.14); background: var(--card); }
 /* ── Home: grouped feature sections + emergency group ── */
 .home-groups { display: flex; flex-direction: column; gap: 22px; }
@@ -365,12 +387,11 @@
         <p class="sos-intro">Rescue teams are available around the clock. Call first, then send a request so a volunteer near you is alerted.</p>
         <button type="button" class="sos-call" onclick="RL_Tel('1122')"><i data-i="phone"></i> Call Rescue 1122</button>
         <div class="cat-grid" style="margin-top:10px">
-          <div class="cat-card" onclick="selectCat(this,'Emergency Rescue &amp; Evacuation')"><div class="cat-icon"><i data-i="rescue"></i></div><div class="cat-body"><h4>Emergency Rescue &amp; Evacuation</h4></div></div>
-          <div class="cat-card" onclick="selectCat(this,'Shelter &amp; Accommodation')"><div class="cat-icon"><i data-i="home"></i></div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4></div></div>
-          <div class="cat-card" onclick="selectCat(this,'Food &amp; Clean Water')"><div class="cat-icon"><i data-i="drop"></i></div><div class="cat-body"><h4>Food &amp; Clean Water</h4></div></div>
+          <div class="cat-card" id="sosTile" onclick="sendEmergency(this)"><div class="cat-icon"><i data-i="flame"></i></div><div class="cat-body"><h4>SOS Emergency Rescue</h4><p class="cat-desc">Instant rescue request with your live location</p></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Hospital')"><div class="cat-icon"><i data-i="hosp"></i></div><div class="cat-body"><h4>Nearby Hospital</h4><p class="cat-desc">Find and route to the closest hospital</p></div></div>
+          <div class="cat-card" onclick="selectCat(this,'Shelter & Accommodation')"><div class="cat-icon"><i data-i="home"></i></div><div class="cat-body"><h4>Shelter &amp; Accommodation</h4><p class="cat-desc">Nearest safe shelter with directions</p></div></div>
         </div>
         <div class="sos-act">
-          <button type="button" onclick="selectCatByName('Emergency Rescue & Evacuation')"><i data-i="plus"></i> Send rescue request</button>
           <button type="button" class="sos-ai" onclick="navigate('copilot')"><i data-i="zap"></i> Talk to AI Copilot</button>
         </div>
       </section>
@@ -422,6 +443,7 @@
         <select id="reqCat" class="field-input" style="display:none">
           <option>Emergency Rescue &amp; Evacuation</option>
           <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
+          <option>Hospital</option>
           <option>Clothing &amp; Supplies</option>
           <option>Home &amp; Damage Recovery</option><option>Missing Persons</option>
         </select>
@@ -444,9 +466,16 @@
           </div>
         </div>
         <div class="safe-point" id="safePoint" style="display:none">
-          <div class="sp-title"><i data-i="shield"></i><span>SafePoint<small>Nearest hospital &amp; shelter to your location</small></span></div>
+          <div class="sp-title"><i data-i="shield"></i><span id="spTitle">SafePoint<small>Route you to the nearest hospital or shelter</small></span></div>
           <div class="sp-map"><div id="safeMap" style="position:absolute;inset:0"></div></div>
-          <div id="safeList"></div>
+          <p class="sp-hint" id="spHint"></p>
+          <div id="safeOpts">
+            <div class="sp-opts">
+              <button type="button" class="sp-chip" onclick="spChoose('hospital')"><i data-i="hosp"></i> Hospital</button>
+              <button type="button" class="sp-chip" onclick="spChoose('shelter')"><i data-i="home"></i> Shelter &amp; Accommodation</button>
+            </div>
+          </div>
+          <div id="safeRoute" style="display:none"></div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
           <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
@@ -1240,44 +1269,198 @@ function loadNearbyLive() {
   });
 }
 
-/* ── SAFEPOINT: on a set location, show the nearest hospital + shelter & accommodation on a map ── */
-var SAFE_MAP=null, SAFE_MK=[], _safeSeq=0, _lastSafe=null, _lastSafeT=0;
+/* ── SAFEPOINT flow: location set → pick Hospital / Shelter → confirm your spot → map moves + live route ── */
+var SAFE_MAP=null, SAFE_MK=[], SAFE_ROUTE=null, _safeSeq=0, SP=null, SP_DEST=null;
 function spFmt(d){ return d<1 ? '<1 km' : (d<10 ? d.toFixed(1) : Math.round(d)) + ' km'; }
-function spCard(cat, icon, col, found){
-  var head = found ? esc(found.item.name||cat) : 'Nothing found within 15 km';
-  var meta = found ? (((found.item.addr)?esc(found.item.addr)+' · ':'')+spFmt(found.dist)) : 'You can still send your request.';
-  var go = found ? '<a class="sp-go" href="https://www.google.com/maps/dir/?api=1&destination='+found.item.lat+','+found.item.lng+'" target="_blank" rel="noopener"><i data-i="pin"></i> Go</a>' : '';
-  return '<div class="sp-card'+(found?'':' miss')+'"><div class="item-icon" style="background:'+col+'22;color:'+col+'">'+RL_Icon(icon)+'</div>'
-    +'<div style="flex:1;min-width:0"><small class="sp-cat" style="color:'+col+'">'+cat+'</small><h5>'+head+'</h5><p>'+meta+'</p></div>'+go+'</div>';
+function spDur(s){ var m=Math.round(s/60); return m<1 ? '<1 min' : (m<90 ? m+' min' : (m/60).toFixed(1)+' hr'); }
+function spClearRoute(){ if(SAFE_ROUTE){ try{ SAFE_MAP.removeLayer(SAFE_ROUTE); }catch(e){} SAFE_ROUTE=null; } }
+/* ── per-category behaviour: SOS system / nearby hospital / nearby shelter — driven by the hidden #reqCat ── */
+function spCatKind(){
+  var c=(((RL_$('reqCat')||{}).value)||'').toLowerCase();
+  if(c.indexOf('emergency rescue')>-1) return 'sos';
+  if(c.indexOf('hospital')>-1) return 'hospital';
+  if(c.indexOf('shelter')>-1) return 'shelter';
+  return 'choose';
 }
-function loadSafePoint(lat,lng){
+function spTitleFor(kind){
+  var t=RL_$('spTitle'); if(!t) return;
+  if(kind==='sos') t.innerHTML='SOS Rescue<small>Send an instant rescue alert</small>';
+  else if(kind==='hospital') t.innerHTML='Nearby Hospital<small>Find and route to the closest hospital</small>';
+  else if(kind==='shelter') t.innerHTML='Nearby Shelter<small>Find and route to the nearest shelter</small>';
+  else t.innerHTML='SafePoint<small>Route you to the nearest hospital or shelter</small>';
+}
+function spEnsureMap(lat,lng,zoom){
+  if(!SAFE_MAP){ SAFE_MAP=RL_LIVE.map('safeMap',lat,lng,zoom==null?14:zoom); }
+  else { SAFE_MAP.setView([lat,lng],zoom==null?14:zoom); }
+  setTimeout(function(){ try{ SAFE_MAP&&SAFE_MAP.invalidateSize(); }catch(e){} },80);
+  return SAFE_MAP;
+}
+/* Step 1 — location is now set: show panel with the two options (map already sits on the picked spot) */
+function safePointHere(lat,lng){
   var box=RL_$('safePoint'); if(!box) return;
-  if(!window.RL_LIVE || !window.L){ box.style.display='none'; return; }
+  SP={lat:lat,lng:lng}; SP_DEST=null;
   box.style.display='';
-  var now=Date.now();
-  if(_lastSafe && Math.abs(_lastSafe.lat-lat)<0.004 && Math.abs(_lastSafe.lng-lng)<0.004 && now-_lastSafeT<15000) return;
-  _lastSafe={lat:lat,lng:lng}; _lastSafeT=now;
-  var me={lat:lat,lng:lng};
-  if(!SAFE_MAP){ SAFE_MAP=RL_LIVE.map('safeMap',lat,lng,13); } else { SAFE_MAP.setView([lat,lng],13); }
-  if(!SAFE_MAP) return;
+  spSetHint();
+  var kind=spCatKind();
+  spTitleFor(kind==='choose'?'choose':kind);
+  RL_$('safeRoute').style.display='none';
+  if(kind==='sos'){
+    /* Emergency Rescue → SOS system, no hospital/shelter choice step */
+    RL_$('safeOpts').style.display='none';
+    spSosPanel();
+  } else {
+    RL_$('safeOpts').style.display='';
+    RL_$('safeOpts').querySelector('.sp-opts').innerHTML = kind==='choose'
+      ? '<button type="button" class="sp-chip" onclick="spChoose(\'hospital\')"><i data-i="hosp"></i> Hospital</button><button type="button" class="sp-chip" onclick="spChoose(\'shelter\')"><i data-i="home"></i> Shelter &amp; Accommodation</button>'
+      : '<button type="button" class="sp-chip" onclick="spChoose(\''+kind+'\')">'+(kind==='hospital'
+        ? '<i data-i="hosp"></i> Find Nearest Hospital'
+        : '<i data-i="home"></i> Find Nearest Shelter')+'</button><button type="button" class="sp-chip" onclick="spChoose(\'sos\')"><i data-i="flame"></i> Send SOS Instead</button>';
+    RL_Icons();
+  }
+  spEnsureMap(lat,lng,14);
+  spClearRoute();
   SAFE_MK.forEach(function(m){ try{ SAFE_MAP.removeLayer(m); }catch(e){} }); SAFE_MK=[];
-  var um=RL_LIVE.marker(SAFE_MAP,lat,lng,'<b>You are here</b>','#B91C1C'); if(um) SAFE_MK.push(um);
-  var le=RL_$('safeList'); if(le) le.innerHTML='<p class="mute" style="padding:8px 2px;font-size:12.5px">Finding the nearest hospital &amp; shelter…</p>';
-  var seq=++_safeSeq;
-  Promise.all([
-    RL_LIVE.overpassPOI(lat,lng,15000,'hospital').catch(function(){ return []; }),
-    RL_LIVE.overpassPOI(lat,lng,15000,'shelter').catch(function(){ return []; })
-  ]).then(function(res){
-    if(seq!==_safeSeq) return; /* a newer pin superseded this response */
-    var near=function(arr){ var b=null,bd=Infinity; (arr||[]).forEach(function(x){ if(x.lat==null||x.lng==null) return; var d=RL_LIVE.distKm(me,x); if(d<bd){ bd=d; b=x; } }); return b?{item:b,dist:bd}:null; };
-    var H=near(res[0]), S=near(res[1]);
-    if(H){ var hm=RL_LIVE.marker(SAFE_MAP,H.item.lat,H.item.lng,'<b>Hospital</b><br>'+esc(H.item.name||''),'#4C8DF6'); if(hm) SAFE_MK.push(hm); }
-    if(S){ var sm=RL_LIVE.marker(SAFE_MAP,S.item.lat,S.item.lng,'<b>Shelter</b><br>'+esc(S.item.name||''),'#2E7D32'); if(sm) SAFE_MK.push(sm); }
-    try{ SAFE_MAP.invalidateSize(); }catch(e){}
-    if(le){ le.innerHTML=spCard('Nearest Hospital','hosp','#4C8DF6',H)+spCard('Shelter &amp; Accommodation','home','#2E7D32',S); RL_Icons(); }
-  }).catch(function(){ if(le) le.innerHTML='<p class="mute" style="padding:8px 2px;font-size:12.5px">Could not load nearby places right now.</p>'; });
+  var um=RL_LIVE.marker(SAFE_MAP,lat,lng,'<b>Your location</b>','#B91C1C'); if(um) SAFE_MK.push(um);
 }
-document.addEventListener('rl:locset', function(ev){ try{ loadSafePoint(ev.detail.lat, ev.detail.lng); }catch(e){} });
+function spSetHint(){
+  if(!SP) return;
+  var hint=RL_$('spHint'); if(!hint) return;
+  var f=RL_$("reqLoc"); var v=f?(f.value||'').trim():'';
+  hint.textContent='For '+(v || '('+SP.lat.toFixed(4)+', '+SP.lng.toFixed(4)+')')+' — '+(spCatKind()==='sos' ? 'SOS ready below' : 'choose what you need nearby:');
+}
+/* Step 2 — user picks an option: ask for their current location, then route */
+function spChoose(kind){
+  if(kind==='sos'){ spSosPanel(); return; }
+  if(!SP){ RL_Toast('Set your location first — Find, GPS or tap the map'); return; }
+  var box=RL_$('safePoint'); if(!box) return;
+  if(!window.RL_LIVE||!window.L){ RL_Toast('Live routing needs internet'); return; }
+  RL_$('safeOpts').style.display='none';
+  var rt=RL_$('safeRoute'); rt.style.display='';
+  rt.innerHTML='<p class="mute" style="font-size:12.5px">Please confirm your current location — allow GPS, or tap <b>Use my searched spot</b> below…</p>';
+  RL_LIVE.locate(function(pos){
+    if(pos && RL_LIVE.inPK(pos.lat,pos.lng)){
+      RL_Toast('Got your GPS position — plotting route…');
+      spBuildRoute(kind,{lat:pos.lat,lng:pos.lng,gps:true});
+    } else {
+      spAskFallback(kind);
+    }
+  });
+}
+function spAskFallback(kind){
+  var rt=RL_$('safeRoute'); if(!rt) return;
+  rt.innerHTML='<p style="font-size:12.5px">GPS unavailable. Use the location you searched, or share your live location so we can route you from your true position.</p>'
+    +'<div class="sp-opts" style="margin-top:8px">'
+    +'<button type="button" class="sp-chip" onclick="spRouteFromPicked(\''+kind+'\')"><i data-i="search"></i> Use my searched spot</button>'
+    +'<button type="button" class="sp-chip" onclick="spRetryGps(\''+kind+'\')"><i data-i="pin"></i> Share live GPS</button>'
+    +'<button type="button" class="sp-chip" onclick="spBack()"><i data-i="arrowL"></i> Back</button></div>';
+  RL_Icons();
+}
+function spRetryGps(kind){
+  RL_$('safeRoute').innerHTML='<p class="mute" style="font-size:12.5px">Getting your position…</p>';
+  RL_LIVE.locate(function(pos){
+    if(pos && RL_LIVE.inPK(pos.lat,pos.lng)) spBuildRoute(kind,{lat:pos.lat,lng:pos.lng,gps:true});
+    else spAskFallback(kind);
+  });
+}
+function spRouteFromPicked(kind){ spBuildRoute(kind,{lat:SP.lat,lng:SP.lng,gps:false}); }
+/* SOS system for the Emergency Rescue category: one tap grabs live GPS, marks URGENT and fires the rescue alert */
+function spSosPanel(){
+  var rt=RL_$('safeRoute'); if(!rt) return;
+  rt.style.display='';
+  rt.innerHTML='<div class="sos-box"><div class="item-icon"><i data-i="flame"></i></div>'
+    +'<div style="flex:1;min-width:0"><h5>Instant Rescue SOS</h5><p>One tap grabs your live GPS, marks the request <b>URGENT</b> and alerts the nearest rescue volunteers. No internet? Send the same alert on WhatsApp.</p></div></div>'
+    +'<div class="sp-opts" style="margin-top:10px">'
+    +'<button type="button" class="sp-chip sos-main" onclick="spSendSos()"><i data-i="flame"></i> Send SOS Now</button>'
+    +'<button type="button" class="sp-chip" onclick="waSendLoc()"><i data-i="phone"></i> SOS on WhatsApp</button></div>';
+  RL_Icons();
+}
+function spSendSos(){
+  var s=RL_$('reqCat'); if(s) s.value='Emergency Rescue & Evacuation';
+  var u=RL_$('reqUrgent'); if(u) u.checked=true;
+  var d=RL_$('reqDesc'); if(d && !d.value) d.value='URGENT: needs immediate rescue — please send help now.';
+  if(LP.getCur()){ submitReq(); }
+  else {
+    RL_Toast('Getting your live position for SOS…');
+    var done=false;
+    RL_LIVE.locate(function(pos){
+      if(done) return; done=true;
+      if(pos && RL_LIVE.inPK(pos.lat,pos.lng)){ LP.setPos(pos.lat,pos.lng); submitReq(); }
+      else { RL_Toast('Allow GPS or set your location, then tap Request Help'); navigate('request'); }
+    });
+    setTimeout(function(){ if(!done){ done=true; RL_Toast('GPS is taking long — set your spot on the map, then tap Request Help'); navigate('request'); } }, 9000);
+  }
+}
+/* Home SOS tile: jump straight into the rescue flow with live GPS */
+function sendEmergency(tile){
+  if(tile){ document.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('active'); }); tile.classList.add('active'); }
+  selectCatByName('Emergency Rescue & Evacuation');
+  var u=RL_$('reqUrgent'); if(u) u.checked=true;
+  LP.locateOnce();
+}
+function spBack(){
+  if(!SP) return;
+  RL_$('safeRoute').style.display='none';
+  RL_$('safeOpts').style.display='';
+  spEnsureMap(SP.lat,SP.lng,14);
+  spClearRoute();
+  SAFE_MK.forEach(function(m){ try{ SAFE_MAP.removeLayer(m); }catch(e){} }); SAFE_MK=[];
+  var um=RL_LIVE.marker(SAFE_MAP,SP.lat,SP.lng,'<b>Your location</b>','#B91C1C'); if(um) SAFE_MK.push(um);
+}
+/* Step 3 — find the nearest POI of the chosen kind from the user's confirmed position, move map, draw route */
+function spBuildRoute(kind,from){
+  var rt=RL_$('safeRoute'); if(!rt) return;
+  var label = kind==='hospital' ? 'Nearest Hospital' : 'Shelter & Accommodation';
+  var col   = kind==='hospital' ? '#4C8DF6' : '#2E7D32';
+  var icon  = kind==='hospital' ? 'hosp' : 'home';
+  var seq=++_safeSeq;
+  rt.innerHTML='<p class="mute" style="font-size:12.5px">Finding the nearest '+(kind==='hospital'?'hospital':'shelter')+' from your position…</p>';
+  RL_LIVE.overpassPOI(from.lat,from.lng,15000,kind).then(function(list){
+    if(seq!==_safeSeq) return;
+    list=(list||[]).filter(function(x){ return x.lat!=null && x.lng!=null; })
+      .map(function(x){ return { item:x, dist:RL_LIVE.distKm(from,x) }; })
+      .sort(function(a,b){ return a.dist-b.dist; });
+    if(!list.length){
+      rt.innerHTML='<p style="font-size:12.5px">No '+(kind==='hospital'?'hospital':'shelter')+' found within 15 km of that spot. Try the other option, or widen your searched location.</p>'
+        +'<div style="margin-top:8px"><button type="button" class="sp-chip" onclick="spBack()"><i data-i="arrowL"></i> Back to options</button></div>';
+      RL_Icons(); return;
+    }
+    var dest=list[0];
+    SP_DEST=dest.item;
+    spEnsureMap(dest.item.lat,dest.item.lng,13);   /* map moves to the chosen place, then we fit both */
+    SAFE_MK.forEach(function(m){ try{ SAFE_MAP.removeLayer(m); }catch(e){} }); SAFE_MK=[];
+    SAFE_ROUTE=null;
+    var um=RL_LIVE.marker(SAFE_MAP,from.lat,from.lng,'<b>You are here</b>'+(from.gps?'':'<br>(searched spot)'),'#B91C1C'); if(um) SAFE_MK.push(um);
+    var dm=RL_LIVE.marker(SAFE_MAP,dest.item.lat,dest.item.lng,'<b>'+label+'</b><br>'+esc(dest.item.name||''),col); if(dm) SAFE_MK.push(dm);
+    try{ SAFE_MAP.fitBounds(window.L.latLngBounds([[from.lat,from.lng],[dest.item.lat,dest.item.lng]]).pad(0.25)); }catch(e){}
+    rt.innerHTML='<div class="sp-route-head"><div class="item-icon" style="background:'+col+'22;color:'+col+'">'+RL_Icon(icon)+'</div>'
+      +'<div style="flex:1;min-width:0"><small class="sp-cat" style="color:'+col+'">'+label+'</small>'
+      +'<h5>'+esc(dest.item.name||label)+'</h5><p>'+((dest.item.addr)?esc(dest.item.addr)+' · ':'')+spFmt(dest.dist)+' straight-line</p></div></div>'
+      +'<div id="spRtBody"><p class="mute" style="font-size:12.5px">Drawing driving directions…</p></div>'
+      +'<a class="sp-go" style="display:inline-flex;margin-top:10px" href="https://www.google.com/maps/dir/?api=1&origin='+from.lat+','+from.lng+'&destination='+dest.item.lat+','+dest.item.lng+'&travelmode=driving" target="_blank" rel="noopener"><i data-i="pin"></i> Open in Google Maps</a>';
+    RL_Icons();
+    RL_LIVE.routeOSRM(from,dest.item).then(function(routes){
+      if(seq!==_safeSeq) return;
+      var b=RL_$('spRtBody'); if(!b) return;
+      if(!routes||!routes.length){ b.innerHTML='<p class="mute" style="font-size:12.5px">Live route unavailable (OSRM down) — the straight-line distance and Google Maps link still work.</p>'; return; }
+      var r=routes[0];
+      try{
+        SAFE_ROUTE=window.L.polyline(r.geometry.coordinates.map(function(c){ return [c[1],c[0]]; }),{color:col,weight:5,opacity:.85}).addTo(SAFE_MAP);
+        SAFE_MAP.fitBounds(SAFE_ROUTE.getBounds().pad(0.2));
+      }catch(e){}
+      var steps=[]; (r.legs&&r.legs[0]&&r.legs[0].steps||[]).forEach(function(st){ if(st.maneuver && st.maneuver.type!=='arrive') steps.push(st); });
+      b.innerHTML='<div class="sp-stats"><span><b>'+(r.distance/1000).toFixed(1)+'</b> km drive</span><span><b>~'+spDur(r.duration)+'</b> by road</span></div>'
+        +(steps.length ? '<b class="sp-rt-title">Turn-by-turn</b>'+steps.slice(0,12).map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('') : '');
+    }).catch(function(){
+      var b2=RL_$('spRtBody'); if(b2) b2.innerHTML='<p class="mute" style="font-size:12.5px">Route service offline — use the Google Maps link.</p>';
+    });
+  }).catch(function(){
+    if(seq!==_safeSeq) return;
+    rt.innerHTML='<p class="mute" style="font-size:12.5px">OpenStreetMap is unreachable right now (bad connection or its servers are busy) — this was not a "nothing nearby" result.</p><div style="margin-top:8px"><button type="button" class="sp-chip" onclick="spRetryGps(\''+kind+'\')"><i data-i="search"></i> Try again</button><button type="button" class="sp-chip" onclick="spBack()"><i data-i="arrowL"></i> Back to options</button></div>';
+    RL_Icons();
+  });
+}
+/* Keep the SafePoint hint in sync once the reverse geocode rewrites #reqLoc */
+document.addEventListener('rl:locset', function(ev){ try{ safePointHere(ev.detail.lat, ev.detail.lng); }catch(e){} });
 
 function renderContacts() {
   var el = RL_$('contactList'); if (!el) return;
@@ -1887,6 +2070,7 @@ var LP=(function(){
       var txt=RL_LIVE.fmtAddr(j)||('('+lat.toFixed(4)+', '+lng.toFixed(4)+')');
       var f=RL_$("reqLoc"); if(f) f.value=txt;
       var a=RL_$("lpAddr"); if(a){ a.textContent=''+txt; a.classList.remove('empty'); }
+      try{ if(typeof spSetHint==='function') spSetHint(); }catch(e){}
     }).catch(function(){ var a=RL_$("lpAddr"); if(a){ a.textContent='Exact: '+lat.toFixed(4)+', '+lng.toFixed(4); a.classList.remove('empty'); } });
   }
   function locateOnce(){

@@ -367,6 +367,8 @@ window.RL_Send = function(method, path, body) {
 window.RL_CAT_LABEL2KEY = {
   'Emergency Rescue & Evacuation': 'rescue',
   'Medical Assistance': 'medical',
+  'Hospital': 'medical',
+  'Nearby Hospital': 'medical',
   'Food & Clean Water': 'food',
   'Shelter & Accommodation': 'shelter',
   'Clothing & Supplies': 'clothing',
