@@ -299,6 +299,15 @@
 
   <!-- FLOOD PREDICTOR -->
   <div id="page-flood" class="hide">
+    <div class="card fade-up" style="margin-bottom:16px">
+      <div class="card-header"><h3>🌊 Check any location</h3><span class="badge-sm">Live river + rainfall model</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="flLoc" class="field-input" placeholder="Koi bhi jagah / city / address likhein…" style="flex:1;min-width:180px" autocomplete="off">
+        <button type="button" class="lp-btn" id="flGps" style="align-self:stretch">📍 GPS</button>
+        <button type="button" class="btn-g" id="flCheck" style="flex:0 0 auto;padding:0 18px">Check risk</button>
+      </div>
+      <div id="flLocNote" style="font-size:12px;opacity:.65;margin-top:8px"></div>
+    </div>
     <div class="grid-2">
       <div>
         <div class="flood-card fade-up" style="margin-bottom:16px">
@@ -333,6 +342,11 @@
         <div class="map-box fade-up" style="height:300px;margin-bottom:16px;position:relative;overflow:hidden">
           <div id="floodMap" style="position:absolute;inset:0"></div>
           <div style="position:absolute;top:10px;left:12px;z-index:600;background:rgba(20,40,25,.78);color:#F5EEDB;padding:5px 11px;border-radius:10px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)">🌊 Pakistan Flood Risk Map</div>
+        </div>
+        <div class="card fade-up" style="margin-bottom:16px">
+          <div class="card-header"><h3>7-Day Flood Forecast</h3><span class="badge-sm">River discharge + rainfall</span></div>
+          <div id="flGraph" style="width:100%"></div>
+          <div id="flGraphLegend" style="display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);margin-top:8px"></div>
         </div>
         <div class="card fade-up">
           <div class="card-header"><h3>Flood History</h3><span class="badge-sm">Documented events</span></div>
@@ -882,10 +896,91 @@ function renderSafetyTips(pct) {
   RL_Icons();
 }
 function liveArea(){ var uu=RL_GetUser()||{}; return (window.RL_LIVE && RL_LIVE.geo(uu.area||uu.city)) || {lat:29.1044,lng:70.3302,name:'Rajanpur'}; }
-function loadFloodLive(){
-  if(!window.RL_LIVE) return; var g=liveArea();
-  Promise.all([ RL_LIVE.weather(g.lat,g.lng).catch(function(){return null;}), RL_LIVE.flood(g.lat,g.lng).catch(function(){return null;}) ])
-    .then(function(a){ applyRisk(RL_LIVE.risk(a[0],a[1]), g.name+', Pakistan'); });
+/* ── FLOOD PREDICTION for an EXACT location (real Open-Meteo river + rainfall) ── */
+var FL_POS=null;          // {lat,lng,name} currently shown
+var FL_CURMK=null;        // map marker for the predicted point
+function floodNote(t){ var e=RL_$('flLocNote'); if(e) e.textContent=t||''; }
+function loadFloodLive(){ var g=liveArea(); predictFlood(g.lat,g.lng,g.name+', Pakistan'); }
+function resolveAndPredict(text){
+  text=(text||'').trim();
+  if(!text){ floodNote('Enter a place first.'); return; }
+  if(!window.RL_LIVE){ floodNote('Location service unavailable.'); return; }
+  floodNote('Locating “'+text+'”…');
+  RL_LIVE.place(text).then(function(p){
+    if(!p){ floodNote('“'+text+'” not found in Pakistan — try a city or full address.'); return; }
+    predictFlood(p.lat,p.lng,(p.name||text)+', Pakistan');
+  });
+}
+function predictFlood(lat,lng,name){
+  if(!window.RL_LIVE) return;
+  FL_POS={lat:lat,lng:lng,name:name};
+  floodNote('⏳ Fetching live river & rainfall data for '+name+'…');
+  var b=RL_$('flBadge'); if(b){ b.textContent='CALCULATING…'; b.style.color='#F5B83D'; }
+  Promise.all([
+    RL_LIVE.weather(lat,lng).catch(function(){return null;}),
+    RL_LIVE.flood(lat,lng).catch(function(){return null;}),
+    RL_LIVE.floodSeries(lat,lng).catch(function(){return null;}),
+    RL_LIVE.rainSeries(lat,lng).catch(function(){return null;})
+  ]).then(function(a){
+    applyRisk(RL_LIVE.risk(a[0],a[1]), name);
+    renderFloodGraph(a[2],a[3]);
+    updateFloodMarker();
+    floodNote('📊 Model: 7-day river discharge (Flood-API) + rainfall (Open-Meteo), calibrated on Pakistan thresholds for '+name+'.');
+  });
+}
+/* ── GRAPH: river discharge line (with danger band) + rainfall bars ── */
+function renderFloodGraph(fl, rn){
+  var el=RL_$('flGraph'); if(!el) return;
+  var times=(fl&&fl.daily&&fl.daily.time)||[];
+  var dis =(fl&&fl.daily&&fl.daily.river_discharge)||[];
+  var rainDates=(rn&&rn.daily&&rn.daily.time)||[];
+  var rain=(rn&&rn.daily&&rn.daily.precipitation_sum)||[];
+  if(!times.length){ el.innerHTML='<div class="empty" style="text-align:center;color:var(--mute);font-size:13px;padding:24px 10px">No river-station data for this exact point — showing rainfall only.</div>'; return; }
+  // Align rainfall onto the flood time axis by date.
+  var rainBy={}; rainDates.forEach(function(d,i){ rainBy[d]=rain[i]||0; });
+  var aligned=times.map(function(d){ return rainBy[d]||0; });
+  var W=460,H=170,padL=34,padR=10,padT=14,padB=26;
+  var iw=W-padL-padR, ih=H-padT-padB;
+  var maxDis=Math.max.apply(null,dis.concat([1]));
+  var maxRain=Math.max.apply(null,aligned.concat([1]));
+  var n=times.length, step=n>1?iw/(n-1):0;
+  // "today" = first date at/after the current date.
+  var todayIdx=n-1;
+  var nowD=new Date().toISOString().slice(0,10);
+  for(var i=0;i<n;i++){ if(times[i]>=nowD){ todayIdx=i; break; } }
+  var yD=function(v){ return padT+ih-(v/maxDis)*ih; };
+  var xAt=function(i){ return padL+i*step; };
+  var s='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="font-family:inherit">';
+  // gridlines
+  for(var g=0;g<=4;g++){ var gy=padT+ih*(g/4); s+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+gy+'" y2="'+gy+'" stroke="#0002" stroke-dasharray="2 3"/>'; }
+  // rainfall bars (scaled to secondary max)
+  var bw=Math.max(3,(iw/n)*0.5);
+  aligned.forEach(function(v,i){ if(v<=0) return; var h=(v/maxRain)*(ih*0.62); s+='<rect x="'+(xAt(i)-bw/2)+'" y="'+(padT+ih-h)+'" width="'+bw+'" height="'+h+'" rx="2" fill="#4C8DF6" opacity=".5"/>'; });
+  // danger threshold (70% of observed peak) as dashed red line
+  var thr=maxDis*0.7; s+='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+yD(thr)+'" y2="'+yD(thr)+'" stroke="#EF5B5B" stroke-width="1.4" stroke-dasharray="5 4" opacity=".8"/>';
+  // discharge line + area
+  var pts=dis.map(function(v,i){ return xAt(i)+','+yD(v||0); });
+  s+='<polygon points="'+padL+','+(padT+ih)+' '+pts.join(' ')+' '+(xAt(n-1))+','+(padT+ih)+'" fill="#16467022"/>';
+  s+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="#164670" stroke-width="2.6" stroke-linejoin="round"/>';
+  dis.forEach(function(v,i){ if(i%2===0||i===n-1){ s+='<circle cx="'+xAt(i)+'" cy="'+yD(v||0)+'" r="2.6" fill="#fff" stroke="#164670" stroke-width="1.6"/>'; } });
+  // "today" separator
+  s+='<line x1="'+xAt(todayIdx)+'" x2="'+xAt(todayIdx)+'" y1="'+padT+'" y2="'+(padT+ih)+'" stroke="#C9A227" stroke-width="1.4" stroke-dasharray="3 3"/>';
+  s+='<text x="'+(xAt(todayIdx)+3)+'" y="'+(padT+9)+'" font-size="9" fill="#C9A227" font-weight="700">today</text>';
+  // x labels (every few days)
+  var lblEvery=Math.ceil(n/7);
+  times.forEach(function(d,i){ if(i%lblEvery===0||i===n-1){ var lab=d.slice(5).replace('-','/'); s+='<text x="'+xAt(i)+'" y="'+(H-8)+'" font-size="8.5" fill="#8a866f" text-anchor="middle">'+lab+'</text>'; } });
+  // y axis labels
+  s+='<text x="4" y="'+(padT+8)+'" font-size="8.5" fill="#8a866f">'+Math.round(maxDis)+'</text>';
+  s+='<text x="4" y="'+(padT+ih)+'" font-size="8.5" fill="#8a866f">0</text>';
+  s+='</svg>';
+  el.innerHTML=s;
+  var lg=RL_$('flGraphLegend'); if(lg){ lg.innerHTML='<span style="color:#164670">— River discharge (m³/s)</span><span style="color:#EF5B5B">--- Danger threshold</span><span style="color:#4C8DF6">▮ Rainfall (mm)</span><span style="color:#C9A227">| Forecast start</span>'; }
+}
+function updateFloodMarker(){
+  if(!FL_POS||!window.L||!FLOOD_MAP) return;
+  try{ FLOOD_MAP.setView([FL_POS.lat,FL_POS.lng], 8); }catch(e){}
+  if(FL_CURMK){ try{ FLOOD_MAP.removeLayer(FL_CURMK); }catch(e){} }
+  FL_CURMK=window.L.circleMarker([FL_POS.lat,FL_POS.lng],{radius:9,color:'#F5B83D',weight:2,fillColor:'#F5B83D',fillOpacity:.85}).addTo(FLOOD_MAP).bindPopup('📍 <b>'+FL_POS.name+'</b> — checking');
 }
 var HELP_MAP=null;
 function initHelpMap(){
@@ -906,11 +1001,11 @@ function initHelpMap(){
 var FLOOD_MAP=null;
 function initFloodMap(){
   if(!window.L||!window.RL_LIVE||FLOOD_MAP) return;
-  var g=liveArea();
+  var g=FL_POS||liveArea();
   FLOOD_MAP = RL_LIVE.map('floodMap', g.lat, g.lng, 5); if(!FLOOD_MAP) return;
   ['rajanpur','muzaffargarh','layyah','jhang','sukkur','charsadda','nowshera','multan'].forEach(function(c){ var p=RL_LIVE.geo(c); if(p) RL_LIVE.marker(FLOOD_MAP,p.lat,p.lng,'🌊 '+p.name+' — flood-prone','#EF5B5B'); });
-  RL_LIVE.marker(FLOOD_MAP,g.lat,g.lng,'📍 <b>'+g.name+'</b> (your area)','#F5B83D');
   setTimeout(function(){try{FLOOD_MAP.invalidateSize();}catch(e){}},250);
+  updateFloodMarker();
 }
 /* ── LOCATION PICKER: exact pin, live GPS, street-level reverse address ── */
 var LP=(function(){
@@ -1173,5 +1268,26 @@ function runScan(){
 }
 loadFloodLive();
 renderSafetyTips(20);
+/* ── Flood predictor location controls ── */
+(function(){
+  var uu=RL_GetUser()||{}; var inp=RL_$('flLoc');
+  if(inp && (uu.area||uu.city)) inp.value=uu.area||uu.city;
+  var go=function(){ if(inp) resolveAndPredict(inp.value); };
+  var chk=RL_$('flCheck'); if(chk) chk.addEventListener('click', go);
+  if(inp) inp.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); go(); } });
+  var gps=RL_$('flGps');
+  if(gps) gps.addEventListener('click', function(){
+    if(!window.RL_LIVE||!navigator.geolocation){ floodNote('GPS not available on this device.'); return; }
+    floodNote('Getting your GPS location…');
+    RL_LIVE.locate(function(pos){
+      if(!pos){ floodNote('Could not read GPS — type your area instead.'); return; }
+      if(!RL_LIVE.inPK(pos.lat,pos.lng)){ floodNote('You appear to be outside Pakistan — flood model covers Pakistan only.'); return; }
+      RL_LIVE.reverse(pos.lat,pos.lng).then(function(j){
+        var nm=(RL_LIVE.fmtAddr(j)||('('+pos.lat.toFixed(3)+', '+pos.lng.toFixed(3)+')')); if(inp) inp.value=nm;
+        predictFlood(pos.lat,pos.lng,nm+', Pakistan');
+      });
+    });
+  });
+})();
 </script>
 </body></html>

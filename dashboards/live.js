@@ -51,6 +51,15 @@ window.RL_LIVE = (function () {
     return fetchJSON('https://flood-api.open-meteo.com/v1/flood?latitude=' + lat + '&longitude=' + lng +
       '&daily=river_discharge&past_days=5&forecast_days=7');
   }
+  // Longer window + explicit dates, for the flood-prediction graph.
+  function floodSeries(lat, lng) {
+    return fetchJSON('https://flood-api.open-meteo.com/v1/flood?latitude=' + lat + '&longitude=' + lng +
+      '&daily=river_discharge&past_days=7&forecast_days=10&timezone=' + encodeURIComponent('Asia/Karachi'));
+  }
+  function rainSeries(lat, lng) {
+    return fetchJSON('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng +
+      '&daily=precipitation_sum,precipitation_probability_max&past_days=2&forecast_days=7&timezone=' + encodeURIComponent('Asia/Karachi'));
+  }
   function search(q) {
     return fetchJSON('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) +
       '&format=jsonv2&limit=1&countrycodes=pk');
@@ -182,5 +191,5 @@ window.RL_LIVE = (function () {
     return mk;
   }
 
-  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
+  return { PK: PK, PK_BOUNDS: PK_BOUNDS, geo: geo, weather: weather, flood: flood, floodSeries: floodSeries, rainSeries: rainSeries, search: search, reverse: reverse, fmtAddr: fmtAddr, locate: locate, risk: risk, map: map, marker: marker, cap: cap, inPK: inPK, clampPK: clampPK, nearest: nearest, distKm: distKm, quakes: quakes, weatherAt: weatherAt, floodAt: floodAt, routeOSRM: routeOSRM, place: place };
 })();
