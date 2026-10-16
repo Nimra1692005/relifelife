@@ -715,12 +715,25 @@
     <div class="card fade-up" style="max-width:560px">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
         <div style="width:72px;height:72px;border-radius:50%;background:var(--g);border:3px solid var(--gold);display:grid;place-items:center;font-weight:800;font-size:24px;color:var(--gold)" id="profAv">US</div>
-        <div><h3 id="profName" style="font-size:20px;font-weight:800">User</h3><p class="mute" style="font-size:13px">Registered Person · Flood Affected</p></div>
+        <div style="flex:1"><h3 id="profName" style="font-size:20px;font-weight:800">User</h3><p class="mute" style="font-size:13px">Registered Person · Flood Affected</p></div>
+        <button type="button" class="lp-btn" id="profEditBtn" onclick="toggleProfEdit(true)">Edit</button>
       </div>
-      <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">User</small></div></div>
-      <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
-      <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Area<small id="profArea">Not set</small></div></div>
-      <div class="item" style="border:none"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="list"></i></div><div class="t">Requests Submitted<small id="profReqs">0</small></div></div>
+      <div id="profView">
+        <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">User</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Area<small id="profArea">Not set</small></div></div>
+      </div>
+      <div id="profEdit" class="hide">
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Full Name</label><input id="peName" class="field-input" placeholder="Your name" autocomplete="name" style="width:100%;margin-top:4px"></div>
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Phone</label><input id="pePhone" class="field-input" placeholder="03001234567" autocomplete="tel" inputmode="tel" style="width:100%;margin-top:4px"></div>
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Area</label><input id="peArea" class="field-input" placeholder="Your city or area" autocomplete="address-level2" style="width:100%;margin-top:4px"></div>
+        <p id="peNote" class="mute" style="font-size:11.5px;margin:0 0 12px"></p>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="submit-btn" id="peSave" onclick="saveProfile()" style="width:auto;margin:0;padding:0 18px">Save changes</button>
+          <button type="button" class="lp-btn" onclick="toggleProfEdit(false)">Cancel</button>
+        </div>
+      </div>
+      <div class="item" style="border:none;margin-top:8px"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="list"></i></div><div class="t">Requests Submitted<small id="profReqs">0</small></div></div>
     </div>
   </div>
 
@@ -1039,6 +1052,83 @@ function renderMyReqs() {
 function updateBadges() {
   var rb = RL_$('reqBadge'); if (rb) rb.textContent = myReqs.length;
   var pr = RL_$('profReqs'); if (pr) pr.textContent = myReqs.length;
+}
+
+/* ── PROFILE — view + edit the user's own details ── */
+function profNormalizePhone(raw) {
+  var d = String(raw || '').replace(/\D/g, '');
+  if (d.indexOf('0092') === 0) d = d.slice(4); else if (d.indexOf('92') === 0) d = d.slice(2);
+  if (d.indexOf('0') === 0) d = d.slice(1);
+  if (!/^3\d{9}$/.test(d)) return null;
+  return '03' + d;
+}
+function profData() {
+  var uu = RL_GetUser() || {}; var s = (window.RL_Auth && RL_Auth.user()) || {};
+  return { name: uu.name || s.full_name || 'User', phone: uu.phone || s.phone || '', area: uu.area || uu.city || s.city || '' };
+}
+function paintProfile() {
+  var d = profData(); var ini = RL_Ini(d.name) || 'US';
+  var av = RL_$('profAv'); if (av) av.textContent = ini;
+  var pn = RL_$('profName'); if (pn) pn.textContent = d.name;
+  var pnf = RL_$('profNameFull'); if (pnf) pnf.textContent = d.name;
+  var pp = RL_$('profPhone'); if (pp) pp.textContent = d.phone || 'Not set';
+  var pa = RL_$('profArea'); if (pa) pa.textContent = d.area || 'Not set';
+  var pr = RL_$('profReqs'); if (pr) pr.textContent = myReqs.length;
+}
+function renderProfile() {
+  paintProfile();
+  // when signed in, pull the authoritative server copy then repaint
+  if (window.RL_API && window.RL_Auth && RL_Auth.token()) { RL_RefreshMe().then(paintProfile).catch(function () {}); }
+}
+function toggleProfEdit(show) {
+  var view = RL_$('profView'), edit = RL_$('profEdit'), btn = RL_$('profEditBtn');
+  if (!view || !edit) return;
+  if (show) {
+    var d = profData();
+    RL_$('peName').value = (d.name && d.name !== 'User') ? d.name : '';
+    RL_$('pePhone').value = d.phone || '';
+    RL_$('peArea').value = d.area || '';
+    var signed = !!(window.RL_API && window.RL_Auth && RL_Auth.token());
+    var note = RL_$('peNote'); if (note) note.textContent = signed ? 'Saved to your ReliefLink account.' : 'Not signed in \u2014 changes are saved on this device only.';
+    view.classList.add('hide'); edit.classList.remove('hide'); if (btn) btn.style.display = 'none';
+  } else {
+    edit.classList.add('hide'); view.classList.remove('hide'); if (btn) btn.style.display = '';
+  }
+}
+function applyProfileLocal(userObj) {
+  var cur = RL_GetUser() || {};
+  if (userObj) { cur.name = userObj.full_name || ''; cur.phone = userObj.phone || ''; cur.area = userObj.city || ''; }
+  try { localStorage.setItem('rl_user', JSON.stringify(cur)); sessionStorage.setItem('rl_user', JSON.stringify(cur)); } catch (e) {}
+  RL_BootUser({ defaultName: cur.name || 'User', defaultRole: 'help' });
+  paintProfile(); toggleProfEdit(false);
+}
+function saveProfile() {
+  var name = (RL_$('peName').value || '').trim();
+  var phone = (RL_$('pePhone').value || '').trim();
+  var area = (RL_$('peArea').value || '').trim();
+  if (name && (name.length < 2 || name.length > 40)) { RL_Toast('Enter your real name (2-40 letters)'); return; }
+  if (phone) { var pn = profNormalizePhone(phone); if (!pn) { RL_Toast('Enter a valid Pakistani mobile number like 03001234567'); return; } phone = pn; }
+  var signed = !!(window.RL_API && window.RL_Auth && RL_Auth.token());
+  var sb = RL_$('peSave'); if (sb) sb.disabled = true;
+  if (signed) {
+    var body = {};
+    if (name) body.full_name = name;
+    if (phone) body.phone = phone;
+    if (area) body.city = area;
+    RL_Send('POST', '/auth/update-profile', body).then(function (res) {
+      if (sb) sb.disabled = false;
+      if (res && res.ok && res.data) {
+        try { RL_Auth.set(res.data, !!localStorage.getItem('rl_session')); } catch (e) {}
+        applyProfileLocal(res.data.user); RL_Toast(res.message || 'Profile updated');
+      } else if (res && res.status === 0) {
+        var uu = RL_GetUser() || {}; if (name) uu.name = name; if (phone) uu.phone = phone; if (area) uu.area = area;
+        applyProfileLocal(uu ? { full_name: uu.name, phone: uu.phone, city: uu.area } : null);
+        RL_Toast('Saved on this device \u2014 will sync when you reconnect');
+      } else { RL_Toast((res && res.message) || 'Could not save \u2014 check your details'); }
+    });
+  } else {
+    var g = { full_name: name, phone: phone, city: area }; applyProfileLocal(g); if (sb) sb.disabled = false; RL_Toast('Profile updated');
+  }
 }
 
 function renderNearby() {
@@ -1426,6 +1516,7 @@ function navigate(page) {
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') { renderNotifs(false); loadNotifsLive(); }
     if (p === 'myrequests')    renderMyReqs();
+    if (p === 'profile')        renderProfile();
     if (p === 'request')       { renderActive(); LP.init(); }
     if (p === 'mesh')          meshInit();
     if (p === 'alerts')        loadAlerts();

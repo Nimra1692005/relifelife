@@ -232,6 +232,44 @@ async function promoteCitizen(res, b) {
 // Back-compat: old landing used register-role — now it is register (password required)
 async function registerRole(res, b) { return register(res, b); }
 
+/* A signed-in user editing their OWN profile (name / phone / area). Token is the only
+   authority for which row is updated — the id is never taken from the request body. */
+async function updateProfile(res, req, b) {
+  const t = readToken(req);
+  if (!t) return fail(res, 'Session expired — please sign in again', 401);
+  if (!t.uid || t.uid === 'admin') return fail(res, 'Not available for this account', 403);
+  const rows = await sb('users', { query: { select: '*', id: 'eq.' + t.uid, limit: '1' } });
+  const u = (rows || [])[0];
+  if (!u) return fail(res, 'Account not found', 404);
+  const patch = { updated_at: nowIso() };
+  if (b.full_name != null && String(b.full_name).trim() !== '') {
+    if (!validName(b.full_name)) return fail(res, 'Invalid name — please write your real name (2-40 letters)', 400);
+    patch.full_name = String(b.full_name).trim();
+  }
+  if (b.city != null && String(b.city).trim() !== '') {
+    const c = cleanCity(b.city);
+    if (!c) return fail(res, 'Invalid area — use letters only (max 80 characters)', 400);
+    patch.city = c;
+  }
+  if (b.phone != null && String(b.phone).trim() !== '') {
+    const p = normPKPhone(b.phone);
+    if (!p) return fail(res, 'Invalid mobile number — use a real Pakistani number like 03001234567', 400);
+    if (p !== u.phone) {
+      const dup = await sb('users', { query: { select: 'id', phone: 'eq.' + p, limit: '1' } });
+      if (dup && dup.length && dup[0].id !== u.id) return fail(res, 'That number already belongs to another account', 409);
+      patch.phone = p;
+    }
+  }
+  if (Object.keys(patch).length <= 1) return fail(res, 'Nothing to update', 400);
+  const out = await sb('users', { method: 'PATCH', query: { id: 'eq.' + u.id, select: '*' }, body: patch, prefer: 'return=representation' });
+  const nu = (out && out[0]) || Object.assign({}, u, patch);
+  // keep any volunteer row's contact fields in sync so dispatch stays accurate
+  if (nu.role === 'volunteer') {
+    await sb('volunteers', { method: 'PATCH', query: { user_id: 'eq.' + nu.id }, body: { full_name: nu.full_name, phone: nu.phone, city: nu.city } }).catch(function () {});
+  }
+  ok(res, { user: publicUser(nu), token: makeToken(nu) }, 'Profile updated');
+}
+
 async function adminSignin(res, b) {
   const wantEmail = (process.env.ADMIN_EMAIL || '').toLowerCase();
   const wantPw = process.env.ADMIN_PASSWORD || '';
@@ -592,6 +630,7 @@ module.exports = async function handler(req, res) {
       if (seg[1] === 'signin' && method === 'POST') return await signin(res, b);
       if (seg[1] === 'me' && method === 'GET') return await me(res, req);
       if (seg[1] === 'promote-citizen' && method === 'POST') return await promoteCitizen(res, b);
+      if (seg[1] === 'update-profile' && method === 'POST') return await updateProfile(res, req, b);
       if (seg[1] === 'register-role' && method === 'POST') return await registerRole(res, b);
       return fail(res, 'Unknown auth endpoint', 404);
     }
