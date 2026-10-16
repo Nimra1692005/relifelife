@@ -744,12 +744,36 @@
     <div class="card fade-up" style="max-width:560px">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
         <div style="width:72px;height:72px;border-radius:50%;background:var(--g);border:3px solid var(--gold);display:grid;place-items:center;font-weight:800;font-size:24px;color:var(--gold)" id="profAv">US</div>
-        <div><h3 id="profName" style="font-size:20px;font-weight:800">User</h3><p class="mute" style="font-size:13px">Registered Person · Flood Affected</p></div>
+        <div style="flex:1"><h3 id="profName" style="font-size:20px;font-weight:800">User</h3><p class="mute" style="font-size:13px">Registered Person · Flood Affected</p></div>
+        <button type="button" class="lp-btn" id="profEditBtn" onclick="toggleProfEdit(true)">Edit</button>
       </div>
-      <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">User</small></div></div>
-      <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
-      <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Area<small id="profArea">Not set</small></div></div>
-      <div class="item" style="border:none"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="list"></i></div><div class="t">Requests Submitted<small id="profReqs">0</small></div></div>
+      <div id="profSign" class="hide" style="margin-bottom:18px">
+        <p class="mute" style="font-size:12.5px;margin:0 0 10px">Sign in with your mobile number and password to sync your profile and requests across devices.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <input id="psPhone" class="field-input" type="tel" placeholder="Phone: 03001234567" maxlength="17" autocomplete="tel" inputmode="tel" style="flex:1;min-width:150px">
+          <input id="psPass" class="field-input" type="password" placeholder="Password" autocomplete="current-password" style="flex:1;min-width:120px">
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button type="button" class="submit-btn" id="psGo" onclick="citizenSignin()" style="width:auto;margin:0;padding:0 18px">Sign in</button>
+          <span class="mute" style="font-size:11.5px">No account? Send a help request, then you can create one.</span>
+        </div>
+      </div>
+      <div id="profView">
+        <div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"><i data-i="user"></i></div><div class="t">Full Name<small id="profNameFull">User</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"><i data-i="phone"></i></div><div class="t">Phone<small id="profPhone">Not set</small></div></div>
+        <div class="item"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"><i data-i="pin"></i></div><div class="t">Area<small id="profArea">Not set</small></div></div>
+      </div>
+      <div id="profEdit" class="hide">
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Full Name</label><input id="peName" class="field-input" placeholder="Your name" autocomplete="name" style="width:100%;margin-top:4px"></div>
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Phone</label><input id="pePhone" class="field-input" placeholder="03001234567" autocomplete="tel" inputmode="tel" style="width:100%;margin-top:4px"></div>
+        <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:700;opacity:.75">Area</label><input id="peArea" class="field-input" placeholder="Your city or area" autocomplete="address-level2" style="width:100%;margin-top:4px"></div>
+        <p id="peNote" class="mute" style="font-size:11.5px;margin:0 0 12px"></p>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="submit-btn" id="peSave" onclick="saveProfile()" style="width:auto;margin:0;padding:0 18px">Save changes</button>
+          <button type="button" class="lp-btn" onclick="toggleProfEdit(false)">Cancel</button>
+        </div>
+      </div>
+      <div class="item" style="border:none;margin-top:8px"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"><i data-i="list"></i></div><div class="t">Requests Submitted<small id="profReqs">0</small></div></div>
     </div>
   </div>
 
@@ -1068,6 +1092,119 @@ function renderMyReqs() {
 function updateBadges() {
   var rb = RL_$('reqBadge'); if (rb) rb.textContent = myReqs.length;
   var pr = RL_$('profReqs'); if (pr) pr.textContent = myReqs.length;
+}
+
+/* ── PROFILE — view + edit the user's own details ── */
+function profNormalizePhone(raw) {
+  var d = String(raw || '').replace(/\D/g, '');
+  if (d.indexOf('0092') === 0) d = d.slice(4); else if (d.indexOf('92') === 0) d = d.slice(2);
+  if (d.indexOf('0') === 0) d = d.slice(1);
+  if (!/^3\d{9}$/.test(d)) return null;
+  return '03' + d;
+}
+function profData() {
+  var uu = RL_GetUser() || {}; var s = (window.RL_Auth && RL_Auth.user()) || {};
+  return { name: uu.name || s.full_name || 'User', phone: uu.phone || s.phone || '', area: uu.area || uu.city || s.city || '' };
+}
+function paintProfile() {
+  var d = profData(); var ini = RL_Ini(d.name) || 'US';
+  var av = RL_$('profAv'); if (av) av.textContent = ini;
+  var pn = RL_$('profName'); if (pn) pn.textContent = d.name;
+  var pnf = RL_$('profNameFull'); if (pnf) pnf.textContent = d.name;
+  var pp = RL_$('profPhone'); if (pp) pp.textContent = d.phone || 'Not set';
+  var pa = RL_$('profArea'); if (pa) pa.textContent = d.area || 'Not set';
+  var pr = RL_$('profReqs'); if (pr) pr.textContent = myReqs.length;
+}
+function renderProfile() {
+  paintAuthState();
+  paintProfile();
+  // when signed in, pull the authoritative server copy then repaint
+  if (window.RL_API && window.RL_Auth && RL_Auth.token()) { RL_RefreshMe().then(paintProfile).catch(function () {}); }
+}
+function toggleProfEdit(show) {
+  var view = RL_$('profView'), edit = RL_$('profEdit'), btn = RL_$('profEditBtn');
+  if (!view || !edit) return;
+  if (show) {
+    var d = profData();
+    RL_$('peName').value = (d.name && d.name !== 'User') ? d.name : '';
+    RL_$('pePhone').value = d.phone || '';
+    RL_$('peArea').value = d.area || '';
+    var signed = !!(window.RL_API && window.RL_Auth && RL_Auth.token());
+    var note = RL_$('peNote'); if (note) note.textContent = signed ? 'Saved to your ReliefLink account.' : 'Not signed in \u2014 changes are saved on this device only.';
+    view.classList.add('hide'); edit.classList.remove('hide'); if (btn) btn.style.display = 'none';
+  } else {
+    edit.classList.add('hide'); view.classList.remove('hide'); if (btn) btn.style.display = '';
+  }
+}
+function applyProfileLocal(userObj) {
+  var cur = RL_GetUser() || {};
+  if (userObj) { cur.name = userObj.full_name || ''; cur.phone = userObj.phone || ''; cur.area = userObj.city || ''; }
+  try { localStorage.setItem('rl_user', JSON.stringify(cur)); sessionStorage.setItem('rl_user', JSON.stringify(cur)); } catch (e) {}
+  RL_BootUser({ defaultName: cur.name || 'User', defaultRole: 'help' });
+  paintProfile(); toggleProfEdit(false);
+}
+function saveProfile() {
+  var name = (RL_$('peName').value || '').trim();
+  var phone = (RL_$('pePhone').value || '').trim();
+  var area = (RL_$('peArea').value || '').trim();
+  if (name && (name.length < 2 || name.length > 40)) { RL_Toast('Enter your real name (2-40 letters)'); return; }
+  if (phone) { var pn = profNormalizePhone(phone); if (!pn) { RL_Toast('Enter a valid Pakistani mobile number like 03001234567'); return; } phone = pn; }
+  var signed = !!(window.RL_API && window.RL_Auth && RL_Auth.token());
+  var sb = RL_$('peSave'); if (sb) sb.disabled = true;
+  if (signed) {
+    var body = {};
+    if (name) body.full_name = name;
+    if (phone) body.phone = phone;
+    if (area) body.city = area;
+    RL_Send('POST', '/auth/update-profile', body).then(function (res) {
+      if (sb) sb.disabled = false;
+      if (res && res.ok && res.data) {
+        try { RL_Auth.set(res.data, !!localStorage.getItem('rl_session')); } catch (e) {}
+        applyProfileLocal(res.data.user); RL_Toast(res.message || 'Profile updated');
+      } else if (res && res.status === 0) {
+        var uu = RL_GetUser() || {}; if (name) uu.name = name; if (phone) uu.phone = phone; if (area) uu.area = area;
+        applyProfileLocal(uu ? { full_name: uu.name, phone: uu.phone, city: uu.area } : null);
+        RL_Toast('Saved on this device \u2014 will sync when you reconnect');
+      } else { RL_Toast((res && res.message) || 'Could not save \u2014 check your details'); }
+    });
+  } else {
+    var g = { full_name: name, phone: phone, city: area }; applyProfileLocal(g); if (sb) sb.disabled = false; RL_Toast('Profile updated');
+  }
+}
+
+/* ── Citizen sign-in right here on the help dashboard (phone + password only) ── */
+function profSignedIn(){ return !!(window.RL_API && window.RL_Auth && RL_Auth.token()); }
+function paintAuthState(){
+  var sign = RL_$('profSign'), btn = RL_$('profEditBtn'), edit = RL_$('profEdit');
+  var signed = profSignedIn();
+  if (sign) sign.classList.toggle('hide', signed);
+  if (btn) btn.style.display = signed ? '' : 'none';
+  if (edit && !signed) { edit.classList.add('hide'); if (RL_$('profView')) RL_$('profView').classList.remove('hide'); }
+}
+function citizenSignin(){
+  var ph = (RL_$('psPhone')||{}).value||'', pw = (RL_$('psPass')||{}).value||'';
+  var pn = profNormalizePhone(ph);
+  if (!pn) { RL_Toast('Enter a valid mobile number like 03001234567'); return; }
+  if (!pw) { RL_Toast('Enter your password'); return; }
+  var go = RL_$('psGo'); if (go) go.disabled = true;
+  RL_Send('POST', '/auth/signin', { phone: pn, password: pw }).then(function(res){
+    if (go) go.disabled = false;
+    if (res && res.ok && res.data && res.data.token) {
+      try { RL_Auth.set(res.data, !!localStorage.getItem('rl_session')); } catch (e) {}
+      var uu = RL_GetUser() || {}, u = res.data.user || {};
+      if (u.full_name) uu.name = u.full_name; if (u.phone) uu.phone = u.phone; if (u.city) uu.area = u.city;
+      try { localStorage.setItem('rl_user', JSON.stringify(uu)); sessionStorage.setItem('rl_user', JSON.stringify(uu)); } catch (e) {}
+      var oc = RL_$('accOffer'); if (oc) oc.style.display = 'none';
+      var pe = RL_$('psPass'); if (pe) pe.value = '';
+      RL_Toast(res.message || 'Signed in \u2014 welcome back');
+      paintAuthState(); paintProfile(); loadMyReqs();
+      if (window.RL_RefreshMe) RL_RefreshMe().then(paintProfile).catch(function(){});
+    } else if (res && res.status === 0) {
+      RL_Toast('Connection problem \u2014 please try again');
+    } else {
+      RL_Toast((res && res.message) || 'Incorrect mobile number or password');
+    }
+  });
 }
 
 function renderNearby() {
@@ -1609,6 +1746,7 @@ function navigate(page) {
     if (p === 'emergency')     renderContacts();
     if (p === 'notifications') { renderNotifs(false); loadNotifsLive(); }
     if (p === 'myrequests')    renderMyReqs();
+    if (p === 'profile')        renderProfile();
     if (p === 'request')       { renderActive(); LP.init(); }
     if (p === 'mesh')          meshInit();
     if (p === 'alerts')        loadAlerts();
@@ -1658,19 +1796,24 @@ setTimeout(sosFlush, 2500);
 /* ── LIVE weather / flood / map (free, no API key) ── */
 function _setTxt(id,v){ var e=RL_$(id); if(e) e.textContent=v; }
 function applyRisk(r,name){
-  _setTxt('flPct', r.pct+'%'); _setTxt('flArea', name);
-  _setTxt('flRiver', r.status+' — '+r.riverMax+' m³/s');
-  _setTxt('flRain', (r.precip48>25?'Very heavy':r.precip48>10?'Heavy':r.precip48>2?'Moderate':'Light')+' · '+r.precip48+'mm/48h');
-  _setTxt('flConf', r.confidence+'%'); _setTxt('flRise', '+'+r.rise+' m³/s'); _setTxt('flTrend', r.trend);
+  var noData = r.uncertain || r.pct==null;
+  _setTxt('flPct', noData?'\u2014':(r.pct+'%')); _setTxt('flArea', name);
+  _setTxt('flRiver', r.sources&&r.sources.river ? (r.status+' \u2014 '+r.riverMax+' m\u00b3/s') : (noData?'No river data':'No river gauge at this point'));
+  _setTxt('flRain', r.sources&&r.sources.rain ? ((r.precip48>25?'Very heavy':r.precip48>10?'Heavy':r.precip48>2?'Moderate':'Light')+' \u00b7 '+r.precip48+'mm/48h forecast') : 'No rainfall data');
+  _setTxt('flConf', noData?'\u2014':(r.confidence+'%')); _setTxt('flRise', r.sources&&r.sources.river?('+'+r.rise+' m\u00b3/s'):'\u2014'); _setTxt('flTrend', r.trend);
   var b=RL_$('flBadge');
-  if(b){ b.innerHTML='<svg class="i" viewBox="0 0 24 24"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"/></svg>'+(r.pct>=60?'HIGH FLOOD RISK':(r.pct>=30?'MODERATE FLOOD RISK':'LOW FLOOD RISK')); b.style.background=r.pct>=60?'rgba(239,91,91,.25)':(r.pct>=30?'rgba(245,183,61,.25)':'rgba(60,192,142,.25)'); b.style.color=r.pct>=60?'#f87171':(r.pct>=30?'#F5B83D':'#3CC08E'); }
-  _setTxt('flRec', r.pct>=60?'Move Now':(r.pct>=30?'Stay Alert':'Safe'));
-  var arc=RL_$('flArc'); if(arc){ var v=Math.max(2,Math.min(98,r.pct)); arc.setAttribute('stroke-dasharray', v+' '+(100-v)); }
-  renderSafetyTips(r.pct);
+  if(b){ b.innerHTML='<svg class="i" viewBox="0 0 24 24"><path d="M12 2.7s6 6.3 6 11.3a6 6 0 0 1-12 0c0-5 6-11.3 6-11.3z"/></svg>'+(noData?'DATA UNAVAILABLE':(r.pct>=60?'HIGH FLOOD RISK':(r.pct>=30?'MODERATE FLOOD RISK':'LOW FLOOD RISK'))); b.style.background=noData?'rgba(150,150,150,.22)':(r.pct>=60?'rgba(239,91,91,.25)':(r.pct>=30?'rgba(245,183,61,.25)':'rgba(60,192,142,.25)')); b.style.color=noData?'#9aa':(r.pct>=60?'#f87171':(r.pct>=30?'#F5B83D':'#3CC08E')); }
+  _setTxt('flRec', noData?'Verify data':(r.pct>=60?'Move Now':(r.pct>=30?'Stay Alert':'Safe')));
+  var arc=RL_$('flArc'); if(arc){ var v=noData?0:Math.max(2,Math.min(98,r.pct)); arc.setAttribute('stroke-dasharray', v+' '+(100-v)); }
+  renderSafetyTips(noData?null:r.pct);
 }
-/* Recommendations adapt to the LIVE risk level — not a static list */
+/* Recommendations adapt to the LIVE risk level \u2014 or an honest caveat when data is missing */
 function renderSafetyTips(pct) {
   var el = RL_$('safetyTips'); if (!el) return;
+  if (pct==null) {
+    el.innerHTML = '<div class="item" style="border-color:#F5B83D44"><div class="item-icon" style="background:#F5B83D22;color:var(--y)"></div><div class="t"><b>Prediction uncertain \u2014 live data unavailable</b><small>Weather and river sources returned no data for this point. No risk value is estimated. Try again shortly or check NDMA / PDMA official advisories.</small></div></div>';
+    return;
+  }
   var tips = pct >= 60 ? [
     ['#EF5B5B','var(--r)','home','Evacuate immediately','Move to higher ground — do not wait'],
     ['#EF5B5B','var(--r)','drop','Never cross flowing water','30 cm of moving water can knock you down'],
@@ -2190,9 +2333,10 @@ function loadSafeAlongRoute(rt, LG){
 /* ── SMART SAFETY SCAN — instant danger report for any PK area ── */
 var SCAN_LAST=null; // last report, for copy/download
 function scanFactorBars(r, qs, alNear){
-  // honest 0-100 contribution per hazard factor for this area
+  // honest 0-100 contribution per hazard factor for this area (null when no data → 0, never fabricated)
+  var noData=r.uncertain||r.pct==null;
   var fRain=Math.min(100, Math.round((r.precip48/50)*100));
-  var fRiver=r.pct;
+  var fRiver=noData?0:r.pct;
   var quakeNear=(qs||[]).filter(function(q){ return RL_LIVE.distKm(SCAN_LAST.pos,q)<150 && q.mag>=4; });
   var fQuake=Math.min(100, quakeNear.reduce(function(a,q){ return a+(q.mag>=6?45:q.mag>=5?25:12); },0));
   var fAlert=Math.min(100,(alNear||[]).length*35);
@@ -2215,29 +2359,50 @@ function runScan(){
   if(out) out.innerHTML='<p style="font-size:13px;padding:8px">Scanning '+q+'…</p>';
   RL_LIVE.place(q).then(function(p){
     if(!p){ if(out) out.innerHTML='<div class="card"><p class="mute" style="padding:12px">Not found: "'+q+'" in Pakistan — try another spelling.</p></div>'; RL_Toast('Place not found'); return; }
+    // Verified registry rows for this facility search (distance-capped, validated in nearestFacilities)
+    var registry=[].concat(
+      (SHELTERS||[]).filter(function(x){return x[4]!=null;}).map(function(x){ return {name:x[0],kind:'Shelter',lat:x[4],lng:x[5],source:'ReliefLink Registry'}; }),
+      (HOSPS||[]).filter(function(x){return x[4]!=null;}).map(function(x){ return {name:x[0],kind:'Hospital',lat:x[4],lng:x[5],source:'ReliefLink Registry'}; })
+    );
     Promise.all([
       RL_LIVE.weather(p.lat,p.lng).catch(function(){return null;}),
       RL_LIVE.flood(p.lat,p.lng).catch(function(){return null;}),
       RL_LIVE.quakes(p.lat,p.lng,300).catch(function(){return [];}),
-      RL_Get('/alerts?active=true&limit=50'),
+      RL_Get('/alerts?active=true&limit=50').catch(function(){return [];}),
       RL_LIVE.floodSeries(p.lat,p.lng).catch(function(){return null;}),
-      RL_LIVE.rainSeries(p.lat,p.lng).catch(function(){return null;})
+      RL_LIVE.rainSeries(p.lat,p.lng).catch(function(){return null;}),
+      RL_LIVE.nearestFacilities(p.lat,p.lng,{radiusKm:40,limit:12,registry:registry}).catch(function(){return [];})
     ]).then(function(res){
-      var wx=res[0], fl=res[1], qs=res[2]||[], al=res[3]||[], fSeries=res[4], rSeries=res[5];
+      var wx=res[0], fl=res[1], qs=res[2]||[], al=Array.isArray(res[3])?res[3]:[], fSeries=res[4], rSeries=res[5], fac=res[6]||[];
       var r=RL_LIVE.risk(wx,fl);
-      var alNear=al.filter(function(a){ return a.latitude!=null && RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude})<80; });
-      var sh=SHELTERS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
-      var hp=HOSPS.filter(function(x){return x[4]!=null;}).map(function(x){ return {n:x[0],d:RL_LIVE.distKm(p,{lat:x[4],lng:x[5]})}; }).sort(function(a,b){return a.d-b.d;}).slice(0,2);
-      var c=r.pct>=60?'#EF5B5B':r.pct>=30?'#F5B83D':'#3CC08E';
-      var html='<div class="card fade-up" style="border-color:'+c+'55"><div class="card-header"><h3>Safety Report — '+p.name+', Pakistan</h3><span class="tag" style="background:'+c+'22;color:'+c+'">'+(r.pct>=60?'HIGH RISK':r.pct>=30?'MODERATE':'LOW RISK')+' '+r.pct+'%</span></div>'
+      var noData=r.uncertain||r.pct==null;
+      var alNear=(al||[]).filter(function(a){ return a.latitude!=null && RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude})<80; });
+      // Only facilities actually verified near this point (OSM Overpass + validated registry), never far/fake rows
+      var sh=fac.filter(function(x){ return x.kind==='Shelter'; }).slice(0,2);
+      var hp=fac.filter(function(x){ return x.kind==='Hospital'; }).slice(0,2);
+      var c=noData?'#9aa':(r.pct>=60?'#EF5B5B':r.pct>=30?'#F5B83D':'#3CC08E');
+      var riskTag=noData?'DATA UNAVAILABLE':((r.pct>=60?'HIGH RISK':r.pct>=30?'MODERATE':'LOW RISK')+' '+r.pct+'%');
+      var helpRows='';
+      if(sh.length) helpRows+=sh.map(function(x){ return x.name+' \u00b7 '+x.source+' \u2014 '+x.km.toFixed(1)+' km'; }).join('<br>');
+      if(hp.length) helpRows+=(helpRows?'<br>':'')+hp.map(function(x){ return x.name+' \u00b7 '+x.source+' \u2014 '+x.km.toFixed(1)+' km'; }).join('<br>');
+      if(!helpRows) helpRows='No verified hospital or shelter within 40 km of this point \u2014 this does not mean none exist.';
+      // Honest data-provenance footer
+      var asOf=new Date().toLocaleString('en-PK',{timeZone:'Asia/Karachi'});
+      var srcBits=[
+        (r.sources&&r.sources.rain)?'Rainfall: Open-Meteo forecast':'Rainfall: unavailable',
+        (r.sources&&r.sources.river)?'River: Open-Meteo / GloFAS':'River: no gauge cell here',
+        'Quakes: USGS (30d)', 'Alerts: ReliefLink registry', 'Facilities: OpenStreetMap + ReliefLink registry'
+      ];
+      var html='<div class="card fade-up" style="border-color:'+c+'55"><div class="card-header"><h3>Safety Report \u2014 '+p.name+', Pakistan</h3><span class="tag" style="background:'+c+'22;color:'+c+'">'+riskTag+'</span></div>'
         +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)"></div><div class="t"><b>'+(wx&&wx.current?Math.round(wx.current.temperature_2m)+'°C · '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather unavailable')+'</b><small>'+(wx&&wx.daily&&wx.daily.precipitation_sum?'Today '+(wx.daily.precipitation_sum[0]||0)+' mm rain · '+(wx.daily.precipitation_probability_max[0]||0)+'% chance':'')+'</small></div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#16467022;color:#164670"></div><div class="t"><b>Flood risk '+r.pct+'% — '+r.status+'</b><small>River '+(r.riverMax||0)+' m³/s · trend: '+r.trend+' · confidence '+r.confidence+'%</small></div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"></div><div class="t"><b>'+(qs.length?qs.length+' earthquake(s) nearby in 30 days':'No earthquakes nearby in the last 30 days')+'</b>'+(qs.length?'<small>'+qs.slice(0,3).map(function(q){return 'M'+q.mag+' — '+(q.place||'')+' ('+Math.round(RL_LIVE.distKm(p,q))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
-        +'<div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"></div><div class="t"><b>'+(alNear.length?alNear.length+' active alert(s) near this area':'No active alerts near this area')+'</b>'+(alNear.length?'<small>'+alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join(' · ')+'</small>':'')+'</div></div>'
-        +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>Nearest help</b><small>'
-          +(sh.length?''+sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'No shelters registered')
-          +(hp.length?'<br>'+hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join(' · '):'')
-        +'</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#16467022;color:#164670"></div><div class="t"><b>'+(noData?'Flood risk: Prediction uncertain':('Flood risk '+r.pct+'% — '+r.status))+'</b><small>'+(noData?'Live weather and river sources returned no data for this point — no risk value is estimated. Verify with NDMA/PDMA.':((r.sources&&r.sources.river)?('Peak '+r.riverMax+' m³/s ('+r.ratio+'× local baseline) · '):'')+((r.sources&&r.sources.rain)?(r.precip48+' mm/48h forecast · '):'No rainfall data · ')+'trend: '+r.trend+' · confidence '+r.confidence+'%')+'</small></div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#F58A3D22;color:var(--o)"></div><div class="t"><b>'+(qs.length?qs.length+' earthquake(s) nearby in 30 days':'No earthquakes nearby in the last 30 days')+'</b>'+(qs.length?'<small>'+qs.slice(0,3).map(function(q){return 'M'+q.mag+' \u2014 '+(q.place||'')+' ('+Math.round(RL_LIVE.distKm(p,q))+' km)';}).join(' \u00b7 ')+'</small>':'')+'</div></div>'
+        +'<div class="item"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)"></div><div class="t"><b>'+(alNear.length?alNear.length+' active alert(s) near this area':'No active alerts near this area')+'</b>'+(alNear.length?'<small>'+alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join(' \u00b7 ')+'</small>':'')+'</div></div>'
+        +'<div class="item" style="border:none"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)"></div><div class="t"><b>Nearest verified help (within 40 km)</b><small>'+helpRows+'</small></div></div>'
+        +'<div style="margin-top:10px;padding:9px 11px;border-radius:10px;background:#0002;font-size:11.5px;line-height:1.5;opacity:.85">'
+          +'<b>Data sources &amp; last updated</b><br>Last updated: '+asOf+' (Asia/Karachi)<br>'+srcBits.join(' \u00b7 ')
+          +'<br><i>Limits: river gauge is a GloFAS model grid cell, not a physical station; a facility absent from OpenStreetMap/registry will not appear. Risk is an evidence-based estimate, never 100% certain.</i>'
+        +'</div>'
         +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">'
           +'<button type="button" class="lp-btn" onclick="copyScanReport()">Copy report</button>'
           +'<button type="button" class="lp-btn" onclick="downloadScanReport()">Download .txt</button>'
@@ -2248,22 +2413,26 @@ function runScan(){
       // graph card + factor breakdown
       var gcard=RL_$('scanGraphCard');
       if(gcard && window.RL_LIVE){
-        SCAN_LAST={pos:p, risk:r, name:p.name, wx:wx, qs:qs, alNear:alNear, sh:sh, hp:hp};
+        SCAN_LAST={pos:p, risk:r, name:p.name, wx:wx, qs:qs, alNear:alNear, sh:sh, hp:hp, asOf:asOf, srcBits:srcBits, noData:noData};
         renderFloodGraph(fSeries, rSeries, 'scanGraph', 'scanGraphLegend');
         scanFactorBars(r, qs, alNear);
         gcard.classList.remove('hide');
       }
       // plain-text report for copy/download
       if(SCAN_LAST){
-        var txtLines=['RELIEFLINK SAFETY REPORT — '+p.name+', Pakistan','Generated: '+new Date().toLocaleString('en-PK',{timeZone:'Asia/Karachi'}),'',
-          'Overall flood risk: '+r.pct+'% ('+r.status+') · confidence '+r.confidence+'%',
-          'River discharge now/peak: '+r.riverNow+' / '+r.riverMax+' m\u00b3/s · trend: '+r.trend,
-          (wx&&wx.current?'Weather: '+Math.round(wx.current.temperature_2m)+'\u00b0C, '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather: unavailable'),
-          (wx&&wx.daily?'48h rainfall forecast: '+r.precip48+' mm':''),
+        var txtLines=['RELIEFLINK SAFETY REPORT \u2014 '+p.name+', Pakistan','Generated: '+asOf+' (Asia/Karachi)','',
+          noData?'Flood risk: DATA UNAVAILABLE \u2014 live weather + river sources returned no data; no risk value is estimated.'
+                :('Flood risk: '+r.pct+'% ('+r.status+') \u00b7 confidence '+r.confidence+'%'),
+          (r.sources&&r.sources.river)?('River discharge peak '+r.riverMax+' m\u00b3/s = '+r.ratio+'\u00d7 this reach\u2019s baseline \u00b7 trend: '+r.trend):'River: no gauge cell at this point',
+          (r.sources&&r.sources.rain)?('48h rainfall forecast: '+r.precip48+' mm'):'Rainfall: unavailable',
+          (wx&&wx.current?'Weather now: '+Math.round(wx.current.temperature_2m)+'\u00b0C, '+(wx.current.relative_humidity_2m||0)+'% humidity':'Weather: unavailable'),
           'Earthquakes (30d, nearby): '+(qs.length?qs.slice(0,3).map(function(x){return 'M'+x.mag+' '+x.place+' ('+Math.round(RL_LIVE.distKm(p,x))+' km)';}).join('; '):'none'),
           'Active alerts nearby: '+(alNear.length?alNear.slice(0,3).map(function(a){return a.title+' ('+Math.round(RL_LIVE.distKm(p,{lat:+a.latitude,lng:+a.longitude}))+' km)';}).join('; '):'none'),
-          'Nearest shelters: '+(sh.length?sh.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join('; '):'none registered'),
-          'Nearest hospitals: '+(hp.length?hp.map(function(x){return x.n+' — '+x.d.toFixed(0)+' km';}).join('; '):'none registered')];
+          'Nearest verified shelters (\u226440 km): '+(sh.length?sh.map(function(x){return x.name+' \u00b7 '+x.source+' \u2014 '+x.km.toFixed(1)+' km';}).join('; '):'none verified nearby'),
+          'Nearest verified hospitals (\u226440 km): '+(hp.length?hp.map(function(x){return x.name+' \u00b7 '+x.source+' \u2014 '+x.km.toFixed(1)+' km';}).join('; '):'none verified nearby'),
+          '',
+          'Data sources: '+srcBits.join('; '),
+          'Limits: river value is a GloFAS model grid cell, not a physical gauge; facilities absent from OpenStreetMap/registry will not appear; this is an evidence-based estimate, never 100% certain. For life-threatening emergencies call 1122, NDMA 1700.'];
         SCAN_LAST.text=txtLines.filter(Boolean).join('\n');
       }
     });
