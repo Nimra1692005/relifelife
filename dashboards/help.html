@@ -109,6 +109,9 @@
 .rt-step { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
 .rt-step:last-child { border-bottom: none; }
 .rt-step .n { width: 22px; height: 22px; border-radius: 50%; background: var(--g); color: var(--gold); display: grid; place-items: center; font-size: 10.5px; font-weight: 800; flex: none; }
+/* map labels for start / destination / danger / safe places */
+.rt-tip { background: rgba(20,40,25,.9); color: #F5EEDB; border: none; border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.rt-tip::before { display: none; }
 @media(max-width:500px){ .cat-grid{ grid-template-columns: repeat(2,1fr); } .call-buttons{ gap:6px; } .call-btn{ padding:8px 12px; font-size:12px; } }
 /* ── AI triage preview box ── */
 .tri-box { border: 1.5px dashed var(--g); border-radius: 14px; padding: 12px 14px; margin: 4px 0 16px; background: rgba(60,192,142,.06); font-size: 12.5px; }
@@ -1146,29 +1149,30 @@ function samplePoints(rt,n){
   return out;
 }
 function scoreRoute(samples, wxArr, flArr, alerts, quakes){
-  var risk=0, warns=[], temps=[], precip=0, dis=0;
+  var risk=0, warns=[], temps=[], precip=0, dis=0, hazards=[];
   samples.forEach(function(s,i){
     var w=wxArr&&wxArr[i], f=flArr&&flArr[i];
+    var localRain=0, localDis=0;
     if(w){
       var t=w.current&&w.current.temperature_2m; if(t!=null) temps.push(t);
-      var p=(w.daily&&w.daily.precipitation_sum&&w.daily.precipitation_sum[0])||0; if(p>precip) precip=p;
+      localRain=(w.daily&&w.daily.precipitation_sum&&w.daily.precipitation_sum[0])||0; if(localRain>precip) precip=localRain;
     }
     if(f&&f.daily&&Array.isArray(f.daily.river_discharge)){
-      var d=Math.max.apply(null,f.daily.river_discharge.map(function(x){return x||0;})); if(d>dis) dis=d;
+      localDis=Math.max.apply(null,f.daily.river_discharge.map(function(x){return x||0;})); if(localDis>dis) dis=localDis;
     }
+    if(localDis>150) hazards.push({lat:s.lat,lng:s.lng,level:'high',label:'🌊 River above danger mark — '+localDis.toFixed(0)+' m³/s'});
+    else if(localDis>50) hazards.push({lat:s.lat,lng:s.lng,level:'med',label:'🌊 Elevated river level — '+localDis.toFixed(0)+' m³/s'});
+    if(localRain>20) hazards.push({lat:s.lat,lng:s.lng,level:'high',label:'🌧️ Very heavy rain on route — '+localRain.toFixed(0)+' mm'});
+    else if(localRain>6) hazards.push({lat:s.lat,lng:s.lng,level:'med',label:'🌧️ Rain likely — '+localRain.toFixed(0)+' mm'});
   });
-  if(precip>20){ risk+=30; warns.push('🌧️ Route par bohot tez barish ('+precip.toFixed(0)+' mm)'); }
-  else if(precip>6){ risk+=12; warns.push('🌧️ Route par barish ka imkaan ('+precip.toFixed(0)+' mm)'); }
-  if(dis>150){ risk+=35; warns.push('🌊 Nadi danger mark se upar ('+dis.toFixed(0)+' m³/s)'); }
-  else if(dis>50){ risk+=15; warns.push('🌊 Nadi ka level khaufnaak ('+dis.toFixed(0)+' m³/s)'); }
   (alerts||[]).forEach(function(a){
     if(a.latitude==null) return;
     var near=samples.some(function(s){ return RL_LIVE.distKm(s,{lat:+a.latitude,lng:+a.longitude})<40; });
-    if(near){ risk+=20; warns.push('⚠️ Active alert route ke paas: '+(a.title||'')); }
+    if(near){ risk+=20; warns.push('⚠️ Active alert near route: '+(a.title||'')); hazards.push({lat:+a.latitude,lng:+a.longitude,level:'high',label:'⚠️ '+(a.title||'Active alert')}); }
   });
-  (quakes||[]).forEach(function(q){ if(q.mag>=4.5){ risk+=10; warns.push('🌍 Haal hi ka earthquake M'+q.mag+' — '+(q.place||'')); } });
+  (quakes||[]).forEach(function(q){ if(q.mag>=4.5){ risk+=10; warns.push('🌍 Recent earthquake M'+q.mag+' — '+(q.place||'')); if(q.lat!=null&&q.lng!=null&&samples.some(function(s){return RL_LIVE.distKm(s,q)<120;})) hazards.push({lat:q.lat,lng:q.lng,level:'med',label:'🌍 Earthquake M'+q.mag}); } });
   var score=Math.max(5,100-risk);
-  return { score:score, warns:warns, tempLo:temps.length?Math.min.apply(null,temps):null, tempHi:temps.length?Math.max.apply(null,temps):null, precip:precip, dis:dis };
+  return { score:score, warns:warns, tempLo:temps.length?Math.min.apply(null,temps):null, tempHi:temps.length?Math.max.apply(null,temps):null, precip:precip, dis:dis, hazards:hazards };
 }
 function scoreColor(s){ return s>=70?'#3CC08E':s>=45?'#F5B83D':'#EF5B5B'; }
 function scoreLabel(s){ return s>=70?'SAFE':s>=45?'CAUTION':'DANGEROUS'; }
@@ -1202,17 +1206,57 @@ function scoreAndRender(start,end,routes){
     drawRoute(start,end,best.rt,alt?alt.rt:null,best.info);
   });
 }
+function _routeCoords(rt){ var c=(rt.geometry&&rt.geometry.coordinates)||[]; return c.map(function(p){ return {lat:p[1],lng:p[0]}; }); }
+function _minDistToRoute(pt, coords){ var m=Infinity; for(var i=0;i<coords.length;i++){ var d=RL_LIVE.distKm(pt,coords[i]); if(d<m) m=d; } return m; }
+function loadSafeAlongRoute(rt, LG){
+  var coords=_routeCoords(rt), el=RL_$('rtSafe');
+  Promise.all([ RL_Get('/shelters'), RL_Get('/hospitals') ]).then(function(r){
+    var pool=[];
+    var sh=Array.isArray(r[0])?r[0]:[], ho=Array.isArray(r[1])?r[1]:[];
+    sh.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ var d=_minDistToRoute({lat:+x.latitude,lng:+x.longitude},coords); if(d<=30) pool.push({kind:'Shelter',icon:'🏕️',name:x.name||'Shelter',d:d,lat:+x.latitude,lng:+x.longitude}); } });
+    ho.forEach(function(x){ if(x.latitude!=null&&x.longitude!=null){ var d=_minDistToRoute({lat:+x.latitude,lng:+x.longitude},coords); if(d<=30) pool.push({kind:'Hospital',icon:'🏥',name:x.name||'Hospital',d:d,lat:+x.latitude,lng:+x.longitude}); } });
+    // fallback to on-page shelter registry if live DB returned nothing
+    if(!pool.length && typeof SHELTERS!=='undefined') SHELTERS.forEach(function(x){ if(x[4]!=null&&x[5]!=null){ var d=_minDistToRoute({lat:x[4],lng:x[5]},coords); if(d<=30) pool.push({kind:'Shelter',icon:'🏕️',name:x[0],d:d,lat:x[4],lng:x[5]}); } });
+    pool.sort(function(a,b){ return a.d-b.d; });
+    var top=pool.slice(0,6);
+    top.forEach(function(p){ var m=window.L.circleMarker([p.lat,p.lng],{radius:7,color:'#2E7D32',weight:2,fillColor:'#3CC08E',fillOpacity:.8}); m.bindTooltip(p.icon+' '+p.name+' · '+p.d.toFixed(0)+' km',{direction:'top',className:'rt-tip'}); m.bindPopup(p.icon+' '+p.kind+' <b>'+p.name+'</b><br>'+p.d.toFixed(0)+' km from route'); if(LG) m.addTo(LG); });
+    if(el) el.innerHTML = top.length ? '<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">'+top.map(function(p){ return '<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">'+p.icon+'</div><div class="t"><b>'+p.name+'</b><small>'+p.kind+' · '+p.d.toFixed(0)+' km off route</small></div></div>'; }).join('')+'</div>' : '<div style="font-size:12.5px;margin-top:6px">Is route ke 30 km ke andar koi registered shelter/hospital nahi mila.</div>';
+  }).catch(function(){ if(el) el.textContent='Safe places data abhi available nahi.'; });
+}
 function drawRoute(start,end,rt,altRt,info){
   var res=RL_$('rtResult');
-  if(ROUTE_MAP&&ROUTE_MAP._rtLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._rtLine); ROUTE_MAP._rtLine=null; }
-  if(ROUTE_MAP&&ROUTE_MAP._altLine){ ROUTE_MAP.removeLayer(ROUTE_MAP._altLine); ROUTE_MAP._altLine=null; }
   if(ROUTE_MAP){
+    ['_rtLine','_altLine'].forEach(function(k){ if(ROUTE_MAP[k]){ ROUTE_MAP.removeLayer(ROUTE_MAP[k]); ROUTE_MAP[k]=null; } });
+    if(ROUTE_MAP._rtLayer){ ROUTE_MAP.removeLayer(ROUTE_MAP._rtLayer); }
+    ROUTE_MAP._rtLayer=window.L.layerGroup().addTo(ROUTE_MAP);
+  }
+  var LG=ROUTE_MAP&&ROUTE_MAP._rtLayer;
+  if(ROUTE_MAP && rt.geometry){
     if(altRt) ROUTE_MAP._altLine=window.L.geoJSON(altRt.geometry,{style:{color:'#999',weight:4,opacity:.45,dashArray:'6 6'}}).addTo(ROUTE_MAP);
     ROUTE_MAP._rtLine=window.L.geoJSON(rt.geometry,{style:{color:scoreColor(info.score),weight:5,opacity:.95}}).addTo(ROUTE_MAP);
-    ROUTE_MAP.fitBounds(ROUTE_MAP._rtLine.getBounds(),{padding:[30,30]});
   }
+  // labeled START + DESTINATION (permanent labels so the map names the places)
   RT_START={lat:start.lat,lng:start.lng}; pinStart();
-  RL_LIVE.marker(ROUTE_MAP,end.lat,end.lng,'🏁 <b>Destination</b>','#2E7D32');
+  var startTip=null, destTip=null;
+  if(RT_START_M){ startTip=window.L.tooltip({permanent:true,direction:'top',offset:[0,-32],className:'rt-tip'}).setContent('🚩 '+(start.name||'Start')); RT_START_M.bindTooltip(startTip); } 
+  var destM=window.L.circleMarker([end.lat,end.lng],{radius:9,color:'#2E7D32',weight:2,fillColor:'#2E7D32',fillOpacity:.85});
+  destTip=window.L.tooltip({permanent:true,direction:'top',offset:[0,-10],className:'rt-tip'}).setContent('🏁 '+(end.name||'Destination'));
+  destM.bindTooltip(destTip); destM.bindPopup('🏁 <b>'+(end.name||'Destination')+'</b>'); if(LG) destM.addTo(LG);
+  // geolocated DANGER markers on the map
+  var hz=info.hazards||[];
+  hz.forEach(function(h){
+    var col=h.level==='high'?'#EF5B5B':'#F5B83D';
+    var m=window.L.circleMarker([h.lat,h.lng],{radius:8,color:col,weight:2,fillColor:col,fillOpacity:.7});
+    m.bindPopup(h.label); m.bindTooltip(h.label,{direction:'top',className:'rt-tip'});
+    if(LG) m.addTo(LG);
+  });
+  // fit map to include route + all markers
+  if(ROUTE_MAP){ try{
+    var b=window.L.latLngBounds([[start.lat,start.lng],[end.lat,end.lng]]);
+    if(ROUTE_MAP._rtLine) b.extend(ROUTE_MAP._rtLine.getBounds());
+    hz.forEach(function(h){ b.extend([h.lat,h.lng]); });
+    ROUTE_MAP.fitBounds(b,{padding:[36,36]});
+  }catch(e){ try{ROUTE_MAP.fitBounds([[start.lat,start.lng],[end.lat,end.lng]],{padding:[36,36]});}catch(_){} } }
   var km=(rt.distance/1000).toFixed(1), min=Math.max(1,Math.round(rt.duration/60));
   var eta=new Intl.DateTimeFormat('en-PK',{timeZone:'Asia/Karachi',hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date(Date.now()+rt.duration*1000));
   var steps=((rt.legs&&rt.legs[0]&&rt.legs[0].steps)||[]).slice(0,7);
@@ -1223,13 +1267,15 @@ function drawRoute(start,end,rt,altRt,info){
     +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">📏</div><div class="t"><b>'+km+' km · ~'+min+' min drive</b><small>Arrival (Karachi time): <b>'+eta+'</b></small></div></div>'
     +'<div class="item"><div class="item-icon" style="background:#4C8DF622;color:var(--b)">🚩</div><div class="t"><b>Start</b><small id="rtStartAddr">Address la raha hoon…</small></div></div>'
     +'<div class="item"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">🏁</div><div class="t"><b>Destination</b><small id="rtEndAddr">Address la raha hoon…</small></div></div>'
-    +(info.warns.length ? info.warns.map(function(w){ return '<div class="item" style="border-color:#EF5B5B44"><div class="item-icon" style="background:#EF5B5B22;color:var(--r)">⚠️</div><div class="t"><b>'+w+'</b></div></div>'; }).join('')
-      : '<div class="item" style="border-color:#3CC08E44"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">✅</div><div class="t"><b>Raaste mein koi danger nahi mili</b><small>Weather, river, alerts aur earthquakes sab clear hain</small></div></div>')
-    +(altRt ? '<div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🔀</div><div class="t"><b>Alternative route skipped</b><small>Safety score '+(altRt._sc!=null?altRt._sc:'kam')+' — is line ko map par grey dekhein</small></div></div>' : '')
-    +(steps.length ? '<div style="margin-top:10px"><b style="font-size:13px">🧭 Turn-by-turn</b>'+steps.map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('')+'</div>' : '');
+    +(hz.length ? '<div style="margin-top:12px"><b style="font-size:13px">📍 Danger spots (map par marked)</b>'+hz.map(function(h){ return '<div class="rt-step"><span class="n" style="background:'+(h.level==='high'?'#EF5B5B':'#F5B83D')+'">!</span><span>'+h.label+'</span></div>'; }).join('')+'</div>'
+        : '<div class="item" style="border-color:#3CC08E44"><div class="item-icon" style="background:#3CC08E22;color:var(--gr)">✅</div><div class="t"><b>Raaste mein koi danger nahi mili</b><small>Weather, river, alerts aur earthquakes sab clear hain</small></div></div>')
+    +(altRt ? '<div class="item"><div class="item-icon" style="background:#7C6CF022;color:var(--p)">🔀</div><div class="t"><b>Alternative route (grey)</b><small>Safety score '+(altRt._sc!=null?altRt._sc:'kam')+' — ye line map par grey dikhi gayi</small></div></div>' : '')
+    +'<div style="margin-top:12px"><b style="font-size:13px">🛡️ Safe places near route</b><div id="rtSafe" class="mute" style="font-size:12.5px">Searching shelters &amp; hospitals along the route…</div></div>'
+    +(steps.length ? '<div style="margin-top:12px"><b style="font-size:13px">🧭 Turn-by-turn</b>'+steps.map(function(s,i){ return '<div class="rt-step"><span class="n">'+(i+1)+'</span><span>'+maneuverText(s)+'</span></div>'; }).join('')+'</div>' : '');
   RL_Icons();
-  RL_LIVE.reverse(start.lat,start.lng).then(function(j1){ var e=RL_$('rtStartAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j1)||('('+start.lat.toFixed(4)+', '+start.lng.toFixed(4)+')'); }).catch(function(){});
-  RL_LIVE.reverse(end.lat,end.lng).then(function(j2){ var e=RL_$('rtEndAddr'); if(e) e.textContent=RL_LIVE.fmtAddr(j2)||('('+end.lat.toFixed(4)+', '+end.lng.toFixed(4)+')'); }).catch(function(){});
+  RL_LIVE.reverse(start.lat,start.lng).then(function(j1){ var a=RL_LIVE.fmtAddr(j1)||('('+start.lat.toFixed(4)+', '+start.lng.toFixed(4)+')'); var e=RL_$('rtStartAddr'); if(e) e.textContent=a; if(startTip) startTip.setContent('🚩 '+a); }).catch(function(){});
+  RL_LIVE.reverse(end.lat,end.lng).then(function(j2){ var a=RL_LIVE.fmtAddr(j2)||('('+end.lat.toFixed(4)+', '+end.lng.toFixed(4)+')'); var e=RL_$('rtEndAddr'); if(e) e.textContent=a; if(destTip) destTip.setContent('🏁 '+a); }).catch(function(){});
+  loadSafeAlongRoute(rt, LG);
   RL_Toast(info.score>=70?'✅ Safest route selected ('+km+' km)':'⚠️ Route set — warnings upar hain');
 }
 /* ── SMART SAFETY SCAN — instant danger report for any PK area ── */
