@@ -199,7 +199,7 @@ window.RL_LIVE = (function () {
     var data = '[out:json][timeout:20];(' + opBody(kind, ar) + ');out center 25;';
     var i = 0;
     function tryOne() {
-      if (i >= OPASS_MIRRORS.length) return Promise.resolve([]);
+      if (i >= OPASS_MIRRORS.length) return Promise.reject(new Error('overpass-unreachable')); /* all mirrors down — caller can show "busy, retry" instead of a misleading empty list */
       return fetch(OPASS_MIRRORS[i++], { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'data=' + encodeURIComponent(data) })
         .then(function (r) { if (!r.ok) throw new Error('http' + r.status); return r.json(); })
         .then(function (j) {
