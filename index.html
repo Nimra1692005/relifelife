@@ -380,21 +380,13 @@ label.urgent-on{color:#d64545!important;font-weight:700}
       <div class="field" style="--i:5"><input type="password" name="hpass2" aria-label="Confirm password" placeholder="Confirm password" required minlength="6" autocomplete="new-password"></div>
       <div class="row" style="--i:6"><label><input type="checkbox" id="urgentCheck"> <span data-rl="chkUrgent">This is urgent</span></label></div>
       <button class="btn" style="--i:7" data-rl="btnCreate">Create account</button>
-      <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hsOpen"><span data-rl="lnkAccSign">Have an account? Sign in</span></a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hrOpen"><span data-rl="lnkCreate">Create account</span></a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
+      <p class="alt" style="--i:7">Want to help? <a data-go="volunteer" tabindex="0" role="button">Volunteer</a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hsOpen"><span data-rl="lnkAccSign">Have an account? Sign in</span></a> &nbsp;·&nbsp; <a data-go="admin" tabindex="0" role="button">Admin</a></p>
       <div id="helpSign" style="display:none;width:100%">
         <h3 data-rl="hAccSign">Sign in to your account</h3>
         <div class="field"><input type="tel" id="hsPhone" aria-label="Phone" placeholder="Phone: 03001234567" maxlength="17"></div>
         <div class="field"><input type="password" id="hsPass" aria-label="Password" placeholder="Password" autocomplete="current-password"></div>
         <button class="btn" type="button" id="hsGo" data-rl="btnSignin">Sign in</button>
-        <p class="alt"><a tabindex="0" role="button" id="hsReg"><span data-rl="lnkNoAcc">New here? Create account</span></a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hsBack"><span data-rl="lnkGuest">Continue without an account</span></a></p>
-      </div>
-      <div id="helpReg" style="display:none;width:100%">
-        <h3 data-rl="hAccReg">Create your account</h3>
-        <div class="field"><input type="text" id="hrName" aria-label="Full name" placeholder="Full name" autocomplete="name" maxlength="40"></div>
-        <div class="field"><input type="tel" id="hrPhone" aria-label="Phone" placeholder="Phone: 03001234567" autocomplete="tel" inputmode="tel" maxlength="17"></div>
-        <div class="field"><input type="password" id="hrPass" aria-label="Password" placeholder="Password (6+ characters)" autocomplete="new-password" minlength="6"></div>
-        <button class="btn" type="button" id="hrGo" data-rl="btnCreate">Create account</button>
-        <p class="alt"><a tabindex="0" role="button" id="hrSign"><span data-rl="lnkAccSign">Have an account? Sign in</span></a> &nbsp;·&nbsp; <a tabindex="0" role="button" id="hrBack"><span data-rl="lnkGuest">Continue without an account</span></a></p>
+        <p class="alt"><a tabindex="0" role="button" id="hsReg"><span data-rl="lnkNoAcc">New here? Create account</span></a></p>
       </div>
     </form>
 
@@ -859,19 +851,14 @@ if(location.hash==='#signin'){dstop();setRole('help',true);helpPanel('sign');var
 
 /* citizen sign-in / create-account panels inside the help form (desktop) — replace the request form, never stack under it */
 function helpPanel(m){
-  var s=document.getElementById('helpSign'),rg=document.getElementById('helpReg'),f=document.querySelector('form[data-role="help"]');
-  var mode=(m==='sign'||m==='reg')?m:'none';
+  var s=document.getElementById('helpSign'),f=document.querySelector('form[data-role="help"]');
+  var mode=(m==='sign')?'sign':'none';
   if(s)s.style.display=mode==='sign'?'':'none';
-  if(rg)rg.style.display=mode==='reg'?'':'none';
-  if(f)for(var i=0;i<f.children.length;i++){var c=f.children[i];if(c!==s&&c!==rg)c.style.display=mode==='none'?'':'none';}
+  if(f)for(var i=0;i<f.children.length;i++){var c=f.children[i];if(c!==s)c.style.display=mode==='none'?'':'none';}
 }
 function $v(id){var e=document.getElementById(id);return e?String(e.value||'').trim():''}
 wireLink('hsOpen',function(){helpPanel('sign');var e=document.getElementById('hsPhone');if(e)e.focus();});
-wireLink('hsBack',function(){helpPanel('none');});
-wireLink('hsReg',function(){helpPanel('reg');var e=document.getElementById('hrName');if(e)e.focus();});
-wireLink('hrOpen',function(){helpPanel('reg');var e=document.getElementById('hrName');if(e)e.focus();});
-wireLink('hrSign',function(){helpPanel('sign');var e=document.getElementById('hsPhone');if(e)e.focus();});
-wireLink('hrBack',function(){helpPanel('none');});
+wireLink('hsReg',function(){helpPanel('none');var e=document.querySelector('form[data-role="help"] input');if(e)e.focus();});
 var hsGo=document.getElementById('hsGo');
 if(hsGo)hsGo.addEventListener('click',function(){
   var ph=$v('hsPhone'),pw=$v('hsPass');
@@ -881,17 +868,6 @@ if(hsGo)hsGo.addEventListener('click',function(){
   RL.signin(ph,pw).then(function(r){
     if(r.ok){window.location.href=(r.user&&r.user.role==='volunteer')?'dashboards/volunteer.html':'dashboards/help.html';}
     else showToast(r.msg||'Could not sign in');});
-});
-var hrGo=document.getElementById('hrGo');
-if(hrGo)hrGo.addEventListener('click',function(){
-  var nm=$v('hrName'),ph=$v('hrPhone'),pw=$v('hrPass');
-  if(nm.length<2){showToast('Please write your real full name (e.g. Ali Raza)');return;}
-  if(!RL.normPK(ph)){showToast('Please enter a valid mobile number (e.g. 03001234567)');return;}
-  if(pw.length<6){showToast('Password must be at least 6 characters');return;}
-  showToast('Creating your account\u2026');
-  RL.signup(nm,ph,pw).then(function(r){
-    if(r.ok){window.location.href='dashboards/help.html';}
-    else showToast(r.msg||'Could not create the account');});
 });
 
 // urgent checkbox — desktop: marks the request urgent (sent with the form; no redirect, keeps typed data)
