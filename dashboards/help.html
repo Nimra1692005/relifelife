@@ -44,6 +44,25 @@
 .lp-btn.on { background: var(--g); color: #F5EEDB; border-color: var(--g); }
 .lp-addr { font-size: 12.5px; line-height: 1.4; color: var(--g); background: rgba(46,125,50,.07); border: 1px dashed rgba(46,125,50,.35); border-radius: 10px; padding: 10px 12px; }
 .lp-addr.empty { color: #7a8a80; background: transparent; border-color: var(--line); font-style: italic; }
+.wa-loc-btn { margin-top: 12px; width: 100%; border: none; cursor: pointer; background: #128C7E; color: #fff; font: inherit; font-weight: 800; font-size: 13.5px; border-radius: 14px; padding: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: .2s; }
+.wa-loc-btn:hover { background: #0f7a6e; transform: translateY(-1px); }
+.wa-loc-btn svg { width: 17px; height: 17px; }
+/* SafePoint — nearest hospital + shelter shown after a location is set */
+.safe-point { margin: 4px 0 16px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: 0 6px 18px rgba(27,58,42,.06); }
+.sp-title { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--g); font-size: 15px; }
+.sp-title > span { display: flex; flex-direction: column; }
+.sp-title small { font-weight: 600; color: var(--mute); font-size: 11.5px; margin-top: 1px; }
+.sp-title svg { width: 20px; height: 20px; color: var(--gold); flex: none; }
+.sp-map { position: relative; height: 200px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--line); margin: 12px 0; }
+.sp-card { display: flex; align-items: center; gap: 10px; padding: 10px 2px; border-top: 1px solid var(--line); }
+.sp-card h5 { font-size: 13px; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-card .sp-cat { display: block; font-size: 10px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1px; }
+.sp-card p { font-size: 11.5px; color: var(--mute); margin: 2px 0 0; }
+.sp-card .item-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+.sp-card .item-icon svg { width: 18px; height: 18px; }
+.sp-go { flex: none; display: inline-flex; align-items: center; gap: 5px; background: var(--g); color: var(--gold); font-weight: 700; font-size: 12px; padding: 8px 12px; border-radius: 10px; }
+.sp-go svg { width: 14px; height: 14px; }
+.sp-card.miss p { margin: 0; }
 .track-card {
   background: linear-gradient(135deg,var(--g),var(--g2)); color: #F5EEDB;
   border-radius: var(--rad); padding: 22px; margin-bottom: 14px; position: relative; overflow: hidden;
@@ -396,27 +415,34 @@
     <div class="grid-2">
       <div class="card fade-up">
         <div class="card-header"><h3 data-rl="formTitle">Quick Help Request</h3><span class="badge-sm">Location only</span></div>
-        <div class="form-group"><label data-rl="lblNeed">What do you need?</label><select id="reqCat" class="field-input">
+        <select id="reqCat" class="field-input" style="display:none">
           <option>Emergency Rescue &amp; Evacuation</option>
           <option>Food &amp; Clean Water</option><option>Shelter &amp; Accommodation</option>
           <option>Clothing &amp; Supplies</option>
           <option>Home &amp; Damage Recovery</option><option>Missing Persons</option>
-        </select></div>
-        <div class="form-group"><label data-rl="lblLoc">Your Location <span style="color:var(--r)">*</span></label>
+        </select>
+        <div class="form-group"><label><span data-rl="lblLoc">Your Location</span> <span style="color:var(--r)">*</span></label>
           <div style="display:flex;gap:8px">
-            <input id="reqLoc" class="field-input" type="text" data-rl-ph="reqLocPh" placeholder="Exact address, or drop a pin on the map" style="flex:1">
-            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.locateOnce()">GPS</button>
+            <input id="reqLoc" class="field-input" type="text" data-rl-ph="reqLocPh" placeholder="Type an address or place" style="flex:1;min-width:0">
+            <button type="button" class="submit-btn" id="reqFindBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.find()"><i data-i="search"></i> Find</button>
+            <button type="button" class="submit-btn" id="reqGeoBtn" style="width:auto;margin:0;padding:0 14px;white-space:nowrap" onclick="LP.locateOnce()"><i data-i="pin"></i> GPS</button>
           </div>
           <div class="loc-picker">
-            <div class="lp-hint">Tap the map to pick your <b>exact location</b> (you can also drag the marker) — or turn on <b>Live GPS</b>. The street-level address fills in automatically.</div>
+            <div class="lp-hint">Search a place with <b>Find</b>, tap the map to drop a pin (drag to fine-tune), or press <b>GPS</b> — the street address fills in automatically.</div>
             <div class="lp-bar">
-              <button type="button" class="lp-btn" id="lpLiveBtn" onclick="LP.toggleLive()">Live GPS</button>
-              <button type="button" class="lp-btn" onclick="LP.locateOnce()">My location</button>
-              <button type="button" class="lp-btn" onclick="LP.recenter()">Recenter</button>
+              <button type="button" class="lp-btn" id="lpLiveBtn" onclick="LP.toggleLive()"><i data-i="pin"></i> Live GPS</button>
+              <button type="button" class="lp-btn" onclick="LP.locateOnce()"><i data-i="search"></i> My location</button>
+              <button type="button" class="lp-btn" onclick="LP.recenter()"><i data-i="globe"></i> Recenter</button>
             </div>
             <div class="lp-map"><div id="locPick" style="position:absolute;inset:0"></div></div>
             <div class="lp-addr empty" id="lpAddr" style="margin-top:10px">No exact location yet — tap the map.</div>
+            <button type="button" class="wa-loc-btn" onclick="waSendLoc()"><i data-i="phone"></i> Send this location on WhatsApp</button>
           </div>
+        </div>
+        <div class="safe-point" id="safePoint" style="display:none">
+          <div class="sp-title"><i data-i="shield"></i><span>SafePoint<small>Nearest hospital &amp; shelter to your location</small></span></div>
+          <div class="sp-map"><div id="safeMap" style="position:absolute;inset:0"></div></div>
+          <div id="safeList"></div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
           <input type="checkbox" id="reqUrgent" style="width:18px;height:18px;cursor:pointer;accent-color:var(--r)">
@@ -717,7 +743,7 @@
 /* App language dictionary (EN / Urdu / Roman Urdu) — consumed by RL_Lang in shared.js */
 window.RL_LANGDICT = {
   homeTitle:   { en: 'Help reaches you, even when the network doesn\'t.', ur: '\u0645\u062f\u062f \u0622\u067e \u062a\u06a9 \u067e\u06c1\u0646\u0686\u062a\u06cc \u06c1\u06d2\u060c \u0686\u0627\u06c1\u06d2 \u0646\u06cc\u0679\u0648\u0631\u06a9 \u0646\u06c1 \u06c1\u0648\u06d2', roman: 'Madad aap tak pohanchti hai, chahe network na ho' },
-  waSos:       { en: 'No internet? Send SOS on WhatsApp', ur: '\U0001F4F2 \u0627\u0646\u0679\u0631\u0646\u06cc\u0679 \u0646\u06c1\u06cc\u06ba\u061f \u0648\u0627\u0679\u0633 \u0627\u06cc\u067e \u067e\u0631 SOS \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Internet nahi? WhatsApp par SOS bhejein' },
+  waSos:       { en: 'No internet? Send SOS on WhatsApp', ur: '\u0627\u0646\u0679\u0631\u0646\u06cc\u0679 \u0646\u06c1\u06cc\u06ba\u061f \u0648\u0627\u0679\u0633 \u0627\u06cc\u067e \u067e\u0631 SOS \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Internet nahi? WhatsApp par SOS bhejein' },
   navHome:     { en: 'Home', ur: '\u0645\u06a9\u0627\u0646', roman: 'Ghar' },
   navRequest:  { en: 'Request Help', ur: '\u0645\u062f\u062f \u06a9\u06cc \u0644\u06cc\u06d2 \u0631\u0633\u062a\u06c1', roman: 'Madad ki request' },
   navMyReqs:   { en: 'My Requests', ur: '\u0645\u06cc\u0631\u06cc \u0628\u0646\u06cc\u0627\u0626\u06cc\u06ba', roman: 'Meri requests' },
@@ -735,9 +761,9 @@ window.RL_LANGDICT = {
   navSettings: { en: 'Settings', ur: '\u062a\u0631\u062a\u06cc\u0628\u0627\u062a', roman: 'Settings' },
   formTitle:   { en: 'Quick Help Request', ur: '\u0641\u0648\u0631\u06cc \u0645\u062f\u062f \u06a9\u06cc \u0628\u0646\u06cc\u0627', roman: 'Fori madad ki request' },
   lblNeed:     { en: 'What do you need?', ur: '\u0622\u067e\u06a9\u0648 \u06a9\u06cc\u0627 \u0686\u0627\u06c1\u06cc\u06d2\u061f', roman: 'Aap ko kya chahiye?' },
-  lblLoc:      { en: '\U0001F4CD Your Location', ur: '\U0001F4CD \u0622\u067e \u06a9\u0627 \u0645\u0642\u0627\u0645', roman: '\U0001F4CD Aap ka thikana' },
+  lblLoc:      { en: 'Your Location', ur: '\u0622\u067e \u06a9\u0627 \u0645\u0642\u0627\u0645', roman: 'Aap ka thikana' },
   btnSend:     { en: 'Request Help', ur: '\u0645\u062f\u062f \u0628\u06be\u06cc\u062c\u06cc\u06ba', roman: 'Madad bhejein' },
-  lblUrgent:   { en: '\U0001F6A8 Mark as URGENT', ur: '\U0001F6A8 \u0627\u0633\u06cc\u0644 \u0637\u06c1\u0631\u06cc\u06ba', roman: '\U0001F6A8 Urgent mark karein' },
+  lblUrgent:   { en: 'Mark as URGENT', ur: '\u0627\u0636\u0627\u067e\u06cc \u0637\u06c1\u0631\u06cc\u06ba', roman: 'Urgent mark karein' },
   reqLocPh:    { en: 'Exact address, or drop a pin on the map', ur: '\u062d\u0642\u06cc\u0642\u06cc \u067e\u062a\u06c1 \u06cc\u0627 \u0646\u0642\u0634\u06c1 \u067e\u0631 \u067e\u0646 \u0631\u06a9\u06be\u06cc\u06ba', roman: 'Exact address, ya map par pin rakhein' },
   accOfferTitle: { en: 'Create an account — track status on any device', ur: '\u0627\u06a9\u0627\u0624\u0646\u0679 \u0628\u0646\u0627 \u0644\u06cc\u06ba \u2014 \u0627\u0633\u0679\u06cc\u0679\u0633 \u06c1\u0631 \u0688\u0648\u0627\u0626\u0633 \u067e\u0631 \u062f\u06cc\u06a9\u06be\u06cc\u06ba', roman: 'Account bana lein \u2014 status har device par track karein' },
   accOfferSub: { en: 'We already have your name and number from your request — just set a password and your past requests will be linked.', ur: '\u06c1\u0645\u06cc\u06ba \u0622\u067e \u06a9\u0627 \u0646\u0627\u0645 \u0627\u0648\u0631 \u0646\u0645\u0628\u0631 \u0628\u0631\u06cc\u062a \u0633\u06d2 \u0645\u0644 \u0686\u06a9\u0627 \u06c1\u06d2 \u2014 \u0635\u0631\u0641 \u0644\u06af\u06cc\u062c\u06cc\u0646 \u0633\u06cc\u0679 \u06a9\u0631\u06cc\u06ba\u060c \u067e\u06c1\u0644\u06cc \u0628\u0646\u06cc\u0627\u062f\u06cc\u06ba \u0628\u06be\u06cc \u0644\u0627\u0626\u0646\u06a9 \u06c1\u0648 \u062c\u0627 \u0626\u06cc\u06ba \u06af\u06cc\u06d2', roman: 'Aap ka naam aur number request se mil chuka hai — bas password set karein, purani requests bhi link ho jayengi.' },
@@ -797,6 +823,15 @@ function waSos(btn) {
   if (!w) { RL_Toast('Allow the popup — WhatsApp will then open'); return; }
   RL_Toast('WhatsApp opened — forward the message to your family group or Rescue contact');
   if (btn) btn.textContent = 'SOS message created — tap again to open a new one';
+}
+/* ── SEND CURRENT LOCATION ON WHATSAPP — works from the request form even if the server is unreachable ── */
+function waSendLoc() {
+  var loc = ((RL_$('reqLoc') || {}).value || '').trim();
+  if (!loc && !GCO) { RL_Toast('Set your location first — tap the map or use GPS'); return; }
+  var cat = ((RL_$('reqCat') || {}).value || '').trim();
+  var w = window.open(waText({ cat: cat, loc: loc }), '_blank');  // carries chosen category + address + pin (GCO)
+  if (!w) { RL_Toast('Allow the popup — WhatsApp will then open'); return; }
+  RL_Toast('WhatsApp opened with your location — send it to a Rescue contact or your family group');
 }
 /* ── #2 OFFLINE SOS QUEUE — requests stored on device while there is no connection, flushed automatically on reconnect. Deduped by clientId, never sent twice. ── */
 var SOS_QK = 'rl_sos_queue', _sosFlushing = false;
@@ -1043,6 +1078,45 @@ function loadNearbyLive() {
     }
   });
 }
+
+/* ── SAFEPOINT: on a set location, show the nearest hospital + shelter & accommodation on a map ── */
+var SAFE_MAP=null, SAFE_MK=[], _safeSeq=0, _lastSafe=null, _lastSafeT=0;
+function spFmt(d){ return d<1 ? '<1 km' : (d<10 ? d.toFixed(1) : Math.round(d)) + ' km'; }
+function spCard(cat, icon, col, found){
+  var head = found ? esc(found.item.name||cat) : 'Nothing found within 15 km';
+  var meta = found ? (((found.item.addr)?esc(found.item.addr)+' · ':'')+spFmt(found.dist)) : 'You can still send your request.';
+  var go = found ? '<a class="sp-go" href="https://www.google.com/maps/dir/?api=1&destination='+found.item.lat+','+found.item.lng+'" target="_blank" rel="noopener"><i data-i="pin"></i> Go</a>' : '';
+  return '<div class="sp-card'+(found?'':' miss')+'"><div class="item-icon" style="background:'+col+'22;color:'+col+'">'+RL_Icon(icon)+'</div>'
+    +'<div style="flex:1;min-width:0"><small class="sp-cat" style="color:'+col+'">'+cat+'</small><h5>'+head+'</h5><p>'+meta+'</p></div>'+go+'</div>';
+}
+function loadSafePoint(lat,lng){
+  var box=RL_$('safePoint'); if(!box) return;
+  if(!window.RL_LIVE || !window.L){ box.style.display='none'; return; }
+  box.style.display='';
+  var now=Date.now();
+  if(_lastSafe && Math.abs(_lastSafe.lat-lat)<0.004 && Math.abs(_lastSafe.lng-lng)<0.004 && now-_lastSafeT<15000) return;
+  _lastSafe={lat:lat,lng:lng}; _lastSafeT=now;
+  var me={lat:lat,lng:lng};
+  if(!SAFE_MAP){ SAFE_MAP=RL_LIVE.map('safeMap',lat,lng,13); } else { SAFE_MAP.setView([lat,lng],13); }
+  if(!SAFE_MAP) return;
+  SAFE_MK.forEach(function(m){ try{ SAFE_MAP.removeLayer(m); }catch(e){} }); SAFE_MK=[];
+  var um=RL_LIVE.marker(SAFE_MAP,lat,lng,'<b>You are here</b>','#B91C1C'); if(um) SAFE_MK.push(um);
+  var le=RL_$('safeList'); if(le) le.innerHTML='<p class="mute" style="padding:8px 2px;font-size:12.5px">Finding the nearest hospital &amp; shelter…</p>';
+  var seq=++_safeSeq;
+  Promise.all([
+    RL_LIVE.overpassPOI(lat,lng,15000,'hospital').catch(function(){ return []; }),
+    RL_LIVE.overpassPOI(lat,lng,15000,'shelter').catch(function(){ return []; })
+  ]).then(function(res){
+    if(seq!==_safeSeq) return; /* a newer pin superseded this response */
+    var near=function(arr){ var b=null,bd=Infinity; (arr||[]).forEach(function(x){ if(x.lat==null||x.lng==null) return; var d=RL_LIVE.distKm(me,x); if(d<bd){ bd=d; b=x; } }); return b?{item:b,dist:bd}:null; };
+    var H=near(res[0]), S=near(res[1]);
+    if(H){ var hm=RL_LIVE.marker(SAFE_MAP,H.item.lat,H.item.lng,'<b>Hospital</b><br>'+esc(H.item.name||''),'#4C8DF6'); if(hm) SAFE_MK.push(hm); }
+    if(S){ var sm=RL_LIVE.marker(SAFE_MAP,S.item.lat,S.item.lng,'<b>Shelter</b><br>'+esc(S.item.name||''),'#2E7D32'); if(sm) SAFE_MK.push(sm); }
+    try{ SAFE_MAP.invalidateSize(); }catch(e){}
+    if(le){ le.innerHTML=spCard('Nearest Hospital','hosp','#4C8DF6',H)+spCard('Shelter &amp; Accommodation','home','#2E7D32',S); RL_Icons(); }
+  }).catch(function(){ if(le) le.innerHTML='<p class="mute" style="padding:8px 2px;font-size:12.5px">Could not load nearby places right now.</p>'; });
+}
+document.addEventListener('rl:locset', function(ev){ try{ loadSafePoint(ev.detail.lat, ev.detail.lng); }catch(e){} });
 
 function renderContacts() {
   var el = RL_$('contactList'); if (!el) return;
@@ -1554,6 +1628,7 @@ var LP=(function(){
   function setPos(lat,lng,rev){
     if(!RL_LIVE.inPK(lat,lng)){ RL_Toast('Pick a location inside Pakistan'); return; }
     cur={lat:lat,lng:lng}; GCO={lat:lat,lng:lng};
+    try{ document.dispatchEvent(new CustomEvent('rl:locset',{detail:{lat:lat,lng:lng}})); }catch(e){}
     if(map){
       if(!marker){ marker=window.L.marker([lat,lng],{draggable:true}).addTo(map); marker.on('dragend',function(){ var p=marker.getLatLng(); setPos(p.lat,p.lng); }); }
       else marker.setLatLng([lat,lng]);
@@ -1575,6 +1650,16 @@ var LP=(function(){
       init(); if(map) map.setView([pos.lat,pos.lng],16); setPos(pos.lat,pos.lng);
     });
   }
+  function find(){
+    var q=((RL_$('reqLoc')||{}).value||'').trim();
+    if(!q){ RL_Toast('Type a place or address to find'); return; }
+    if(!window.RL_LIVE){ RL_Toast('Location service unavailable'); return; }
+    RL_Toast('Finding "'+q+'"…');
+    RL_LIVE.place(q).then(function(r){
+      if(!r||r.lat==null||r.lng==null){ RL_Toast('Could not find "'+q+'" — tap the map instead'); return; }
+      init(); if(map) map.setView([+r.lat,+r.lng],15); setPos(+r.lat,+r.lng,true);
+    }).catch(function(){ RL_Toast('Search failed — tap the map instead'); });
+  }
   function toggleLive(){
     if(!window.RL_LIVE) return;
     liveOn=!liveOn; var b=RL_$("lpLiveBtn"); if(b) b.classList.toggle('on',liveOn);
@@ -1588,8 +1673,8 @@ var LP=(function(){
     } else { if(watchId!=null&&navigator.geolocation){ navigator.geolocation.clearWatch(watchId); watchId=null; } RL_Toast('Live GPS OFF'); }
   }
   function recenter(){ init(); if(map&&cur) map.setView([cur.lat,cur.lng],16); else if(map){ var g=liveArea(); map.setView([g.lat,g.lng],12); } }
-  function reset(){ cur=null; GCO=null; if(marker&&map){ map.removeLayer(marker); marker=null; } var a=RL_$("lpAddr"); if(a){ a.textContent='No exact location yet — tap the map.'; a.classList.add('empty'); } }
-  return { init:init, locateOnce:locateOnce, toggleLive:toggleLive, recenter:recenter, getCur:function(){return cur;}, reset:reset, setPos:setPos };
+  function reset(){ cur=null; GCO=null; if(marker&&map){ map.removeLayer(marker); marker=null; } var a=RL_$("lpAddr"); if(a){ a.textContent='No exact location yet — tap the map.'; a.classList.add('empty'); } var sb=RL_$("safePoint"); if(sb) sb.style.display='none'; }
+  return { init:init, locateOnce:locateOnce, find:find, toggleLive:toggleLive, recenter:recenter, getCur:function(){return cur;}, reset:reset, setPos:setPos };
 })();
 /* ── SAFE ROUTE PLANNER v2 — any→any address, AI safety score, alternatives ── */
 var ROUTE_MAP=null, RT_START=null, RT_START_M=null, RT_DEST_SEL=null;
