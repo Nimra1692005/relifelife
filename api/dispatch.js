@@ -519,6 +519,52 @@ async function copilot(res, b) {
   ok(res, { engine: 'rules', intent: rule, triage: tri, guidance: GUIDANCE[rule.incident_type] || GUIDANCE.other, question: nextQuestion(rule), reply, draft: { incident_type: rule.incident_type, needs: rule.needs, people_count: rule.people_count, urgency: rule.urgency, description: message } }, 'Copilot reply');
 }
 
+/* ── Mesh Network (real-time zone relay) ─────────────────
+   Serverless can't hold WebSockets, so the live port is short-poll:
+   POST a message, GET the zone's recent messages + peer presence.
+   Coordinates are kept only when inside Pakistan (map scope). */
+const PK_BOX = { s: 23.6, n: 37.3, w: 58.4, e: 78.4 };
+function _meshZone(v) {
+  const z = String(v || '').trim().toLowerCase().replace(/[^\w\- ]/g, '').slice(0, 40).trim();
+  return z || 'general';
+}
+function _pk(v) { const f = parseFloat(v); return Number.isFinite(f) && f >= PK_BOX.s && f <= PK_BOX.n ? f : null; }
+function _pkLng(v) { const f = parseFloat(v); return Number.isFinite(f) && f >= PK_BOX.w && f <= PK_BOX.e ? f : null; }
+
+async function createMeshMessage(res, b) {
+  const zone = _meshZone(b.zone);
+  const body = String(b.body || '').replace(/[^\S\n ]+/g, ' ').trim().slice(0, 1000);
+  if (!body) return fail(res, 'Message is empty', 400);
+  const lat = _pk(b.lat), lon = _pkLng(b.lon);
+  const row = {
+    id: rid('mesh'),
+    zone,
+    sender: String(b.sender || 'Neighbour').replace(/[^\w\- ]/g, '').slice(0, 30) || 'Neighbour',
+    body,
+    emergency: b.emergency === true || b.emergency === 'true',
+    created_at: nowIso()
+  };
+  if (lat != null && lon != null) { row.latitude = lat; row.longitude = lon; }
+  const created = await sb('mesh_messages', { method: 'POST', body: row, prefer: 'return=representation' });
+  ok(res, created && created[0] ? created[0] : row, 'Posted');
+}
+
+async function listMeshZone(res, q) {
+  const zone = _meshZone(q.zone);
+  // recent window: since=<iso> returns only newer rows (polling); otherwise last 50.
+  const query = { select: '*', zone: 'eq.' + zone, order: 'created_at.desc', limit: 50 };
+  if (q.since) query.created_at = 'gt.' + encodeURIComponent(String(q.since));
+  const messages = (await sb('mesh_messages', { query })) || [];
+  // Peer presence for the 1 km radar: latest located message per sender.
+  const peers = {};
+  messages.forEach(function (m) {
+    if (m.latitude == null || m.longitude == null) return;
+    const k = String(m.sender || 'anon');
+    if (!peers[k]) peers[k] = { name: k, lat: m.latitude, lon: m.longitude, at: m.created_at };
+  });
+  ok(res, { zone, messages: messages.slice().reverse(), peers: Object.keys(peers).map(function (k) { return peers[k]; }) }, '');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
@@ -567,6 +613,7 @@ module.exports = async function handler(req, res) {
     }
     if (r0 === 'shelters') return await listShelters(res);
     if (r0 === 'hospitals') return await listHospitals(res);
+    if (r0 === 'mesh') return method === 'POST' ? await createMeshMessage(res, b) : await listMeshZone(res, q);
     return fail(res, 'Not found: /api/v1/' + seg.join('/'), 404);
   } catch (e) {
     return fail(res, 'Server error: ' + (e && e.message ? e.message : String(e)), 500);
