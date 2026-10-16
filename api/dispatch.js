@@ -327,7 +327,7 @@ async function adminOverview(res) {
 
 /* ── Alerts (admin broadcast → volunteer notifications) ── */
 async function createAlert(res, req, b) {
-  if (!readToken(req)) return fail(res, 'Sign in zaroori hai — alerts sirf authorized team bhej sakti hai', 401);
+  if (!readToken(req)) return fail(res, 'Sign in required — only the authorized team can send alerts', 401);
   const title = (b.title || '').trim();
   if (!title) return fail(res, 'Alert title is required', 400);
   const row = {
@@ -357,7 +357,7 @@ async function listVolunteers(res, q) {
   ok(res, (await sb('volunteers', { query })) || []);
 }
 async function verifyVolunteer(res, req, id) {
-  if (!readToken(req)) return fail(res, 'Sign in zaroori hai', 401);
+  if (!readToken(req)) return fail(res, 'Sign in required', 401);
   const out = await sb('volunteers', { method: 'PATCH', query: { id: 'eq.' + id, select: 'id,verified' }, body: { verified: true }, prefer: 'return=representation' });
   ok(res, (out && out[0]) || { id: id, verified: true }, 'Volunteer verified');
 }
@@ -378,10 +378,10 @@ function readBody(req) {
 
 async function updateVolunteer(res, req, id, b) {
   const t = readToken(req);
-  if (!t) return fail(res, 'Sign in zaroori hai — profile sirf account owner update kar sakta hai', 401);
+  if (!t) return fail(res, 'Sign in required — only the account owner can update the profile', 401);
   if (t.role !== 'admin') {
     const v = ((await sb('volunteers', { query: { select: 'id,user_id', id: 'eq.' + id, limit: '1' } }).catch(function () { return []; })) || [])[0];
-    if (v && v.user_id && v.user_id !== t.uid) return fail(res, 'Is profile ko update karne ki ijazat nahi', 403);
+    if (v && v.user_id && v.user_id !== t.uid) return fail(res, 'You are not allowed to update this profile', 403);
   }
   const patch = {};
   if (Array.isArray(b.skills)) patch.skills = b.skills.slice(0, 12);
@@ -480,11 +480,11 @@ const GUIDANCE = {
   other: ['Stay where you are if safe; note your nearest landmark.', 'Keep your phone charged and Rescue 1122 within reach.']
 };
 function nextQuestion(i) {
-  if (!i.people_count) return 'Aapke saath kitne log hain? (How many people are with you?)';
-  if (i.needs.includes('rescue') || i.needs.includes('evacuation')) return 'Kya aap log chat par hain ya phanse hue hain? (Are you on a rooftop or trapped?)';
-  if (i.incident_type === 'medical') return 'Kya zakhmi hosh mein hain ya chal sakte hain? (Is the injured person conscious?)';
-  if (i.incident_type === 'missing') return 'Akhri baar kab aur kahan nazar aaye? (When and where were they last seen?)';
-  return 'Apna ilaaka / nearest landmark likh dein taake team theek jagah pohanche. (Enter your area or nearest landmark.)';
+  if (!i.people_count) return 'How many people are with you?';
+  if (i.needs.includes('rescue') || i.needs.includes('evacuation')) return 'Are you on a rooftop or trapped?';
+  if (i.incident_type === 'medical') return 'Is the injured person conscious or able to walk?';
+  if (i.incident_type === 'missing') return 'When and where were they last seen?';
+  return 'Enter your area or nearest landmark so the team reaches the right place.';
 }
 
 // Copilot: Groq LLM if GROQ_API_KEY env is set, otherwise the deterministic rule engine.
@@ -514,8 +514,8 @@ async function copilot(res, b) {
       }
     } catch (e) { /* fall through to rule engine */ }
   }
-  const reply = 'Main ne aapki baat samajh li: ' + rule.incident_type.toUpperCase() +
-    (rule.flags.length ? ' (' + rule.flags.join(', ') + ')' : '') + '. Emergency services ka intezar na karein — Rescue 1122 dabayein.';
+  const reply = 'I understood your situation: ' + rule.incident_type.toUpperCase() +
+    (rule.flags.length ? ' (' + rule.flags.join(', ') + ')' : '') + '. Don\'t wait for emergency services — call Rescue 1122.';
   ok(res, { engine: 'rules', intent: rule, triage: tri, guidance: GUIDANCE[rule.incident_type] || GUIDANCE.other, question: nextQuestion(rule), reply, draft: { incident_type: rule.incident_type, needs: rule.needs, people_count: rule.people_count, urgency: rule.urgency, description: message } }, 'Copilot reply');
 }
 

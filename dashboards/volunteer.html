@@ -66,7 +66,7 @@
 <div class="layout">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="logo"><div class="logo-icon">🌿</div><span class="logo-text">ReliefLink</span></div>
+  <div class="logo"><span class="logo-text">ReliefLink</span></div>
   <div class="nav-group">
     <button class="nav-item active" data-page="home"><i data-i="home"></i>Home</button>
     <button class="nav-item" data-page="tasks"><i data-i="list"></i>Available Tasks<span class="badge" id="taskBadge">0</span></button>
@@ -199,18 +199,18 @@
           <div id="profHist"></div>
         </div>
         <div class="card fade-up" style="margin-top:16px">
-          <div class="card-header"><h3>🚤 My Resources</h3><span class="badge-sm">Registry</span></div>
-          <p class="mute" style="font-size:12.5px;margin-bottom:10px">Agar aap ke paas yeh resources hain to mark karein — rescue teams zaroorat ke waqt (naav, generator, vehicle) qareebi registered assets dekhti hain.</p>
+          <div class="card-header"><h3>My Resources</h3><span class="badge-sm">Registry</span></div>
+          <p class="mute" style="font-size:12.5px;margin-bottom:10px">If you have any of these resources, mark them — rescue teams look for nearby registered assets (boat, generator, vehicle) when they need them.</p>
           <div class="pill-row" id="assetPills">
-            <button type="button" class="pill" data-v="Boat">🚤 Boat</button>
-            <button type="button" class="pill" data-v="Small boat">🛶 Small boat</button>
-            <button type="button" class="pill" data-v="Van / 4x4">🚐 Van / 4x4</button>
-            <button type="button" class="pill" data-v="Generator">⚡ Generator</button>
-            <button type="button" class="pill" data-v="Medical kit">🧰 Medical kit</button>
-            <button type="button" class="pill" data-v="Crane / Winch">🏗️ Crane / Winch</button>
-            <button type="button" class="pill" data-v="Radio">📻 Radio</button>
+            <button type="button" class="pill" data-v="Boat">Boat</button>
+            <button type="button" class="pill" data-v="Small boat">Small boat</button>
+            <button type="button" class="pill" data-v="Van / 4x4">Van / 4x4</button>
+            <button type="button" class="pill" data-v="Generator">Generator</button>
+            <button type="button" class="pill" data-v="Medical kit">Medical kit</button>
+            <button type="button" class="pill" data-v="Crane / Winch">Crane / Winch</button>
+            <button type="button" class="pill" data-v="Radio">Radio</button>
           </div>
-          <button type="button" class="submit-btn" style="margin-top:12px" id="assetSaveBtn" onclick="saveAssets()">💾 Save My Resources</button>
+          <button type="button" class="submit-btn" style="margin-top:12px" id="assetSaveBtn" onclick="saveAssets()">Save My Resources</button>
         </div>
       </div>
     </div>
@@ -348,7 +348,7 @@ function renderHome() {
       + '<div><b>' + (ST_TEXT[t.status] || t.status) + '</b>Status</div>'
       + '<div><b>' + (t.team || '—') + '</b>Team</div>'
       + '</div><button class="upd-btn" onclick="openUpdateModal()">Update Progress</button></div>'
-    : '<div class="assign-card fade-up center" style="padding:30px 22px"><div style="font-size:34px;margin-bottom:6px">🧭</div>'
+    : '<div class="assign-card fade-up center" style="padding:30px 22px"><div style="font-size:34px;margin-bottom:6px"></div>'
       + '<h4 style="font-size:16px;font-weight:800;margin-bottom:4px">No active assignment yet</h4>'
       + '<p style="opacity:.8;font-size:13px;margin-bottom:14px">You joined ReliefLink — claim your first task from the queue and every hour will count here.</p>'
       + '<button class="upd-btn" style="max-width:260px;margin:0 auto" onclick="navigate(\'tasks\')">Browse Available Tasks</button></div>';
@@ -384,7 +384,7 @@ function renderProfileDynamic() {
     : '<p class="mute" style="font-size:13px;padding:8px 0">No completed tasks yet — your history will build up here.</p>';
   var a = RL_$('profAch');
   if (a) a.innerHTML = done.length >= 1
-    ? '<div class="item"><div class="item-icon" style="background:rgba(201,162,39,.18);color:var(--gold)">' + RL_Icon('award') + '</div><div class="t">First Task Done<small>Completed ' + done.length + ' task' + (done.length > 1 ? 's' : '') + ' — thank you!</small></div><span class="tag tag-yellow">🏅</span></div>'
+    ? '<div class="item"><div class="item-icon" style="background:rgba(201,162,39,.18);color:var(--gold)">' + RL_Icon('award') + '</div><div class="t">First Task Done<small>Completed ' + done.length + ' task' + (done.length > 1 ? 's' : '') + ' — thank you!</small></div><span class="tag tag-yellow"></span></div>'
     : '<p class="mute" style="font-size:13px;padding:8px 0">Complete your first task to earn your first badge.</p>';
 }
 function loadProfile() {
@@ -415,9 +415,9 @@ function saveAssets() {
   var btn = RL_$('assetSaveBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
   RL_Send('PATCH', '/volunteers/' + encodeURIComponent(VOL), { assets: assets }).then(function (res) {
-    if (btn) { btn.disabled = false; btn.textContent = '💾 Save My Resources'; }
-    if (res && res.ok) RL_Toast(assets.length ? '✅ Resources saved — admin aur rescue teams ko dikhai denge' : '✅ Cleared — koi asset marked nahi');
-    else RL_Toast('Server tak pohanch na saka — dobara try karein');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save My Resources'; }
+    if (res && res.ok) RL_Toast(assets.length ? 'Resources saved — visible to admin and rescue teams' : 'Cleared — no assets marked');
+    else RL_Toast('Could not reach the server — try again');
   });
 }
 
@@ -518,10 +518,10 @@ function clearNotifs() { if (RL_$('notifBadge')) RL_$('notifBadge').textContent 
 
 /* ── TRAINING ── */
 var training = [
-  {emoji:'🚑',title:'Basic First Aid & CPR',level:'Beginner',dur:'2h',done:true,desc:'Essential first aid and CPR techniques.'},
-  {emoji:'🚤',title:'Flood Rescue Operations',level:'Intermediate',dur:'4h',done:false,desc:'Boat handling and water rescue procedures.'},
-  {emoji:'🍱',title:'Food Safety & Distribution',level:'Beginner',dur:'1.5h',done:true,desc:'Food handling, storage, and distribution.'},
-  {emoji:'🧰',title:'Shelter Construction',level:'Beginner',dur:'3h',done:false,desc:'Tent setup and basic shelter management.'}
+  {emoji:'',title:'Basic First Aid & CPR',level:'Beginner',dur:'2h',done:true,desc:'Essential first aid and CPR techniques.'},
+  {emoji:'',title:'Flood Rescue Operations',level:'Intermediate',dur:'4h',done:false,desc:'Boat handling and water rescue procedures.'},
+  {emoji:'',title:'Food Safety & Distribution',level:'Beginner',dur:'1.5h',done:true,desc:'Food handling, storage, and distribution.'},
+  {emoji:'',title:'Shelter Construction',level:'Beginner',dur:'3h',done:false,desc:'Tent setup and basic shelter management.'}
 ];
 function renderTraining() {
   var el = RL_$('trainingList');
